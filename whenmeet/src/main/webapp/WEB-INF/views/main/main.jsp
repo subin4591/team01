@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>main|언제만나</title>
 <script src="js/jquery-3.6.4.min.js"></script>
 <script>
 $(document).ready(function(){
