@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="meeting.MeetingDAO">
+	<select id="getApp" resultType="String">
+		select user_id from applicant_table
+	</select>
+</mapper>
