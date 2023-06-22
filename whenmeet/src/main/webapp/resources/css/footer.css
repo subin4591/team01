@@ -1,0 +1,17 @@
+@charset "UTF-8";
+
+/* footer */
+footer {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	color: #DB9F9F;
+}
+#footer_left {
+	margin-top: 32px;
+	margin-right: 25%;
+	font-size: 20px;
+}
+#footer_right {
+	margin_left: 25%;
+}
