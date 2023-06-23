@@ -14,6 +14,7 @@
 	</script>
 </head>
 <body>
+	<%@ include file="../header.jsp" %>
 	<h1>${ user_id }</h1>
 </body>
 </html>
