@@ -405,17 +405,20 @@ header{
   align-items: center;
 }
 
-#Dday {
+#Dday, #Dday_edit{
 	position : relative;
   width: 95%;
   height: 40%;
   background-color: white;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: center;
+ 	 justify-content: space-around;
 	border: 2px solid #F25287;
+}
+#Dday_edit{
+	border: 5px solid #F25287;
 }
 
 @font-face {
@@ -424,8 +427,31 @@ header{
     font-weight: normal;
     font-style: normal;
 }
+#Dday img{
+	position : absolute;
+	right : 0px;
+	margin : 5px;
+	width : 30px;
+	height : 30px;
+	cursor: pointer;	
+}
+#Dday_edit .etc{
+	position : absolute;
+	left : 0px;
+	top : -1px;
+	width : 108px;
+	height : 34.5px;
+}
+#endEditDate{
+	position : absolute;
+	right : 5px;
+	top : 5px;
+	width : 30px;
+	height : 30px;
+	cursor: pointer;	
+}
 
-#Dday span:first-child {
+#Dday span:nth-child(2) {
 	position : relative;
 	margin-top : 10px;
 	margin-bottom : -10px;
@@ -434,7 +460,7 @@ header{
   	font-weight: 900;
 }
 
-#Dday span:nth-child(2) {
+#Dday span:nth-child(3) {
 	margin-top : -10px;
 	margin-bottom : 10px;
 	font-family: "코트라";
@@ -445,7 +471,7 @@ header{
   	margin: 0;
 }
 
-#Dday span:nth-child(3) {
+#Dday span:nth-child(4) {
 	position : relative;
   	font-size: 20px;
   	font-weight: 600;
@@ -454,7 +480,7 @@ header{
 	margin-bottom : 0px;
 }
 
-#Dday span:nth-child(4) {
+#Dday span:nth-child(5) {
 	position : relative;
 	margin-top : 0px;
 	margin-bottom : 20px;

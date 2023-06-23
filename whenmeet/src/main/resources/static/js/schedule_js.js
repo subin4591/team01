@@ -91,6 +91,17 @@ $(document).ready(function () {
 			});		
 	});
 
+/* 미팅 일정 */
+$("#editDate").click(function(){
+	$("#Dday_edit").show();
+	$("#Dday").hide();
+})
+$("#endEditDate").click(function(){
+	$("#Dday_edit").hide();
+	$("#Dday").show();
+})
+
+/* 미팅 위치 */
   locateB.on("click", function () {
     let container = document.getElementById("map");
     let options = {

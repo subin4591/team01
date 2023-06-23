@@ -195,10 +195,16 @@ String userImgErr = "img/user_logo.png";
         	<div id="Dday_area">
         	
           		<div id="Dday">
+          				<a><img id = "editDate" src = "img/방장용_수정_버튼.svg" /></a>
             		<span>D-day</span>
             		<span>14</span>
             		<span>2022년 12월 31일 (토)</span>
             		<span>14:00 - 15:30</span>
+          		</div>
+          		
+          		<div id = "Dday_edit" style = "display : None;">
+          			<img class = "etc" src = "img/수정중.svg" />
+          			<img ID = "endEditDate" src = "img/엑스.svg" />
           		</div>
           		
           		<div id="Dday_info">
