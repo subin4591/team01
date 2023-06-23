@@ -9,10 +9,14 @@
 <link rel = "stylesheet" href = "css/schedule_css.css">
 <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
 <script src = "js/schedule_js.js"></script>
+<script
+      type="text/javascript"
+      src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2b4c5e3499f85cf245295753dba018dc"
+></script>
 </head>
 <%
 // 사용자 프로필 에러남
-String userImgErr = "img/userEmpty.png";
+String userImgErr = "img/user_logo.png";
 %>
 
 <body>
@@ -95,17 +99,151 @@ String userImgErr = "img/userEmpty.png";
 	<div class = "user_modal">
 		<span>유저 정보를 표시해요</span>
 	</div>
+	
 	<!-- 그룹 정보 -->
-	<div class = "group_info" style = "position : relative; left : 25%; margin-top : 10px; margin-left: 1%; width : 74%; height:500px; background : white;">
-		
-	</div>
-
+	<div id="section_two">
+        <p class="main_header">감자 프로젝트 그룹</p>
+        
+        <div id="section_two_right">
+			<div id="review_area"></div>
+        	<div id="review_btn">
+        		<div id = "white_btn_area">
+            		<button type="button" onclick="location.href='#'" style = "margin : 5px"class="btns">
+              			비공개
+            		</button>
+            		<button type="button" onclick="location.href='#'" style = "margin : 5px" class="btns">
+              			공유
+            		</button>
+            	</div>
+            	<button type="button" onclick="location.href='#'" id="delete_btn">
+              		그룹 탈퇴
+            	</button>
+          </div>
+		</div>
+      </div>
+    
 	<!-- 하단 상자 -->
-	<div class = "meeting_setting">
+	<div id="second_section">
+		<div id="second_btns">
+			<button class="btns2" href="#" id = "meeting_date_btn" >미팅 일정</button>
+			<button class="btns2" href="#" id="meeting_location_btn">미팅 위치</button>
+			<button class="btns2" href="#" id = "gantt_chart_btn">간트 차트</button>
+			<button class="btns2" href="#" id = "group_detail_btn">그룹 정보</button>
+		</div>
+
+<div id = "meeting_date" >
+	<div class="group_info">
+		
+		
+			<div id="chart_area">
+          		<div id="map">
+          			<table border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">
+          			<thead>
+          			<tr align = "center"  style="height: 54px; font-weight: bold;">
+          				<td style="width: 12.5%;">&nbsp;</td>
+						<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+							<span style = "font-size : 20px">일</span></td>
+						<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+							<span style = "font-size : 20px">일</span></td>
+						<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+							<span style = "font-size : 20px">일</span></td>
+						<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+							<span style = "font-size : 20px">일</span></td>
+						<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+							<span style = "font-size : 20px">일</span></td>
+						<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+							<span style = "font-size : 20px">일</span></td>
+						<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+							<span style = "font-size : 20px">일</span></td>						
+						
+          			</tr>
+          			</thead>
+          			<tbody>
+          			
+          			<% 
+          		// when2meet은 table 안 쓰고 다 div 정렬한 것 같은데...
+          		// height 최소 크기 지정이 안 됨...
+          			for (int i = 0; i < 42; i++){
+          				int count = 5;
+          				count = count + i/2;
+          				String spanT = " style = 'color : #F25287'";
+          				%>
+          			
+          			<tr align = "center"  style="height: 7.2px; font-weight: bold;">	
+          			<%if ((i%2 == 0)){ %>
+          				<td rowspan = "2">
+          				<span<%if (count == 12 || count == 24){%><%=spanT %><%} %>>
+          				<%= count%>:00</span></td>
+          			<%} %>
+						<td style="width: 12.5%;">&nbsp;</td>
+						<td style="width: 12.5%;">&nbsp;</td>
+						<td style="width: 12.5%;">&nbsp;</td>
+						<td style="width: 12.5%;">&nbsp;</td>
+						<td style="width: 12.5%;">&nbsp;</td>
+						<td style="width: 12.5%;">&nbsp;</td>
+						<td style="width: 12.5%;">&nbsp;</td>
+          			</tr>
+          			<%} %>
+          			</tbody>
+          			
+          			</table>
+          			<br>
+          		</div>
+        	</div>
+        
+        	
+        	<div id="Dday_area">
+        	
+          		<div id="Dday">
+            		<span>D-day</span>
+            		<span>14</span>
+            		<span>2022년 12월 31일 (토)</span>
+            		<span>14:00 - 15:30</span>
+          		</div>
+          		
+          		<div id="Dday_info">
+            		<div id="update_date">
+              			<form action="#" method="get" id="update_frm">
+                			<input type="datetime-local" name="start_date" />
+                			<p>-</p>
+                			<input type="datetime-local" name="end_date" />
+               	 			<input type="submit" value="수정" />
+              			</form>
+            		</div>
+            		
+            		<div id="join_area">
+              			<p>참여한 사람|</p>
+              			<div id="join_member">
+                			<li><p>방장쓰</p></li>
+                			<li><p>맴버1</p></li>
+                			<li><p>맴버2</p></li>
+              			</div>
+            		</div>
+            		
+          		</div>
+        	</div>
+      </div>
+      
+      </div>
+</div>
+	
+	<div id = "meeting_location" style = "display : none;">
+		<div class="group_info">위치</div>
 	</div>
 	
+	<div id = "gantt_chart" style = "display : none;">
+		<div class="group_info">간트</div>
+	</div>
+	
+	<div id = "group_detail" style = "display : none;">
+		<div class="group_info">상세</div>
+</div>	
+	
 	<!-- footer -->
-	<%@ include file="../footer.jsp" %>
-</div>
+	
+	<div>
+		<%@ include file="../footer.jsp" %>
+	</div>
+
 </body>
 </html>
