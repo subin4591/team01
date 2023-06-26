@@ -197,7 +197,7 @@ String userImgErr = "img/user_logo.png";
           				<br>
           			</form>
           		</div>
-          			<div id = "total_table" style = "display : None;">
+          		<div id = "total_table" style = "display : None;">
           				<table border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">
           				<thead>
           				<tr align = "center"  style="height: 54px; font-weight: bold;">

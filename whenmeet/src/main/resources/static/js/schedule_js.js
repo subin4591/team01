@@ -100,11 +100,11 @@ $(document).ready(function () {
 /* 미팅 일정 */
 $("#ScheduleSaveBtn").click(function(){
 	$("#total_table").show();
-	$("#map").hide();
+	$("#timeTable").hide();
 })
 $("#ScheduleEditBtn").click(function(){
 	$("#total_table").hide();
-	$("#map").show();
+	$("#timeTable").show();
 })
 $("#editDate").click(function(){
 	$("#Dday_edit").show();
