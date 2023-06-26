@@ -14,7 +14,9 @@
 	</script>
 </head>
 <body>
-	<%@ include file="../header.jsp" %>
-	<h1>${ user_id }</h1>
+	<input type="button" value="LOGIN" id="login" onclick="location.href='/meeting/test/login'"><br>
+	<input type="button" value="LOGOUT" id="logout" onclick="location.href='/meeting/test/logout'">
+	<h1>로그인 여부</h1>
+	<h3>${ session_id }</h3>
 </body>
 </html>

@@ -1,0 +1,74 @@
+@charset "UTF-8";
+
+/* meeting_detailed */
+#meeting_detailed {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 80%;
+	margin-top: 50px;
+	margin-bottom: 50px;
+	padding: 30px 30px;
+	border: 1px solid #DB9F9F;
+}
+#contents_caption {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 18px;
+	height: 25px;
+}
+#contents_category {
+	color: #DB9F9F;
+}
+#contents_title {
+	color: #F25287;
+	margin: 15px 0;
+}
+#contents_info {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	height: 25px;
+}
+#contents_writer_info {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+#writer_profile {
+	width: 30px;
+	height: 30px;
+	border: 1px solid #F25287;
+	border-radius: 50%;
+}
+#writer_name {
+	font-size: 20px;
+	margin-left: 10px;
+}
+#contents_info_text {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+#contents_info_text * {
+	margin-left: 20px;
+	color: #A4A4A4;
+}
+#contents {
+	margin: 30px 0;
+}
+#contents_list_btn, #contents_change_btn {
+	font-weight: bold;
+	color: #F25287;
+	background-color: #F9F3F3;
+	border-color: #F25287;
+}
+#contents_delete_btn {
+	font-weight: bold;
+	color: white;
+	background-color: #F25287;
+	border-color: #F25287;
+}

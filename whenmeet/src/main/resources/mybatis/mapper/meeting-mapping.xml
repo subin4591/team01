@@ -2,7 +2,45 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="meeting.MeetingDAO">
-	<select id="getApp" resultType="String">
-		select user_id from applicant_table
+	<!-- Meeting select -->
+	<select id="meetingListAll" parameterType="meetingpagingdto" resultType="meetingdto">
+		select * from meeting_table
+		where end = "진행" and hidden = "공개"
+		order by ${sort_type} desc
+		limit #{start}, #{end}
 	</select>
+	
+	<select id="meetingCountAll" resultType="int">
+		select count(*) from meeting_table
+		where end = "진행" and hidden = "공개"
+	</select>
+	
+	<select id="meetingDetailed" parameterType="int" resultType="meetingdto">
+		select * from meeting_table
+		where seq = #{seq}
+	</select>
+	
+	<select id="userInfo" parameterType="String" resultType="userdto">
+		select * from user_table
+		where user_id = #{user_id}
+	</select>
+	
+	<!-- Meeting insert -->
+	<insert id="insertMeetingTable" parameterType="meetingdto">
+		insert into meeting_table(user_id, writer, title, contents, category, hidden, writing_time, hits, end, applicant_cnt, profile_url)
+		values(#{user_id}, #{writer}, #{title}, #{contents}, #{category}, #{hidden}, now(), 0, "진행", 0, #{profile_url})
+	</insert>
+	
+	<!-- Meeting update -->
+	<update	id="updateMeetingHits" parameterType="int">
+		update meeting_table
+		set hits = hits + 1
+		where seq = #{seq}
+	</update>
+	
+	<update id="updateMeetingContents" parameterType="meetingdto">
+		update meeting_table
+		set title = #{title}, contents = #{contents}, category = #{category}, hidden = #{hidden}
+		where seq = #{seq}
+	</update>
 </mapper>
