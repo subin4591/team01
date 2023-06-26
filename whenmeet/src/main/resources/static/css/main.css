@@ -1,0 +1,72 @@
+@charset "UTF-8";
+
+body{
+    background-color: #F9F3F3;
+    margin: 0;
+}
+#back{
+	width: 100%;
+    height: 500px;
+}
+#top{
+	display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#add_btn button{
+	position: absolute;
+    width: 250px;
+    height: 70px;
+    background: #F25287;
+    border: 0;
+    color: white;
+    cursor:pointer;
+    left:50%;
+    transform: translate(-50%, -50%);
+}
+#content{
+	display: flex;
+  	justify-content: space-between;
+  	height:650px;
+}
+#body{
+	top: 50px;
+    position: relative
+}
+#rank{
+	background:white;
+	height:300px;
+	margin: 30px 30px 50px 30px;
+}
+
+#group{
+	background:white;
+	width:500px;
+	margin-left:30px;
+}
+#schedule{
+	background:white;
+	width:750px;
+	padding-left: 40px;
+}
+#my_post{
+	margin-right:30px;
+	background:white;
+	width:500px;
+}
+.text{
+	text-align:center;
+}
+#group .text{
+	border:2px solid grey;
+	margin:0;
+	padding:15px 0;
+}
+.group_list{
+	border-bottom:2px solid grey;
+	margin:0;
+}
+#writing{
+	height:250px;
+}
+
