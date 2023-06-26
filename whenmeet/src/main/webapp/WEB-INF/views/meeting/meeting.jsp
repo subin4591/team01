@@ -8,14 +8,21 @@
 	<link rel="icon" href="/img/footlogo.svg">
 	<title>모임 | 언제만나</title>
 	<link href="/css/meeting/meeting.css" rel=stylesheet>
+	<link href="/css/meeting/meeting_default.css" rel=stylesheet>
 	<script src="/js/jquery-3.6.4.min.js"></script>
 	<script>
 		$(document).ready(function() {
+			/// Function
+			function tryLogin() {
+        		alert("로그인이 필요합니다.");
+    		};
+			
 			/// banner event
 			let banner = $("#banner").find("ul");
 			let bannerWidth = banner.children().outerWidth();
 			let bannerHeight = banner.children().outerHeight();
 			let imgLen = banner.children().length;
+			
 			// banner function
 			function rollingRight() {
 				banner.css({
@@ -32,8 +39,34 @@
 					}
 				);
 			};
+			
 			// banner defalut event
 			let rollingId = setInterval(rollingRight, 10000);
+			
+			
+			/// page active event
+			$(".sort_a[data-target='${ sort }']").addClass("page_active");
+			$(".page_a:contains('${ page }')").addClass("page_active");
+			
+			
+			/// contents btns event
+			$("#mycon_btn").on("click", function() {
+				if (${ session_id == null }) {
+					tryLogin();
+				}
+				else {
+					window.location.href = "";
+				}
+			});
+			
+			$("#write_btn").on("click", function() {
+				if (${ session_id == null }) {
+					tryLogin();
+				}
+				else {
+					window.location.href = "meeting/write";
+				}
+			});
 
 		});
 	</script>
@@ -88,10 +121,11 @@
 	
 	<div id="contents_list">
 		<div id="contents_table_caption">
-			<p>총 50개</p>
+			<p>총 ${ total_cnt }개</p>
 			<div id="contents_sort">
-				<a href="">최신순</a>
-				<a href="">신청자순</a>		
+				<a href="meeting?sort=time&page=1" class="sort_a" data-target="time">최신순</a>
+				<a href="meeting?sort=appl&page=1" class="sort_a" data-target="appl">신청순</a>
+				<a href="meeting?sort=hits&page=1" class="sort_a" data-target="hits">조회순</a>		
 			</div>		
 		</div>
 		<table id="contents_table">
@@ -104,45 +138,35 @@
 				<th>조회</th>
 			</tr>
 			
-			<!-- 임시 게시글 -->
-			<tr>
-				<td>1</td>
-				<td>공부</td>
-				<td><a href="">제목입니다</a></td>
-				<td>작성자입니다</td>
-				<td>2023.06.21</td>
-				<td>8</td>
-				<td>0</td>
-			</tr>
-			<tr>
-				<td>2</td>
-				<td>운동</td>
-				<td><a href="">제목입니다</a></td>
-				<td>작성자입니다</td>
-				<td>2023.06.21</td>
-				<td>8</td>
-				<td>0</td>
-			</tr>
-			<tr>
-				<td>3</td>
-				<td>취미</td>
-				<td><a href="">제목입니다</a></td>
-				<td>작성자입니다</td>
-				<td>2023.06.21</td>
-				<td>8</td>
-				<td>0</td>
-			</tr>
-			<tr>
-				<td>4</td>
-				<td>기타</td>
-				<td><a href="">제목입니다</a></td>
-				<td>작성자입니다</td>
-				<td>2023.06.21</td>
-				<td>8</td>
-				<td>0</td>
-			</tr>
-
+			<c:forEach items="${ meeting_list }" var="m">
+				<tr>
+					<td>${ m.seq }</td>
+					<td>${ m.category }</td>
+					<td><a href="meeting/detailed?seq=${ m.seq }">${ m.title }</a></td>
+					<td>${ m.writer }</td>
+					<td>${ m.writing_time }</td>
+					<td>${ m.applicant_cnt }</td>
+					<td>${ m.hits }</td>
+				</tr>
+			</c:forEach>
+			
 		</table>
+		<div id="page_nums">
+		<%
+			String sort = (String)request.getAttribute("sort");
+			int totalCnt = (Integer)request.getAttribute("total_cnt");
+			int divNum = (Integer)request.getAttribute("div_num");
+			int totalPage = totalCnt / divNum;
+			
+			if (totalCnt % divNum != 0)
+        		totalPage++;
+			
+			for (int p = 1; p <= totalPage; p++)
+        		out.println("&nbsp;<a class='page_a'"
+        			+ " href=\"meeting?sort=" + sort + "&page=" + p + "\">"
+        			+ p + "</a>&nbsp;");
+		%>
+		</div>
 		<div id="contents_btns">
 			<input id="mycon_btn" type="button" value="내글보기">
 			<input id="write_btn" type="button" value="글쓰기">

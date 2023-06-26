@@ -6,6 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class MeetingTestController {
 	@Autowired
@@ -14,11 +16,26 @@ public class MeetingTestController {
 	
 	@RequestMapping("/meeting/test")
 	public ModelAndView meetingTest() {
-		String user_id = service.getApp();
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("meeting/meeting_test");
+		return mv;
+	}
+	
+	@RequestMapping("/meeting/test/login")
+	public ModelAndView meetingTestLogin(HttpSession session) {
+		session.setAttribute("session_id", "member1");
 		
 		ModelAndView mv = new ModelAndView();
-		mv.addObject("user_id", user_id);
-		mv.setViewName("meeting/meeting_test");
+		mv.setViewName("redirect:/meeting/test");
+		return mv;
+	}
+	
+	@RequestMapping("/meeting/test/logout")
+	public ModelAndView meetingTestLogout(HttpSession session) {
+		session.removeAttribute("session_id");
+		
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("redirect:/meeting/test");
 		return mv;
 	}
 }
