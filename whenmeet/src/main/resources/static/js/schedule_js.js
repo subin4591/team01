@@ -92,6 +92,14 @@ $(document).ready(function () {
 	});
 
 /* 미팅 일정 */
+$("#ScheduleSaveBtn").click(function(){
+	$("#total_table").show();
+	$("#map").hide();
+})
+$("#ScheduleEditBtn").click(function(){
+	$("#total_table").hide();
+	$("#map").show();
+})
 $("#editDate").click(function(){
 	$("#Dday_edit").show();
 	$("#Dday").hide();
@@ -100,6 +108,85 @@ $("#endEditDate").click(function(){
 	$("#Dday_edit").hide();
 	$("#Dday").show();
 })
+
+/* 간트 차트 */
+  	$("#ganttCreateBtn").click(function(){
+		$("#ganttEdit").show();
+		$("#ganttCreate").hide();
+	})
+  	$("#ganttEditCancelBtn").click(function(){
+		$("#ganttCreate").show();
+		$("#ganttEdit").hide();
+	})	
+  	$("#ganttEditSaveBtn").click(function(){
+		$("#ganttResult").show();
+		$("#ganttEdit").hide();
+	})	
+	$("#ganttResultEditBtn").click(function(){
+		$("#ganttEdit").show();
+		$("#ganttResult").hide();
+	})
+	
+	/*구글 차트 api*/
+    google.charts.load('current', {'packages':['gantt']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Task ID');
+      data.addColumn('string', 'Task Name');
+      /*data.addColumn('string', 'Resource');*/
+      data.addColumn('date', 'Start Date');
+      data.addColumn('date', 'End Date');
+      data.addColumn('number', 'Duration');
+      data.addColumn('number', 'Percent Complete');
+      data.addColumn('string', 'Dependencies');
+
+      data.addRows([
+        ['0', '주제 정하기',
+         null, new Date(2023, 7, 28), null, 50, null],
+        ['1', '토의하기',
+         new Date(2023, 6, 25), new Date(2023, 8, 20), null, 10, null],
+        ['2', '개발하기',
+         new Date(2023, 8, 21), new Date(2023, 11, 20), null, 100, null],
+        ['3', '간식 먹기',
+         new Date(2023, 11, 21), new Date(2023, 12, 21), null, 100, null],
+         ]);
+
+	let today = new Date();
+      var options = {
+		width : 1000,
+        height: 280,
+        gantt: {
+			barHeight: 45,
+			trackHeight: 70,
+			defaultStartDate: today,
+			
+			innerGridHorizLine:{
+				stroke : "#F9F3F3"
+			},
+			innerGridDarkTrack: {
+				fill: "#F9F3F3"
+			},
+			
+			labelStyle: {
+				fontSize : 20
+			},
+			
+			palette: [{
+				"color" : "#FF86AE",
+				"dark" : "#F25287",
+				"light" : "#FFB4CD"
+			}]
+
+        }
+      };
+
+      var chart = new google.visualization.Gantt(document.getElementById('chart_div'));
+
+      chart.draw(data, options);
+    }
 
 /* 미팅 위치 */
   locateB.on("click", function () {
@@ -113,4 +200,5 @@ $("#endEditDate").click(function(){
     let map = new kakao.maps.Map(container, options);
   });
   
+  		
 });

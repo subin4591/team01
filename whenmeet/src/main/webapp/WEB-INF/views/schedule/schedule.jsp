@@ -8,6 +8,7 @@
 <title>일정|언제만나</title>
 <link rel = "stylesheet" href = "css/schedule_css.css">
 <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src = "js/schedule_js.js"></script>
 <script
       type="text/javascript"
@@ -137,58 +138,120 @@ String userImgErr = "img/user_logo.png";
 		
 			<div id="chart_area">
           		<div id="map">
-          			<table border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">
-          			<thead>
-          			<tr align = "center"  style="height: 54px; font-weight: bold;">
-          				<td style="width: 12.5%;">&nbsp;</td>
-						<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-							<span style = "font-size : 20px">일</span></td>
-						<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-							<span style = "font-size : 20px">일</span></td>
-						<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-							<span style = "font-size : 20px">일</span></td>
-						<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-							<span style = "font-size : 20px">일</span></td>
-						<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-							<span style = "font-size : 20px">일</span></td>
-						<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-							<span style = "font-size : 20px">일</span></td>
-						<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-							<span style = "font-size : 20px">일</span></td>						
+          				<table border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">
+          				<thead>
+          				<tr align = "center"  style="height: 54px; font-weight: bold;">
+          					<td style="width: 12.5%;">&nbsp;</td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+								<span style = "font-size : 20px">일</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+								<span style = "font-size : 20px">일</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+								<span style = "font-size : 20px">일</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+								<span style = "font-size : 20px">일</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+								<span style = "font-size : 20px">일</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+								<span style = "font-size : 20px">일</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+								<span style = "font-size : 20px">일</span></td>						
 						
-          			</tr>
-          			</thead>
-          			<tbody>
+          					</tr>
+   	       				</thead>
+   	       				<tbody>
           			
-          			<% 
-          		// when2meet은 table 안 쓰고 다 div 정렬한 것 같은데...
-          		// height 최소 크기 지정이 안 됨...
-          			for (int i = 0; i < 42; i++){
-          				int count = 5;
-          				count = count + i/2;
-          				String spanT = " style = 'color : #F25287'";
-          				%>
+          				<% 
+       	   				// when2meet은 table 안 쓰고 다 div 정렬한 것 같은데...
+          				// height 최소 크기 지정이 안 됨...
+          					for (int i = 0; i < 42; i++){
+          						int count = 5;
+          						count = count + i/2;
+          						String spanT = " style = 'color : #F25287'";
+          					%>
           			
-          			<tr align = "center"  style="height: 7.2px; font-weight: bold;">	
-          			<%if ((i%2 == 0)){ %>
-          				<td rowspan = "2">
-          				<span<%if (count == 12 || count == 24){%><%=spanT %><%} %>>
-          				<%= count%>:00</span></td>
-          			<%} %>
-						<td style="width: 12.5%;">&nbsp;</td>
-						<td style="width: 12.5%;">&nbsp;</td>
-						<td style="width: 12.5%;">&nbsp;</td>
-						<td style="width: 12.5%;">&nbsp;</td>
-						<td style="width: 12.5%;">&nbsp;</td>
-						<td style="width: 12.5%;">&nbsp;</td>
-						<td style="width: 12.5%;">&nbsp;</td>
-          			</tr>
-          			<%} %>
-          			</tbody>
+          					<tr align = "center"  style="height: 7.2px; font-weight: bold;">	
+          					<%if ((i%2 == 0)){ %>
+          						<td rowspan = "2">
+          						<span<%if (count == 12 || count == 24){%><%=spanT %><%} %>>
+          							<%= count%>:00</span></td>
+          					<%} %>
+								<td style="width: 12.5%;">&nbsp;</td>
+								<td style="width: 12.5%;">&nbsp;</td>
+								<td style="width: 12.5%;">&nbsp;</td>
+								<td style="width: 12.5%;">&nbsp;</td>
+								<td style="width: 12.5%;">&nbsp;</td>
+								<td style="width: 12.5%;">&nbsp;</td>
+								<td style="width: 12.5%;">&nbsp;</td>
+          					</tr>
+          					<%} %>
+          					</tbody>
           			
-          			</table>
-          			<br>
+          				</table>
+          				<br>
+          			
+          				
+          			<form class = "tableForm" action = "#" method = "GET">
+          				<!-- for문으로 색깔이 채워져 있으면 1, 비어있으면 0 해서 기다란 STRING 으로 보낼까? -->
+          				<button type = "submit" class = "btns" id = "ScheduleSaveBtn">저장</button>
+          				<br>
+          			</form>
           		</div>
+          		<div id = "total_table" style = "display : None;">
+          				<table border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">
+          				<thead>
+          				<tr align = "center"  style="height: 54px; font-weight: bold;">
+          					<td style="width: 12.5%;">&nbsp;</td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+								<span style = "font-size : 20px">일</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+								<span style = "font-size : 20px">일</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+								<span style = "font-size : 20px">일</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+								<span style = "font-size : 20px">일</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+								<span style = "font-size : 20px">일</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+								<span style = "font-size : 20px">일</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+								<span style = "font-size : 20px">일</span></td>						
+						
+          					</tr>
+   	       				</thead>
+   	       				<tbody>
+          			
+          				<% 
+       	   				// when2meet은 table 안 쓰고 다 div 정렬한 것 같은데...
+          				// height 최소 크기 지정이 안 됨...
+          					for (int i = 0; i < 42; i++){
+          						int count = 5;
+          						count = count + i/2;
+          						String spanT = " style = 'color : #F25287'";
+          					%>
+          			
+          					<tr align = "center"  style="height: 7.2px; font-weight: bold;">	
+          					<%if ((i%2 == 0)){ %>
+          						<td rowspan = "2">
+          						<span<%if (count == 12 || count == 24){%><%=spanT %><%} %>>
+          							<%= count%>:00</span></td>
+          					<%} %>
+								<td style="width: 12.5%;">&nbsp;</td>
+								<td style="width: 12.5%;">&nbsp;</td>
+								<td style="width: 12.5%;">&nbsp;</td>
+								<td style="width: 12.5%;">&nbsp;</td>
+								<td style="width: 12.5%;">&nbsp;</td>
+								<td style="width: 12.5%;">&nbsp;</td>
+								<td style="width: 12.5%;">&nbsp;</td>
+          					</tr>
+          					<%} %>
+          					</tbody>
+          			
+          				</table>
+          				<br>
+          				<button type = "button" class = "btns" id = "ScheduleEditBtn">수정</button>
+          				<br>
+          			</div>
         	</div>
         
         	
@@ -231,20 +294,36 @@ String userImgErr = "img/user_logo.png";
       </div>
       
       </div>
-</div>
+
 	
 	<div id = "meeting_location" style = "display : none;">
 		<div class="group_info">위치</div>
 	</div>
 	
 	<div id = "gantt_chart" style = "display : none;">
-		<div class="group_info">간트</div>
+		<div class="group_info">
+		
+			<div id = "ganttCreate">
+				<button id = "ganttCreateBtn"><h1>十 새로운 차트</h1></button>
+			</div>
+			
+			<div id = "ganttEdit" style = "display : None">
+				<button id = "ganttEditCancelBtn"><h1>취소</h1></button>
+				<button id = "ganttEditSaveBtn"><h1>저장</h1></button>				
+			</div>
+
+			<div id = "ganttResult" style = "display:None">
+				<div id="chart_div"></div>
+				<button id = "ganttInitBtn"><h1>초기화</h1></button>
+				<button id = "ganttResultEditBtn"><h1>수정</h1></button>
+			</div>			
+		</div>			
 	</div>
 	
 	<div id = "group_detail" style = "display : none;">
 		<div class="group_info">상세</div>
+	</div>	
 </div>	
-	
 	<!-- footer -->
 	
 	<div>

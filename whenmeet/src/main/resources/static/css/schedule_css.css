@@ -358,7 +358,7 @@ header{
 .group_info {
 	position : relative;
   	width: 95%;
-  	height : 85%;
+  	height : 750px;
   	margin-left : 2.5%;
   	background : #f9f3f3;
 
@@ -367,6 +367,7 @@ header{
   	justify-content: space-between;
 }
 
+/* 미팅 일정 */
 #chart_area {
   width: 684px;
   height: 680.4px;
@@ -390,6 +391,30 @@ header{
 	width: 655.2px;
   	height: 658.8px;
  	margin: 10.8px;
+}
+
+#ScheduleSaveBtn, #ScheduleEditBtn{
+	position : relative;
+  	width: 130px;
+ 	height: 50px;
+ 	
+ 	margin: auto;
+ 	display : block;
+	
+  	border-radius: 30px;
+  	border: 3px solid #f25287;
+  	background: #f25287;
+  	color: white;
+
+  	cursor: pointer;
+  	font-size: 20px;
+  	font-weight: 700;
+}
+
+#ScheduleSaveBtn:hover, #ScheduleEditBtn:hover{
+	background : white;
+	color : black;
+	transition: 0.5s;
 }
 
 #Dday_area {
@@ -586,3 +611,46 @@ li {
 #join_member::-webkit-scrollbar-track {
     background-color: #D9D9D9;
 }
+
+/*간트 차트*/
+
+#ganttCreate, #ganttEdit, #ganttResult{
+	width : 95%;
+	height : 90%;
+	margin : auto;
+	background-color : white;
+}
+#chart_div{
+	width : 90%;
+	height : 90%;
+	margin-bottom : 10%;
+	margin-left : 5%;
+	overflow-x : scroll;
+}
+#chart_div::-webkit-scrollbar{
+	width : 5px;
+}
+#chart_div::-webkit-scrollbar-thumb {
+    background-color: #F25287;
+}
+#chart_div::-webkit-scrollbar-track {
+    background-color: #D9D9D9;
+}
+#ganttCreateBtn{
+	position : relative;
+	width : 300px;
+	color : white;
+	background : #F25287;
+	border: solid #F25287;
+	display : block;
+	margin : auto;
+	top : 45%;
+}
+#ganttCreateBtn:hover{
+	background : #E53972;
+	transition : 0.4s;
+}
+#ganttCreateBtn:click{
+	background : #DF2D68;
+}
+
