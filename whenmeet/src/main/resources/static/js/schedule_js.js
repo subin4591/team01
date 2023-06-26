@@ -16,6 +16,12 @@ function popClose(){
 	$(modalBg).hide();
 }
 
+//로딩창 종료하기
+function loadingClose(){
+	var loadPage = $(".loader");
+	$(loadPage).hide();
+}
+
 
 $(document).ready(function () {
 	//버튼 조작
@@ -127,6 +133,7 @@ $("#endEditDate").click(function(){
 		$("#ganttResult").hide();
 	})
 	
+	
 	/*구글 차트 api*/
     google.charts.load('current', {'packages':['gantt']});
     google.charts.setOnLoadCallback(drawChart);
@@ -188,17 +195,17 @@ $("#endEditDate").click(function(){
       chart.draw(data, options);
     }
 
-/* 미팅 위치 */
-  locateB.on("click", function () {
-    let container = document.getElementById("map");
-    let options = {
-      //지도를 생성할 때 필요한 기본 옵션
-      center: new kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
-      level: 3, //지도의 레벨(확대, 축소 정도)
-    };
+	/* 미팅 위치 */
+  	locateB.on("click", function () {
+    	let container = document.getElementById("map");
+    	let options = {
+      	//지도를 생성할 때 필요한 기본 옵션
+      	center: new kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
+      	level: 3, //지도의 레벨(확대, 축소 정도)
+    	};
 
-    let map = new kakao.maps.Map(container, options);
-  });
+    	let map = new kakao.maps.Map(container, options);
+  	});
   
   		
 });

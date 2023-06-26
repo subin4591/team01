@@ -137,7 +137,7 @@ String userImgErr = "img/user_logo.png";
 		
 		
 			<div id="chart_area">
-          		<div id="map">
+          		<div id="timeTable">
           				<table border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">
           				<thead>
           				<tr align = "center"  style="height: 54px; font-weight: bold;">
@@ -197,7 +197,7 @@ String userImgErr = "img/user_logo.png";
           				<br>
           			</form>
           		</div>
-          		<div id = "total_table" style = "display : None;">
+          			<div id = "total_table" style = "display : None;">
           				<table border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">
           				<thead>
           				<tr align = "center"  style="height: 54px; font-weight: bold;">
@@ -252,7 +252,7 @@ String userImgErr = "img/user_logo.png";
           				<button type = "button" class = "btns" id = "ScheduleEditBtn">수정</button>
           				<br>
           			</div>
-        	</div>
+        		</div>
         
         	
         	<div id="Dday_area">
@@ -313,7 +313,14 @@ String userImgErr = "img/user_logo.png";
 			</div>
 
 			<div id = "ganttResult" style = "display:None">
-				<div id="chart_div"></div>
+			<!-- 
+			<div class = "loader">
+				<div class = "loaderIcon"></div>
+			</div>
+			-->
+				<div id = "ganttChart">
+					<div id="chart_div"></div>
+				</div>
 				<button id = "ganttInitBtn"><h1>초기화</h1></button>
 				<button id = "ganttResultEditBtn"><h1>수정</h1></button>
 			</div>			

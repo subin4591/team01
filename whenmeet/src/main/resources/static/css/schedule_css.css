@@ -387,7 +387,7 @@ header{
     background-color: #D9D9D9;
 }
 
-#map {
+#timeTable {
 	width: 655.2px;
   	height: 658.8px;
  	margin: 10.8px;
@@ -620,20 +620,22 @@ li {
 	margin : auto;
 	background-color : white;
 }
-#chart_div{
-	width : 90%;
-	height : 90%;
-	margin-bottom : 10%;
-	margin-left : 5%;
+#ganttChart{
+	width : 70%;
+	height : 70%;
+	margin : 5%;
+	margin-bottom : 20%;
+	float : right;
 	overflow-x : scroll;
+	overflow-y : scroll;
 }
-#chart_div::-webkit-scrollbar{
-	width : 5px;
+#ganttChart::-webkit-scrollbar{
+	width : 12px;
 }
-#chart_div::-webkit-scrollbar-thumb {
+#ganttChart::-webkit-scrollbar-thumb {
     background-color: #F25287;
 }
-#chart_div::-webkit-scrollbar-track {
+#ganttChart::-webkit-scrollbar-track {
     background-color: #D9D9D9;
 }
 #ganttCreateBtn{
@@ -653,4 +655,39 @@ li {
 #ganttCreateBtn:click{
 	background : #DF2D68;
 }
+#ganttResult .loader{
+	position : absolute;
+	width : 95%;
+	height : 90%;
+	z-index : 997;
+	margin : auto;
+	background : white;
+}
+.loader .loaderIcon{
+	position : absolute;
+	left: 50%;
+    top: 50%;
+    z-index : 998;
+    width: 150px;
+    height: 150px;
+    margin : -75px 0 0 -75px;
+     border: 16px solid #F25287;
+      border-radius: 50%;
+      border-top: 16px solid #FF86AE;
+       width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+ 
 
