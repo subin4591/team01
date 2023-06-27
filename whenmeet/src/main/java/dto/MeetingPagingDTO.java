@@ -3,6 +3,7 @@ package dto;
 public class MeetingPagingDTO {
 	String category, sort_type;
 	int start, end;
+	String user_id;
 	
 	public String getCategory() {
 		return category;
@@ -28,6 +29,13 @@ public class MeetingPagingDTO {
 	public void setEnd(int end) {
 		this.end = end;
 	}
+	public String getUser_id() {
+		return user_id;
+	}
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
+	}
+	
 	
 	
 }

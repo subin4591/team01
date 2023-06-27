@@ -20,6 +20,24 @@ public class MeetingService {
 	public int meetingCountAll() {
 		return dao.meetingCountAll();
 	}
+	public List<MeetingDTO> meetingListCategory(MeetingPagingDTO dto) {
+		return dao.meetingListCategory(dto);
+	}
+	public int meetingCountCategory(String category) {
+		return dao.meetingCountCategory(category);
+	}
+	public List<MeetingDTO> meetingListAllUser(MeetingPagingDTO dto) {
+		return dao.meetingListAllUser(dto);
+	}
+	public int meetingCountAllUser(String user_id) {
+		return dao.meetingCountAllUser(user_id);
+	}
+	public List<MeetingDTO> meetingListCategoryUser(MeetingPagingDTO dto) {
+		return dao.meetingListCategoryUser(dto);
+	}
+	public int meetingCountCategoryUser(MeetingPagingDTO dto) {
+		return dao.meetingCountCategoryUser(dto);
+	}
 	public void insertMeetingTable(MeetingDTO dto) {
 		dao.insertMeetingTable(dto);
 	}

@@ -6,13 +6,21 @@
 <head>
 	<meta charset="UTF-8">
 	<link rel="icon" href="/img/footlogo.svg">
-	<title>모임 | 언제만나</title>
+	<title>모집글 작성 | 언제만나</title>
 	<link href="/css/meeting/meeting.css" rel=stylesheet>
 	<link href="/css/meeting/meeting_write.css" rel=stylesheet>
 	<script src="/js/jquery-3.6.4.min.js"></script>
 	<script src="/ckeditor5/build/ckeditor.js"></script>
 	<script>
 		$(document).ready(function() {
+			// password event
+			$("#hidden_radio input").change(function() {
+				if ($(this).val() == "공개") {
+					$("#contents_password").val("");
+				}
+				$("#write_form_password").slideToggle(400);
+			});
+			
 			// editor
 			ClassicEditor.create(document.querySelector( '#editor' ));
 			
@@ -54,6 +62,11 @@
 				<input type="radio" name="hidden" value="공개" checked>공개
 				<input type="radio" name="hidden" value="비공개">비공개
 			</div>		
+		</div>
+		
+		<div id="write_form_password" style="display: none;">
+			<label>비밀번호</label>		
+			<input type="password" name="contents_password" id="contents_password">
 		</div>
 				
 		<input type="text" placeholder="제목을 입력하세요." name="title" id="title">

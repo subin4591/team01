@@ -3,6 +3,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="meeting.MeetingDAO">
 	<!-- Meeting select -->
+	<!-- 기본 게시글 목록 -->
 	<select id="meetingListAll" parameterType="meetingpagingdto" resultType="meetingdto">
 		select * from meeting_table
 		where end = "진행" and hidden = "공개"
@@ -15,29 +16,72 @@
 		where end = "진행" and hidden = "공개"
 	</select>
 	
+	<select id="meetingListCategory" parameterType="meetingpagingdto" resultType="meetingdto">
+		select * from meeting_table
+		where end = "진행" and hidden = "공개" and category = #{category}
+		order by ${sort_type} desc
+		limit #{start}, #{end}
+	</select>
+	
+	<select id="meetingCountCategory" parameterType="String" resultType="int">
+		select count(*) from meeting_table
+		where end = "진행" and hidden = "공개" and category = #{category}
+	</select>
+	
+	<!-- 유저 게시글 목록 -->
+	<select id="meetingListAllUser" parameterType="meetingpagingdto" resultType="meetingdto">
+		select * from meeting_table
+		where user_id = #{user_id}
+		order by ${sort_type} desc
+		limit #{start}, #{end}
+	</select>
+	
+	<select id="meetingCountAllUser" parameterType="String" resultType="int">
+		select count(*) from meeting_table
+		where user_id = #{user_id}
+	</select>
+	
+	<select id="meetingListCategoryUser" parameterType="meetingpagingdto" resultType="meetingdto">
+		select * from meeting_table
+		where user_id = #{user_id} and category = #{category}
+		order by ${sort_type} desc
+		limit #{start}, #{end}
+	</select>
+	
+	<select id="meetingCountCategoryUser" parameterType="meetingpagingdto" resultType="int">
+		select count(*) from meeting_table
+		where user_id = #{user_id} and category = #{category}
+	</select>
+	
+	<!-- 게시글 상세 -->
 	<select id="meetingDetailed" parameterType="int" resultType="meetingdto">
 		select * from meeting_table
 		where seq = #{seq}
 	</select>
 	
+	<!-- 유저 정보 -->
 	<select id="userInfo" parameterType="String" resultType="userdto">
 		select * from user_table
 		where user_id = #{user_id}
 	</select>
 	
+	
 	<!-- Meeting insert -->
+	<!-- 게시글 작성 -->
 	<insert id="insertMeetingTable" parameterType="meetingdto">
-		insert into meeting_table(user_id, writer, title, contents, category, hidden, writing_time, hits, end, applicant_cnt, profile_url)
-		values(#{user_id}, #{writer}, #{title}, #{contents}, #{category}, #{hidden}, now(), 0, "진행", 0, #{profile_url})
+		insert into meeting_table(user_id, writer, title, contents, category, hidden, writing_time, hits, end, applicant_cnt, profile_url, contents_password)
+		values(#{user_id}, #{writer}, #{title}, #{contents}, #{category}, #{hidden}, now(), 0, "진행", 0, #{profile_url}, #{contents_password})
 	</insert>
 	
 	<!-- Meeting update -->
+	<!-- 조회수 증가 -->
 	<update	id="updateMeetingHits" parameterType="int">
 		update meeting_table
 		set hits = hits + 1
 		where seq = #{seq}
 	</update>
 	
+	<!-- 게시글 수정 -->
 	<update id="updateMeetingContents" parameterType="meetingdto">
 		update meeting_table
 		set title = #{title}, contents = #{contents}, category = #{category}, hidden = #{hidden}

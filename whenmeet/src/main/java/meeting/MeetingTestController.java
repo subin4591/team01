@@ -22,8 +22,8 @@ public class MeetingTestController {
 	}
 	
 	@RequestMapping("/meeting/test/login")
-	public ModelAndView meetingTestLogin(HttpSession session) {
-		session.setAttribute("session_id", "member1");
+	public ModelAndView meetingTestLogin(String id, HttpSession session) {
+		session.setAttribute("session_id", id);
 		
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("redirect:/meeting/test");

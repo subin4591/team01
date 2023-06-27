@@ -19,7 +19,7 @@ a:hover {
 }
 
 /* btns */
-#contents_btns, #write_form_btn, #contents_btn, #change_form_btn {
+#contents_btns, #write_form_btn, #contents_btn, #change_form_btn, #popup_btn {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
@@ -29,7 +29,8 @@ a:hover {
 #write_form_btn *, 
 #contents_btn_left *,
 #contents_btn_right *,
-#change_form_btn * {
+#change_form_btn *,
+#popup_btn * {
 	width: 85px;
 	height: 35px;
 	font-size: 16px;
