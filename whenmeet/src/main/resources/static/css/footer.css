@@ -1,0 +1,18 @@
+@charset "UTF-8";
+
+/* footer */
+footer {
+    width: 100%;
+    border-top: 3px solid #F25287;
+    padding: 20px 0;
+    text-align: center;
+    margin-top: 150px; /* 낮추기 위해 margin-top 값 조정 */
+}
+#footer_left {
+	margin-top: 32px;
+	margin-right: 25%;
+	font-size: 20px;
+}
+#footer_right {
+	margin-left: 25%;
+}
