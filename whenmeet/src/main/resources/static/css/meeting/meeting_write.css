@@ -5,7 +5,7 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	width: 80%;
+	width: 60%;
 	margin-top: 50px;
 	margin-bottom: 50px;
 	padding: 30px 30px;
@@ -31,7 +31,8 @@
 }
 
 /* category */
-#category_select label {
+#category_select label,
+#write_form_password label {
 	font-size: 18px;
 }
 #category {
@@ -76,6 +77,26 @@
 #hidden_radio *:hover {
     box-shadow: 0 0 0 max(2px, 0.2em) #F25287;
     cursor: pointer;
+}
+
+/* password */
+#write_form_password {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: right;
+	margin-top: 20px;
+}
+#write_form_password input {
+	width: 150px;
+	height: 30px;
+	border: 2px solid #DB9F9F;
+	border-radius: 10px;
+	outline: none;
+	color: #DB9F9F;
+	background-color: #F9F3F3;
+	font-size: 18px;
+	margin-left: 10px;
 }
 
 /* title */

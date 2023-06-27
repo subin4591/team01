@@ -6,7 +6,7 @@
 <head>
 	<meta charset="UTF-8">
 	<link rel="icon" href="/img/footlogo.svg">
-	<title>모임 | 언제만나</title>
+	<title>모집글 수정 | 언제만나</title>
 	<link href="/css/meeting/meeting.css" rel=stylesheet>
 	<link href="/css/meeting/meeting_change.css" rel=stylesheet>
 	<script src="/js/jquery-3.6.4.min.js"></script>
@@ -47,6 +47,18 @@
  					$(this).prop("checked", true);
  				}
  			});
+ 			
+ 			// password event
+ 			if ("${ dto.hidden }" == "공개") {
+				$("#change_form_password").hide();
+			}
+ 			
+			$("#hidden_radio input").change(function() {
+				if ($(this).val() == "공개") {
+					$("#contents_password").val("");
+				}
+				$("#change_form_password").slideToggle(400);
+			});
 		});
 	</script>
 </head>
@@ -71,6 +83,11 @@
 				<input type="radio" name="hidden" value="공개">공개
 				<input type="radio" name="hidden" value="비공개">비공개
 			</div>		
+		</div>
+		
+		<div id="change_form_password">
+			<label>비밀번호</label>		
+			<input type="password" name="contents_password" id="contents_password" value="${ dto.contents_password }">
 		</div>
 				
 		<input type="text" value="${ dto.title }" name="title" id="title">

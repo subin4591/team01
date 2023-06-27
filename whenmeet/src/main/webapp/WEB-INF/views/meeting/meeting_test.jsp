@@ -14,7 +14,10 @@
 	</script>
 </head>
 <body>
-	<input type="button" value="LOGIN" id="login" onclick="location.href='/meeting/test/login'"><br>
+	<form action="/meeting/test/login">
+		아이디 <input type="text" name="id"><br>
+		<input type="submit" value="LOGIN" id="login"><br>	
+	</form>
 	<input type="button" value="LOGOUT" id="logout" onclick="location.href='/meeting/test/logout'">
 	<h1>로그인 여부</h1>
 	<h3>${ session_id }</h3>

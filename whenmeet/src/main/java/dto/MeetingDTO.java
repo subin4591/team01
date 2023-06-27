@@ -6,7 +6,7 @@ public class MeetingDTO {
 	int hits;
 	String end;
 	int applicant_cnt;
-	String profile_url;
+	String profile_url, contents_password;
 	
 	public int getSeq() {
 		return seq;
@@ -79,6 +79,12 @@ public class MeetingDTO {
 	}
 	public void setProfile_url(String profile_url) {
 		this.profile_url = profile_url;
+	}
+	public String getContents_password() {
+		return contents_password;
+	}
+	public void setContents_password(String contents_password) {
+		this.contents_password = contents_password;
 	}
 	
 	
