@@ -1,10 +1,27 @@
 /**
  * 
  */
+// table 컬러 바꾸기
+function tbColorChange(element){
+	if( $(element).attr("alt") != "1"){
+	$(element).css({
+		"background" : "rgba(242, 82, 135, 1)"
+	});
+	$(element).attr("alt", "1");
+	}
+	else if ($(element).attr("alt") == "1"){
+		$(element).css({
+		"background" : "rgba(0,0,0,0)"
+	});
+	$(element).attr("alt", "0");
+	}
+}
+
 //유저 팝업을 열기
-function popOpen(){
+function popOpen(element){
 	var modalPop = $('.user_modal');
 	var modalBg = $('.user_modal_bg');
+	$(".modalUserName").text(element);
 	$(modalPop).show();
 	$(modalBg).show();
 }

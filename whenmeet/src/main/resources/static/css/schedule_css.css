@@ -68,6 +68,7 @@ header{
 .member_list_content::-webkit-scrollbar-track {
     background-color: #D9D9D9;
 }
+
 .memberList{
 	list-style : None;
 	padding-left : 10%;
@@ -132,8 +133,8 @@ header{
 .user_modal{
 	display : None;
 	position : absolute;
-	width : 500px;
-	height : 300px;
+	width : 600px;
+	height : 450px;
 	top :20%;
 	left : 30%;
 	z-index:1000;
@@ -141,6 +142,17 @@ header{
 	background:#fff;
 	border: 5px solid #F25287;
 	border-radius: 10px;
+	
+}
+.user_modal_content h1{
+	margin : 20px; 
+	font-size : 40px; 
+	display : inline;
+}
+.user_modal_content span{
+	margin : 25px; 
+	color : gray; 
+	font-size : 24px;
 }
 
 /*하단 상자 위치*/
@@ -174,71 +186,6 @@ header{
   	line-height : 50px;
   	margin-top : 0;
 }
-
-/*회원 목록...?!*/
-/*
-#user_pro {
-  list-style: none;
-  text-align: center;
-
-  width: 100%;
-  height: 100%;
-  padding: 0;
-}
-
-#user_pro > li {
-  background-color: #f9f3f3;
-  width: 80%;
-  height: 60px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  margin: 15px auto 10px auto;
-  border-radius: 30px;
-}
-
-#user_pro > li > div {
-  width: 100%;
-  height: 50px;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-}
-
-#user_pro > li > div > img:first-child {
-  width: 40px;
-  height: 70px;
-}
-
-#user_pro > li > div > img:last-child {
-  width: 20px;
-  height: 20px;
-}
-
-#user_pro > li > div > span {
-  font-size: 18px;
-  font-weight: 600;
-}
-/* --------------main END-------------- */
-/*
-
-@media (max-width: 650px) {
-  #user_pro > li {
-    width: 140px;
-  }
-
-  #user_pro > li > div > span {
-    font-size: 15px;
-  }
-}
-
-@media (min-width: 800px) {
-  #user_pro > li {
-    width: 230px;
-  }
-}
-
-/* ---------------main team-list END------------------- */
 
 /* ------------ main Right----------------- */
 
@@ -417,6 +364,42 @@ header{
 	transition: 0.5s;
 }
 
+.total_table_left{
+	margin-bottom : 5%;
+	margin-left : 5%;
+	float : left;
+	background : white;
+	border : 0;
+	color : #F25287;
+	font-size : 60px;
+	cursor : pointer;
+}
+#time_table_top h2, #time_table_top hr{
+	position : relative;
+	top : 30px;
+}
+#total_table_top h2, #total_table_top hr{
+	position : relative;
+	top : 30px;
+}
+.total_table_right{
+	margin-bottom : 5%;
+	margin-right : 5%;
+	float : right;
+	background : white;
+	border : 0;
+	color : #F25287;
+	font-size : 60px;
+	cursor : pointer;
+}
+.timeTable .tdCol{
+	width : 102%;
+	height : 20px;
+	background : rgba(0,0,0,0);
+	margin : auto;
+	border : 0px;
+	cursor : pointer;
+}
 #Dday_area {
 	position: relative;
   width: 35%;

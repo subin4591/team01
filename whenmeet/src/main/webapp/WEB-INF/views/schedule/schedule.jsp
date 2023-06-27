@@ -15,6 +15,7 @@
       src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2b4c5e3499f85cf245295753dba018dc"
 ></script>
 </head>
+<%@page import = "java.util.*"%>
 <%
 // 사용자 프로필 에러남
 String userImgErr = "img/user_logo.png";
@@ -22,23 +23,6 @@ String userImgErr = "img/user_logo.png";
 
 <body>
 <div class = "schedule_page">
-	<!-- 헤더 위치 -->
-	<!-- 
-	<header class = "schedule_header">
-		<div class = "user_icon">
-		<a href = "/" >
-			<img src = "img/userEmpty.png"  
-			onError = "<%=userImgErr %>" 
-			alt = "유저 프로필 사진" class = "userIcon"/>
-		</a>
-		</div>
-		<div class = "logo">
-		<a href = "/">
-			<img src = "img/logo.svg" alt = "메인 로고 이미지" class = "mainLogo"/>
-		</a>
-		</div>
-	</header>
-	-->
 	
 	<%@ include file="../header.jsp" %>
 	
@@ -51,11 +35,19 @@ String userImgErr = "img/user_logo.png";
 		<!-- 맴버 리스트 -->
 		<div class = "member_list_content">
 			<ul class = memberList>
+			<script>
+			
+			</script>
 			<%
+			ArrayList<String> memberName = new ArrayList<String>();
+			memberName.add("방장쓰");
+			memberName.add("부방장쓰");
+			memberName.add("맴버1");
+			memberName.add("맴버2");
+			memberName.add("맴버3");
+			memberName.add("맴버4");
 			
-			String memberName = "방장쓰";
-			
-			for(int i = 0; i < 10; i++){
+			for(int i = 0; i < memberName.size(); i++){
 				String Img = "img/방장표시.svg";
 				boolean host = false;
 				boolean subhost = false;
@@ -69,7 +61,9 @@ String userImgErr = "img/user_logo.png";
 			%>
 				<li>
 				<!-- 모달 팝업 열기-->
-				<a href="#" class = "user_open" onclick="javascript:popOpen();">
+
+				<a href="#" class = "user_open" onclick="javascript:popOpen('<%= memberName.get(i) %>'); " >
+				
 				<div class = "member">				
 					<!-- 유저 프로필 이미지 설정 -->
 					<div class = "Uimage">
@@ -79,7 +73,7 @@ String userImgErr = "img/user_logo.png";
 					</div>
 					<!-- 유저 이름 설정-->
 					<div class = "text">
-						<h2><%= memberName %></h2>
+						<h2><%= memberName.get(i) %></h2>
 						
 					<!-- 방장 및 부방장 설정-->	
 						<%if(host || subhost){ %>
@@ -96,9 +90,31 @@ String userImgErr = "img/user_logo.png";
 		</div>
 	</div>
 	<!-- 모달 팝업 -->
+	<script>
+	
+	</script>
 	<div class = "user_modal_bg" onclick = "javascript:popClose();"></div>
 	<div class = "user_modal">
-		<span>유저 정보를 표시해요</span>
+		<div style = "position : relative; top : -3px; background : #F25287; width : 100%; height: 50px;">
+			<h1 style = "position : relative; font-size : 28px; margin : 3px; top : 3px; text-align : center; color : white;">사용자 정보</h1>
+		</div>
+		<div class = "user_modal_content">
+		<img style = "position : relative; top : -3px; width : 100%; height : 100px; object-fit: cover; z-index : 1001" 
+			src = "https://plus.unsplash.com/premium_photo-1670099796196-298771740ed7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=580&q=80"/>
+		<img style = "position : absolute; top : 60px; left : 0px; margin : 10px; z-index : 1002;" 
+							src = "<%= userImgErr %>" 
+							onError = "<%= userImgErr %>" 
+							alt = "유저 프로필 이미지" class = "userProfile"/>
+		<div class = "profileText" style = "overflow : hidden; white-space:nowrap; text-overflow : ellipsis;">
+		<br><br><br><h1 class = "modalUserName"> 정보를 불러올 수 없습니다.</h1>
+		<br><span>@doremiAccount</span> <br><br>
+		<div style = "font-size : 20px">
+			<span><b>주소 |</b> 도레시 미파구 솔라동 시도레 마을</span> <br>
+			<span><b>전화번호 |</b> 010-1234-5678</span> <br>
+			<span><b>이메일 |</b> doremi@gmail.com</span> <br>
+		</div>
+		</div>
+		</div>		
 	</div>
 	
 	<!-- 그룹 정보 -->
@@ -136,26 +152,72 @@ String userImgErr = "img/user_logo.png";
 	<div class="group_info">
 		
 		
-			<div id="chart_area">
-          		<div id="timeTable">
-          				<table border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">
+			<div id="chart_area" oncontextmenu="return false" ondragstart="return false" onselectstart="return false">
+				<%@page import = "java.text.SimpleDateFormat" %>
+          		<%@page import = "java.util.Calendar" %>
+          		<%@page import = "java.util.Date" %>
+          		<%
+          			String date = "20230101";		//일요일이어야함
+          			String[] dates = new String[7];
+          			String[] datesY = new String[7];
+          			String[] datesM = new String[7];
+          			String[] datesD = new String[7];
+          			dates[0] = date;
+          			
+          			SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+         			
+          			Date date1 = format.parse(date);
+          			
+          			Calendar cal = Calendar.getInstance(); 
+         			cal.setTime(date1);
+         			
+         			for (int i = 1; i < 7; i ++){
+         				cal.add(Calendar.DATE, 1);
+         				Date date2 = cal.getTime();
+         				String temp = format.format(date2);
+         				dates[i] = temp;
+         			}
+         			
+         			for (int i = 0; i < 7; i++){
+         				datesY[i] = dates[i].substring(0, 4);
+         				datesM[i] = dates[i].substring(4, 6);
+         				datesD[i] = dates[i].substring(6, 8);
+         			}
+         			
+          		%>
+	
+          		<div id="timeTable" style = "display : None;">
+          				<div id = "time_table_top" style = "margin : 10px; text-align : center;">
+						
+          				<button type = "button" class = "total_table_left">◀</button>
+          		        <h2 style = "display : inline;">
+          		        <%=datesY[0] %>/<%=datesM[0] %>/<%=datesD[0] %> - <%=datesY[6] %>/<%=datesM[6] %>/<%=datesD[6] %>
+          		        </h2>	
+          		        <button type = "button" class = "total_table_right">▶</button>
+     					<hr style = "width : 50%; height : 5px; background-color : #F25287; border: 0;">	
+
+          			</div>
+          			
+          				<br>
+          				
+          				<table class = "timeTable" border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">
           				<thead>
           				<tr align = "center"  style="height: 54px; font-weight: bold;">
           					<td style="width: 12.5%;">&nbsp;</td>
-							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+							<td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[0] %>/<%=datesD[0] %></span><br>
 								<span style = "font-size : 20px">일</span></td>
-							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-								<span style = "font-size : 20px">일</span></td>
-							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-								<span style = "font-size : 20px">일</span></td>
-							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-								<span style = "font-size : 20px">일</span></td>
-							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-								<span style = "font-size : 20px">일</span></td>
-							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-								<span style = "font-size : 20px">일</span></td>
-							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-								<span style = "font-size : 20px">일</span></td>						
+							<td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[1] %>/<%=datesD[1] %></span><br>
+								<span style = "font-size : 20px">월</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[2] %>/<%=datesD[2] %></span><br>
+								<span style = "font-size : 20px">화</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[3] %>/<%=datesD[3] %></span><br>
+								<span style = "font-size : 20px">수</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[4] %>/<%=datesD[4] %></span><br>
+								<span style = "font-size : 20px">목</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[5] %>/<%=datesD[5] %></span><br>
+								<span style = "font-size : 20px">금</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[6] %>/<%=datesD[6] %></span><br>
+								<span style = "font-size : 20px">토</span></td>						
 						
           					</tr>
    	       				</thead>
@@ -170,19 +232,20 @@ String userImgErr = "img/user_logo.png";
           						String spanT = " style = 'color : #F25287'";
           					%>
           			
-          					<tr align = "center"  style="height: 7.2px; font-weight: bold;">	
+          					<tr align = "center"  style=" font-weight: bold;">	
           					<%if ((i%2 == 0)){ %>
           						<td rowspan = "2">
           						<span<%if (count == 12 || count == 24){%><%=spanT %><%} %>>
           							<%= count%>:00</span></td>
           					<%} %>
-								<td style="width: 12.5%;">&nbsp;</td>
-								<td style="width: 12.5%;">&nbsp;</td>
-								<td style="width: 12.5%;">&nbsp;</td>
-								<td style="width: 12.5%;">&nbsp;</td>
-								<td style="width: 12.5%;">&nbsp;</td>
-								<td style="width: 12.5%;">&nbsp;</td>
-								<td style="width: 12.5%;">&nbsp;</td>
+          						<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol0<%=i%>" onclick = "javascript:tbColorChange('#tbCol0<%=i%>');" alt = "0"></div></td>
+								<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol1<%=i%>" onclick = "javascript:tbColorChange('#tbCol1<%=i%>');" alt = "0"></div></td>
+								<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol2<%=i%>" onclick = "javascript:tbColorChange('#tbCol2<%=i%>');" alt = "0"></div></td>
+								<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol3<%=i%>" onclick = "javascript:tbColorChange('#tbCol3<%=i%>');" alt = "0"></div></td>
+								<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol4<%=i%>" onclick = "javascript:tbColorChange('#tbCol4<%=i%>');" alt = "0"></div></td>
+								<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol5<%=i%>" onclick = "javascript:tbColorChange('#tbCol5<%=i%>');" alt = "0"></div></td>
+								<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol6<%=i%>" onclick = "javascript:tbColorChange('#tbCol6<%=i%>');" alt = "0"></div></td>
+								
           					</tr>
           					<%} %>
           					</tbody>
@@ -197,25 +260,39 @@ String userImgErr = "img/user_logo.png";
           				<br>
           			</form>
           		</div>
-          		<div id = "total_table" style = "display : None;">
-          				<table border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">
+          		
+          		<div id = "total_table">
+          			<div id = "total_table_top" style = "margin : 10px; text-align : center;">
+
+          				<button type = "button" class = "total_table_left">◀</button>
+          		        <h2 style = "display : inline;">
+          		        <%=datesY[0] %>/<%=datesM[0] %>/<%=datesD[0] %> - <%=datesY[6] %>/<%=datesM[6] %>/<%=datesD[6] %>
+          		        </h2>	
+          		        <button type = "button" class = "total_table_right">▶</button>
+     					<hr style = "width : 50%; height : 5px; background-color : #F25287; border: 0;">	
+
+          			</div>
+          			
+          				<br>
+          			
+          				<table class = "totalTable" border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">
           				<thead>
           				<tr align = "center"  style="height: 54px; font-weight: bold;">
           					<td style="width: 12.5%;">&nbsp;</td>
-							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
+							<td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[0] %>/<%=datesD[0] %></span><br>
 								<span style = "font-size : 20px">일</span></td>
-							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-								<span style = "font-size : 20px">일</span></td>
-							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-								<span style = "font-size : 20px">일</span></td>
-							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-								<span style = "font-size : 20px">일</span></td>
-							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-								<span style = "font-size : 20px">일</span></td>
-							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-								<span style = "font-size : 20px">일</span></td>
-							<td style="width: 12.5%;"><span style = "color : #F25287;">12/25</span><br>
-								<span style = "font-size : 20px">일</span></td>						
+							<td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[1] %>/<%=datesD[1] %></span><br>
+								<span style = "font-size : 20px">월</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[2] %>/<%=datesD[2] %></span><br>
+								<span style = "font-size : 20px">화</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[3] %>/<%=datesD[3] %></span><br>
+								<span style = "font-size : 20px">수</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[4] %>/<%=datesD[4] %></span><br>
+								<span style = "font-size : 20px">목</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[5] %>/<%=datesD[5] %></span><br>
+								<span style = "font-size : 20px">금</span></td>
+							<td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[6] %>/<%=datesD[6] %></span><br>
+								<span style = "font-size : 20px">토</span></td>										
 						
           					</tr>
    	       				</thead>
@@ -230,7 +307,7 @@ String userImgErr = "img/user_logo.png";
           						String spanT = " style = 'color : #F25287'";
           					%>
           			
-          					<tr align = "center"  style="height: 7.2px; font-weight: bold;">	
+          					<tr align = "center"  style="font-weight: bold;">	
           					<%if ((i%2 == 0)){ %>
           						<td rowspan = "2">
           						<span<%if (count == 12 || count == 24){%><%=spanT %><%} %>>
