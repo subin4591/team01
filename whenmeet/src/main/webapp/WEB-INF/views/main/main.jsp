@@ -38,53 +38,53 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         {
           title: 'Long Event',
-          start: '2023-01-07',
-          end: '2023-01-10'
+          start: '2023-06-07',
+          end: '2023-06-10'
         },
         {
           groupId: 999,
           title: 'Repeating Event',
-          start: '2023-01-09T16:00:00'
+          start: '2023-06-09T16:00:00'
         },
         {
           groupId: 999,
           title: 'Repeating Event',
-          start: '2023-01-16T16:00:00'
+          start: '2023-06-16T16:00:00'
         },
         {
           title: 'Conference',
-          start: '2023-01-11',
-          end: '2023-01-13'
+          start: '2023-06-11',
+          end: '2023-06-13'
         },
         {
           title: 'Meeting',
-          start: '2023-01-12T10:30:00',
-          end: '2023-01-12T12:30:00'
+          start: '2023-06-12T10:30:00',
+          end: '2023-06-12T12:30:00'
         },
         {
           title: 'Lunch',
-          start: '2023-01-12T12:00:00'
+          start: '2023-06-12T12:00:00'
         },
         {
           title: 'Meeting',
-          start: '2023-01-12T14:30:00'
+          start: '2023-06-12T14:30:00'
         },
         {
           title: 'Happy Hour',
-          start: '2023-01-12T17:30:00'
+          start: '2023-06-12T17:30:00'
         },
         {
           title: 'Dinner',
-          start: '2023-01-12T20:00:00'
+          start: '2023-06-12T20:00:00'
         },
         {
           title: 'Birthday Party',
-          start: '2023-01-13T07:00:00'
+          start: '2023-06-13T07:00:00'
         },
         {
           title: 'Click for Google',
           url: 'http://google.com/',
-          start: '2023-01-28'
+          start: '2023-06-28'
         }
       ]
     });
@@ -129,32 +129,33 @@ $(document).ready(function(){
 	    <div id="content">
 		    <div id="group">
 		    	<h1 class="text">나의 그룹</h1>
-		    	<h2 class="group_list">그룹1</h2>
-		    	<h2 class="group_list">그룹2</h2>
-		    	<h2 class="group_list">그룹3</h2>
-		    	<h2 class="group_list">그룹4</h2>
-		    	<h2 class="group_list">그룹5</h2>
-
+		    	<c:forEach items="${mygroup}" var="group" begin="0" end="4">
+		    		<h2 class="group_list">${group}</h2>
+		    	</c:forEach>
+		    	<div id="writing">
+			    	<h1>작성한 구인글</h1>
+			    	<c:forEach items="${mywrite}" var="write" begin="0" end="4">
+		    			<h2 class="writing_list">${write}</h2>
+		    		</c:forEach>
+			    </div>
+			    <div id="apply">
+			    	<h1>신청한 구인글</h1>
+			    	<c:forEach items="${myapplication}" var="application" begin="0" end="4">
+		    			<h2 class="writing_list">${application}</h2>
+		    		</c:forEach>
+			    </div>
 		    </div>
 		    <div id="schedule">
 		    	<h1 class="text">나의 일정</h1>
 		    	<div id='calendar'></div>
 		    	
 		    </div>
-		    <div id="my_post">
-			    <div id="writing">
-			    	<h1>작성한 구인글</h1>
-			    </div>
-			    <div id="apply">
-			    	<h1>신청한 구인글</h1>
-			    </div>
+		    <div id="rank">
+		    	<h1>인기 글</h1>
+			    <c:forEach items="${ranklist}" var="rank" begin="0" end="4">
+		    			<h2 class="writing_list">${rank}</h2>
+		    	</c:forEach>
 			</div>
-	    </div>
-	    <div id="rank">
-	    	<h1>인기 구인글</h1><br>
-	    	<h2>1</h2><br>
-	    	<h2>2</h2><br>
-	    	<h2>3</h2>
 	    </div>
     </div>
     <div>

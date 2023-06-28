@@ -5166,7 +5166,21 @@ var FullCalendar = (function (exports) {
 
     const CLASS_NAME = 'fc-col-header-cell'; // do the cushion too? no
     function renderInner$1(renderProps) {
-        return renderProps.text;
+        if(renderProps.text == "Sun"){
+            return "일";
+        }else if(renderProps.text == "Mon"){
+            return "월";
+        }else if(renderProps.text == "Tue"){
+            return "화";
+        }else if(renderProps.text == "Wed"){
+            return "수";
+        }else if(renderProps.text == "Thu"){
+            return "목";
+        }else if(renderProps.text == "Fri"){
+            return "금";
+        }else if(renderProps.text == "Sat"){
+            return "토";
+        }
     }
 
     class ContentInjector extends BaseComponent {
