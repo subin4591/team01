@@ -4,6 +4,7 @@ public class MeetingPagingDTO {
 	String category, sort_type;
 	int start, end;
 	String user_id;
+	int seq;
 	
 	public String getCategory() {
 		return category;
@@ -35,7 +36,16 @@ public class MeetingPagingDTO {
 	public void setUser_id(String user_id) {
 		this.user_id = user_id;
 	}
+	public int getSeq() {
+		return seq;
+	}
+	public void setSeq(int seq) {
+		this.seq = seq;
+	}
 	
-	
+	public void calcNum(int page, int divNum) {
+		this.start = (page - 1) * divNum;
+		this.end = divNum;
+	}
 	
 }

@@ -17,18 +17,6 @@
 	align-items: center;
 	justify-content: space-between;
 }
-#write_form_cancel_btn {
-	font-weight: bold;
-	color: #F25287;
-	background-color: #F9F3F3;
-	border-color: #F25287;
-}
-#write_form_write_btn {
-	font-weight: bold;
-	color: white;
-	background-color: #F25287;
-	border-color: #F25287;
-}
 
 /* category */
 #category_select label,
