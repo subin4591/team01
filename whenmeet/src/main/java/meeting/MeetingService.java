@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import dto.ApplicantDTO;
 import dto.MeetingDTO;
 import dto.MeetingPagingDTO;
 import dto.UserDTO;
@@ -50,7 +51,25 @@ public class MeetingService {
 	public void updateMeetingHits(int seq) {
 		dao.updateMeetingHits(seq);
 	}
+	public void updateMeetingApp(int seq) {
+		dao.updateMeetingApp(seq);
+	}
 	public void updateMeetingContents(MeetingDTO dto) {
 		dao.updateMeetingContents(dto);
+	}
+	public void insertApplicantTable(ApplicantDTO dto) {
+		dao.insertApplicantTable(dto);
+	}
+	public List<ApplicantDTO> applicantList(MeetingPagingDTO dto) {
+		return dao.applicantList(dto);
+	}
+	public int applicantCount(int seq) {
+		return dao.applicantCount(seq);
+	}
+	public int applicantUserCount(MeetingPagingDTO dto) {
+		return dao.applicantUserCount(dto);
+	}
+	public ApplicantDTO applicantOneUser(MeetingPagingDTO dto) {
+		return dao.applicantOneUser(dto);
 	}
 }

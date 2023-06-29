@@ -85,18 +85,6 @@
 	/* 작성일 */
 	width: 180px;
 }
-#mycon_btn {
-	font-weight: bold;
-	color: #F25287;
-	background-color: #F9F3F3;
-	border-color: #F25287;
-}
-#write_btn {
-	font-weight: bold;
-	color: white;
-	background-color: #F25287;
-	border-color: #F25287;	
-}
 .page_active {
 	font-weight: bold;
 	color: #F25287;

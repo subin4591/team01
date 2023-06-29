@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import dto.ApplicantDTO;
 import dto.MeetingDTO;
 import dto.MeetingPagingDTO;
 import dto.UserDTO;
@@ -28,5 +29,11 @@ public interface MeetingDAO {
 	public MeetingDTO meetingDetailed(int seq);
 	public UserDTO userInfo(String user_id);
 	public void updateMeetingHits(int seq);
+	public void updateMeetingApp(int seq);
 	public void updateMeetingContents(MeetingDTO dto);
+	public void insertApplicantTable(ApplicantDTO dto);
+	public List<ApplicantDTO> applicantList(MeetingPagingDTO dto);
+	public int applicantCount(int seq);
+	public int applicantUserCount(MeetingPagingDTO dto);
+	public ApplicantDTO applicantOneUser(MeetingPagingDTO dto);
 }

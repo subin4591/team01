@@ -2,15 +2,16 @@ package meeting;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import dto.ApplicantDTO;
 import dto.MeetingDTO;
 import dto.MeetingPagingDTO;
 import dto.UserDTO;
@@ -22,49 +23,18 @@ public class MeetingController {
 	@Qualifier("meetingservice")
 	MeetingService service;
 	
-	// banner 메소드
-	public HashMap<String, MeetingDTO> makeBanner() {
-		// banner MeetingPagingDTO 생성
-		MeetingPagingDTO bannerPage = new MeetingPagingDTO();
-		bannerPage.setSort_type("applicant_cnt");
-		bannerPage.setStart(0);
-		bannerPage.setEnd(1);
-		
-		// List 생성
-		HashMap<String, MeetingDTO> bannerMap = new HashMap<>();
-		
-		// all banner
-		bannerMap.put("all", service.meetingListAll(bannerPage).get(0));
-		
-		// exercise banner
-		bannerPage.setCategory("운동");
-		bannerMap.put("exercise", service.meetingListCategory(bannerPage).get(0));
-		
-		// hobby banner
-		bannerPage.setCategory("취미");
-		bannerMap.put("hobby", service.meetingListCategory(bannerPage).get(0));
-		
-		// study banner
-		bannerPage.setCategory("공부");
-		bannerMap.put("study", service.meetingListCategory(bannerPage).get(0));
-
-		// etc banner
-		bannerPage.setCategory("기타");
-		bannerMap.put("etc", service.meetingListCategory(bannerPage).get(0));
-		
-		return bannerMap;
-	}
+	@Autowired
+	@Qualifier("meetingetcservice")
+	MeetingEtcService etcService;
+	
 	
 	@RequestMapping("/meeting")
-	public ModelAndView meeting(@RequestParam(value="category", defaultValue="all") String category,
-			@RequestParam(value="sort", defaultValue="time") String sort,
-			@RequestParam(value="page", defaultValue="1") int page,
-			HttpSession session) {
+	public ModelAndView meeting(@RequestParam(value="category", defaultValue="all") String category, HttpSession session) {
 		// ModelAndView 생성
 		ModelAndView mv = new ModelAndView();
 		
 		// banner HashMap 생성
-		HashMap<String, MeetingDTO> bannerMap = makeBanner();
+		HashMap<String, MeetingDTO> bannerMap = etcService.makeBanner();
 		mv.addObject("all_banner", bannerMap.get("all"));
 		mv.addObject("exercise_banner", bannerMap.get("exercise"));
 		mv.addObject("hobby_banner", bannerMap.get("hobby"));
@@ -72,61 +42,48 @@ public class MeetingController {
 		mv.addObject("etc_banner", bannerMap.get("etc"));
 		
 		// 게시글 목록 생성
-		MeetingPagingDTO page_dto = new MeetingPagingDTO();
+		String sort = "time";	// 기본 정렬 : 최신순
+		int page = 1;	// 기본 페이지 : 1 page
+		List<MeetingDTO> meeting_list = etcService.getMeetingList(category, sort, page);
 		
-		// 글목록 정렬
-		if (sort.equals("time")) {	// 최신순
-			page_dto.setSort_type("writing_time");
-			sort = "time";
-		}
-		else if(sort.equals("appl")) {	// 신청순
-			page_dto.setSort_type("applicant_cnt");
-			sort = "appl";
-		}
-		else if(sort.equals("hits")) {	// 조회순
-			page_dto.setSort_type(sort);
-		}
+		// 게시글 개수
+		int total_cnt = etcService.getMeetingCount(category);
 		
-		// 페이징 작업
-		int div_num = 10;	// 한 페이지당 글 개수
-		page_dto.setStart((page - 1) * div_num);
-		page_dto.setEnd(div_num);
-		
-		// 글 목록 생성
-		int total_cnt = 0;	// 전체 글 개수
-		List<MeetingDTO> meeting_list;	// 글 목록
-		mv.addObject("category", category);	// 카테고리
-		
-		if (category.equals("all")) {
-			total_cnt = service.meetingCountAll();
-			meeting_list = service.meetingListAll(page_dto);
-		}
-		else {
-			if (category.equals("exercise")) {
-				category = "운동";
-			}
-			else if (category.equals("hobby")) {
-				category = "취미";
-			}
-			else if (category.equals("study")) {
-				category = "공부";
-			}
-			else {
-				category = "기타";
-			}
-			page_dto.setCategory(category);
-			total_cnt = service.meetingCountCategory(category);
-			meeting_list = service.meetingListCategory(page_dto);
-		}
-		
+		mv.addObject("category", category);
 		mv.addObject("sort", sort);
 		mv.addObject("page", page);
 		mv.addObject("total_cnt", total_cnt);
-		mv.addObject("div_num", div_num);
+		mv.addObject("div_num", 10);
 		mv.addObject("meeting_list", meeting_list);
 		mv.setViewName("meeting/meeting_category");
 		
 		return mv;
+	}
+	
+	@RequestMapping("/meetingSort")
+	@ResponseBody
+	public HashMap<String, Object> meetingSort(String category, String sort) {
+		// 게시글 목록 생성
+		List<MeetingDTO> meeting_list = etcService.getMeetingList(category, sort, 1);
+		
+		// 게시글 개수
+		int total_cnt = etcService.getMeetingCount(category);
+		
+		// JSON 형태 반환
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("meeting_list", meeting_list);
+		map.put("total_cnt", total_cnt);
+		map.put("div_num", 10);
+		return map;
+	}
+	
+	@RequestMapping("/meetingPage")
+	@ResponseBody
+	public List<MeetingDTO> meetingPage(String category, String sort, int page) {
+		// 게시글 목록 생성
+		List<MeetingDTO> meeting_list = etcService.getMeetingList(category, sort, page);
+		
+		return meeting_list;
 	}
 	
 	@RequestMapping("/meeting/write")
@@ -151,17 +108,96 @@ public class MeetingController {
 	}
 	
 	@RequestMapping("/meeting/detailed")
-	public ModelAndView meetingDetailed(int seq) {
+	public ModelAndView meetingDetailed(int seq, HttpSession session) {
 		// MeetingDTO 생성
 		MeetingDTO dto = service.meetingDetailed(seq);
 		
 		// 조회수 증가
 		service.updateMeetingHits(seq);
 		
+		// 로그인 유저 정보
+		String session_id = (String)session.getAttribute("session_id");
+		UserDTO user_dto = service.userInfo(session_id);
+		
+		// 신청 댓글 목록 페이징 작업
+		String sort = "time";
+		int page = 1;
+		int total_cnt = service.applicantCount(seq);
+		List<ApplicantDTO> app_list = etcService.getApplicantList(seq, page);
+		
+		// 신청 댓글 중복 확인
+		MeetingPagingDTO page_dto = new MeetingPagingDTO();
+		page_dto.setSeq(seq);
+		page_dto.setUser_id(session_id);
+		
+		int user_app_cnt = service.applicantUserCount(page_dto);
+		
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("dto", dto);
+		mv.addObject("user_dto", user_dto);
+		mv.addObject("sort", sort);
+		mv.addObject("page", page);
+		mv.addObject("total_cnt", total_cnt);
+		mv.addObject("div_num", 10);
+		mv.addObject("app_list", app_list);
+		mv.addObject("user_app_cnt", user_app_cnt);
 		mv.setViewName("meeting/meeting_detailed");
 		return mv;
+	}
+	
+	@RequestMapping("/meeting/applicantInsert")
+	public String meetingApplicantInsert(ApplicantDTO app_dto) {
+		// 신청 댓글의 게시글 번호
+		int seq = app_dto.getSeq();
+		
+		// 신청 댓글 insert
+		service.insertApplicantTable(app_dto);
+		
+		// 게시글 신청자수 update
+		service.updateMeetingApp(seq);
+		
+		return "redirect:/meeting/detailed?seq=" + seq;
+	}
+	
+	@RequestMapping("/applicantSort")
+	@ResponseBody
+	public HashMap<String, Object> applicantSort(int seq) {
+		// 신청 댓글 목록 생성
+		List<ApplicantDTO> app_list = etcService.getApplicantList(seq, 1);
+		
+		// 게시글 개수
+		int total_cnt = service.applicantCount(seq);
+		
+		// JSON 형태 반환
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("app_list", app_list);
+		map.put("total_cnt", total_cnt);
+		map.put("div_num", 10);
+		
+		return map;
+	}
+	
+	@RequestMapping("/applicantMy")
+	@ResponseBody
+	public ApplicantDTO applicantMy(int seq, String user_id) {
+		// 유저 신청 댓글 생성
+		MeetingPagingDTO page_dto = new MeetingPagingDTO();
+		page_dto.setSeq(seq);
+		page_dto.setUser_id(user_id);
+		ApplicantDTO app = service.applicantOneUser(page_dto);
+		
+		if (app == null) {
+			app = new ApplicantDTO();
+			app.setUser_id("none");
+		}
+		
+		return app;
+	}
+	
+	@RequestMapping("/applicantPage")
+	@ResponseBody
+	public List<ApplicantDTO> applicantPage(int seq, int page) {
+		return etcService.getApplicantList(seq, page);
 	}
 	
 	@RequestMapping("/meeting/change")
@@ -185,10 +221,7 @@ public class MeetingController {
 	}
 	
 	@RequestMapping("/meeting/my")
-	public ModelAndView meetingMy(@RequestParam(value="category", defaultValue="all") String category,
-			@RequestParam(value="sort", defaultValue="time") String sort,
-			@RequestParam(value="page", defaultValue="1") int page,
-			HttpSession session) {
+	public ModelAndView meetingMy(@RequestParam(value="category", defaultValue="all") String category, HttpSession session) {
 		// ModelAndView 생성
 		ModelAndView mv = new ModelAndView();
 		
@@ -198,61 +231,47 @@ public class MeetingController {
 		mv.addObject("user_dto", user_dto);
 		
 		// 게시글 목록 생성
-		MeetingPagingDTO page_dto = new MeetingPagingDTO();
-		page_dto.setUser_id(user_id);
+		String sort = "time";
+		int page = 1;
+		List<MeetingDTO> meeting_list = etcService.getMeetingList(category, sort, page, user_id);
 		
-		// 글목록 정렬
-		if (sort.equals("time")) {	// 최신순
-			page_dto.setSort_type("writing_time");
-			sort = "time";
-		}
-		else if(sort.equals("appl")) {	// 신청순
-			page_dto.setSort_type("applicant_cnt");
-			sort = "appl";
-		}
-		else if(sort.equals("hits")) {	// 조회순
-			page_dto.setSort_type(sort);
-		}
+		// 게시글 개수
+		int total_cnt = etcService.getMeetingCount(category, user_id);
 		
-		// 페이징 작업
-		int div_num = 10;	// 한 페이지당 글 개수
-		page_dto.setStart((page - 1) * div_num);
-		page_dto.setEnd(div_num);
-		
-		// 글 목록 생성
-		int total_cnt = 0;	// 전체 글 개수
-		List<MeetingDTO> meeting_list;	// 글 목록
-		mv.addObject("category", category);	// 카테고리
-		
-		if (category.equals("all")) {
-			total_cnt = service.meetingCountAllUser(user_id);
-			meeting_list = service.meetingListAllUser(page_dto);
-		}
-		else {
-			if (category.equals("exercise")) {
-				category = "운동";
-			}
-			else if (category.equals("hobby")) {
-				category = "취미";
-			}
-			else if (category.equals("study")) {
-				category = "공부";
-			}
-			else {
-				category = "기타";
-			}
-			page_dto.setCategory(category);
-			total_cnt = service.meetingCountCategoryUser(page_dto);
-			meeting_list = service.meetingListCategoryUser(page_dto);
-		}
-		
+		mv.addObject("category", category);
 		mv.addObject("sort", sort);
 		mv.addObject("page", page);
 		mv.addObject("total_cnt", total_cnt);
-		mv.addObject("div_num", div_num);
+		mv.addObject("div_num", 10);
 		mv.addObject("meeting_list", meeting_list);
 		mv.setViewName("meeting/meeting_my");
 		
 		return mv;
+	}
+	
+	@RequestMapping("/meetingMySort")
+	@ResponseBody
+	public HashMap<String, Object> meetingMySort(String category, String sort, String user_id) {
+		// 게시글 목록 생성
+		List<MeetingDTO> meeting_list = etcService.getMeetingList(category, sort, 1, user_id);
+		
+		// 게시글 개수
+		int total_cnt = etcService.getMeetingCount(category, user_id);
+		
+		// JSON 형태 반환
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("meeting_list", meeting_list);
+		map.put("total_cnt", total_cnt);
+		map.put("div_num", 10);
+		return map;
+	}
+	
+	@RequestMapping("/meetingMyPage")
+	@ResponseBody
+	public List<MeetingDTO> meetingMyPage(String category, String sort, int page, String user_id) {
+		// 게시글 목록 생성
+		List<MeetingDTO> meeting_list = etcService.getMeetingList(category, sort, page, user_id);
+		
+		return meeting_list;
 	}
 }
