@@ -321,13 +321,17 @@ String userImgErr = "img/user_logo.png";
           </div>
         </div>
         
-        <div id="Dday_area">
-        	<div id="Dday">
-          	<a><img id = "editDate" src = "img/방장용_수정_버튼.svg" /></a>
+        <div id="Dday_area" >
+        	<div id="Dday" style = "display : None" >
+          	<a><img class = "editDate" src = "img/방장용_수정_버튼.svg" /></a>
             <span>D-day</span>
             <span>14</span>
             <span>2022년 12월 31일 (토)</span>
             <span>14:00 - 15:30</span>
+          </div>
+          <div id="DdayInit" >
+          	<a><img class = "editDate" src = "img/방장용_수정_버튼.svg" /></a>
+            <span>D-day가<br>아직 등록되지 않았습니다.</span>
           </div>
           		
           <div id = "Dday_edit" style = "display : None;">
@@ -415,12 +419,13 @@ String userImgErr = "img/user_logo.png";
 	  <div id = "gantt_chart" style = "display : none;">
 		  <div class="group_info">		
 			  <div id = "ganttCreate">
-				  <button id = "ganttCreateBtn"><h1>十 새로운 차트</h1></button>
+				  <button id = "ganttCreateBtn"><h1><img src = "img/plusIcon.svg">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;새로운 차트</h1></button>
 			  </div>	
 
-			  <div id = "ganttEdit" style = "display : None">
-				  <button id = "ganttEditCancelBtn"><h1>취소</h1></button>
-				  <button id = "ganttEditSaveBtn"><h1>저장</h1></button>				
+			  <div id = "ganttFirstEdit" style = "display : None">
+			  	<div id="chart_div"></div>
+				<button id = "ganttFirstEditCancelBtn"><h1>취소</h1></button>
+				<button id = "ganttFirstEditSaveBtn"><h1>저장</h1></button>				
 			  </div>
 
 			  <div id = "ganttResult" style = "display:None">

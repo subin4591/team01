@@ -192,12 +192,14 @@ $("#ScheduleEditBtn").click(function(){
 	});
 	$("#timeTable").show();
 })
-$("#editDate").click(function(){
+$(".editDate").click(function(){
 	$("#Dday_edit").show();
+	$("#DdayInit").hide();
 	$("#Dday").hide();
 })
 $("#endEditDate").click(function(){
 	$("#Dday_edit").hide();
+	$("#DdayInit").hide();
 	$("#Dday").show();
 })
 $(".submitBtn").click(function(){
@@ -207,19 +209,19 @@ $(".submitBtn").click(function(){
 
 /* 간트 차트 */
   	$("#ganttCreateBtn").click(function(){
-		$("#ganttEdit").show();
+		$("#ganttFirstEdit").show();
 		$("#ganttCreate").hide();
 	})
-  	$("#ganttEditCancelBtn").click(function(){
+  	$("#ganttFirstEditCancelBtn").click(function(){
 		$("#ganttCreate").show();
-		$("#ganttEdit").hide();
+		$("#ganttFirstEdit").hide();
 	})	
-  	$("#ganttEditSaveBtn").click(function(){
+  	$("#ganttFirstEditSaveBtn").click(function(){
 		$("#ganttResult").show();
-		$("#ganttEdit").hide();
+		$("#ganttFirstEdit").hide();
 	})	
 	$("#ganttResultEditBtn").click(function(){
-		$("#ganttEdit").show();
+		$("#ganttFirstEdit").show();
 		$("#ganttResult").hide();
 	})
 	

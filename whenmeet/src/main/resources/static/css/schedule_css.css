@@ -410,7 +410,7 @@ body{
   align-items: center;
 }
 
-#Dday{
+#Dday, #DdayInit{
 	position : relative;
   	width: 95%;
   	height: 45%;
@@ -430,7 +430,7 @@ body{
 	border: 5px solid #F25287;
 }
 
-#Dday img{
+.editDate{
 	position : absolute;
 	right : 0px;
 	margin : 5px;
@@ -454,13 +454,19 @@ body{
 	cursor: pointer;	
 }
 
-#Dday span:nth-child(2) {
+#Dday span:nth-child(2), #DdayInit span{
 	position : relative;
 	margin-top : 10px;
 	margin-bottom : -10px;
 	font-family: "코트라";
   	font-size: 50px;
   	font-weight: 900;
+}
+#DdayInit span{
+	font-family : "KimjungchulGothic-Bold";
+  	font-size: 36px;
+  	margin : auto;
+  	text-align : center;
 }
 
 #Dday span:nth-child(3) {
@@ -707,12 +713,22 @@ li {
 #ganttCreateBtn{
 	position : relative;
 	width : 300px;
+	height : 84px;
 	color : white;
 	background : #F25287;
 	border: solid #F25287;
 	display : block;
 	margin : auto;
 	top : 45%;
+	border-radius : 50px;
+}
+#ganttCreateBtn img{
+	position : absolute;
+	width : 44px;
+	height : 44px;
+	left : 20px;
+	top : 20px;
+	
 }
 #ganttCreateBtn:hover{
 	background : #E53972;
