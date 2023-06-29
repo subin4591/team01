@@ -16,18 +16,30 @@
 			// editor
 			let editor;
 			ClassicEditor
-				.create(document.querySelector( '#editor' ))
-				.then(editor => {
-					editor.setData("${ dto.contents }");
-				})
+			    .create( document.querySelector( '#editor' ) )
+			    .then( newEditor => {
+			        editor = newEditor;
+			        editor.setData("${ dto.contents }");
+			    } )
+			    .catch( error => {
+			        console.error( error );
+			    } );
 			
 			// submit event
 			let title = $("#title");
 			let cSubmit = $("#change_form_change_btn");
  			cSubmit.on("click", function() {
+				let conLen = editor.getData().length;
+ 				
  				if (title.val() == "" || title.val() == "제목을 입력하세요.") {
 					alert("제목을 입력하세요.");
 				}
+ 				else if (conLen == 0) {
+ 					alert("내용을 입력하세요.");
+ 				}
+ 				else if (conLen >= 4000) {
+ 					alert("4000자 까지 입력할 수 있습니다.");
+ 				}
 				else {
 					$("#change_form").submit();
 				}
@@ -49,6 +61,15 @@
  			});
  			
  			// password event
+ 			$("#contents_password").on("keyup", function() {
+				let text_len = $(this).val().length;
+	            let text_max = 20;
+	            if (20 - text_len <= 0) {
+	            	alert(text_max + "자 까지 입력할 수 있습니다.");
+	                $(this).val("");
+	            }
+			});
+ 			
  			if ("${ dto.hidden }" == "공개") {
 				$("#change_form_password").hide();
 			}
@@ -58,6 +79,16 @@
 					$("#contents_password").val("");
 				}
 				$("#change_form_password").slideToggle(400);
+			});
+			
+			// title event
+			$("#title").on("keyup", function() {
+				let text_len = $(this).val().length;
+	            let text_max = 100;
+	            if (100 - text_len <= 0) {
+	            	alert(text_max + "자 까지 입력할 수 있습니다.");
+	                $(this).val($(this).val().slice(0, 90));
+	            }
 			});
 		});
 	</script>

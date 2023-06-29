@@ -10,8 +10,10 @@
 	<link href="/css/meeting/meeting.css" rel=stylesheet>
 	<link href="/css/meeting/meeting_detailed.css" rel=stylesheet>
 	<script src="/js/jquery-3.6.4.min.js"></script>
+	<script src="/js/meeting.js"></script>
 	<script>
 		$(document).ready(function() {
+			/// 게시글
 			// 비공개 게시글 event
 			if ("${ dto.hidden }" == "비공개") {
 				$("#meeting_detailed_all").hide();
@@ -46,6 +48,30 @@
 				alert("복사되었습니다.");
 			});
 			
+			// 삭제 event
+			$("#contents_delete_btn").on("click", function() {
+				let reallyDelete = confirm("정말 삭제하시겠습니까?");
+				if (reallyDelete) {
+					let seq = ${ dto.seq };
+					
+					// form 태그 생성 및 submit
+					let deleteForm = $("<form></form>");
+					deleteForm.attr("action", "/meeting/delete");
+					deleteForm.attr("method", "post");
+					deleteForm.append($("<input>", {type: "hidden", name: "seq", value: seq}));
+					
+					$("body").append(deleteForm);
+					
+					deleteForm.submit();
+				}
+			})
+			
+			
+			/// 신청 댓글
+			// 기본 page active event
+			$("#applicant_page_nums").html(makePage(${ total_cnt }, ${ div_num }));
+			pageActive("time", 1);
+			
 			// 신청 댓글 글자수 제한 event
 			$("#app_contents").on("keyup", function() {
 				let text_len = $(this).val().length;
@@ -58,6 +84,19 @@
 	                $(this).val($(this).val().slice(0, 450));
 	                text_len = $(this).val().length;
 	                $("#app_th").text(text_len + "/" + text_max);
+	            }
+			});
+			$(document).on("keyup", "#my_app_contents", function() {
+				let text_len = $(this).val().length;
+	            let text_max = 500;
+	            if (500 - text_len > 0) {
+	                $("#my_app_th").text(text_len + "/" + text_max);
+	            }
+	            else {
+	                alert(text_max + "자 까지 입력할 수 있습니다.");
+	                $(this).val($(this).val().slice(0, 450));
+	                text_len = $(this).val().length;
+	                $("#my_app_th").text(text_len + "/" + text_max);
 	            }
 			});
 			
@@ -79,7 +118,45 @@
 							alert("신청 댓글을 입력하세요.");
 						}
 						else {
-							$("#applicant_form").submit();					
+							let formData = $("#applicant_form").serialize();
+							$.ajax({
+								url: "/meeting/applicantInsert",
+								data: formData,
+								type: "post",
+								dataType: "json",
+								success: function(data) {
+									// page active event
+									$("#applicant_page_nums").show();
+									$("#applicant_page_nums").html(makePage(data.total_cnt, data.div_num));
+									pageActive("time", 1);
+									
+									// 모임신청 총 개수
+									$("#applicant_ul_caption h2").text("모임신청 총 " + data.total_cnt + "개");
+									
+									// 신청 댓글 목록
+									let au = $("#applicant_ul");
+									au.html("");
+									
+									for (let a = 0; a < data.app_list.length; a++) {
+										let a_user = data.app_list[a].user_id;
+										let ma = new MeetingApp(
+												data.app_list[a].profile_url,
+												data.app_list[a].name,
+												data.app_list[a].applicant_time,
+												data.app_list[a].approval,
+												data.app_list[a].contents
+											);
+										// 본인 댓글이면
+										if ("${ session_id }" == a_user) {
+											au.append(ma.printLiMy());
+										}	// if end
+										// 본인 댓글이 아니면
+										else {
+											au.append(ma.printLi());
+										}	// else end
+									}	// for end
+								}	// success end
+							});	// ajax end
 						}
 					}
 				}
@@ -88,86 +165,43 @@
 				}
 			});
 			
-			/// page active event
-			$(".sort_a[data-target='${ sort }']").addClass("page_active");
-			$(".page_a:contains('${ page }')").addClass("page_active");
-			
 			/// sort ajax event
 			$(".sort_a[data-target='time']").on("click", function(event) {
 				event.preventDefault();
 				let seq = ${ dto.seq };
 				
 				$.ajax({
-					url: "/applicantSort",
+					url: "/meeting/applicantSort",
 					data: {seq: seq},
 					type: "post",
 					dataType: "json",
 					success: function(data) {
 						// page active event
-						$(".sort_a, .page_a").removeClass("page_active");
-						$(".sort_a[data-target='time']").addClass("page_active");
+						pageActive("time", 1);
+						$("#applicant_page_nums").show();
 						
-						// 게시글 목록
+						// 신청 댓글 목록
 						let au = $("#applicant_ul");
 						au.html("");
 						
-						for (let a = 0; a < data.app_list.length; a++) {
-							let a_user = data.app_list[a].user_id;
+						for (let a = 0; a < data.length; a++) {
+							let a_user = data[a].user_id;
+							let ma = new MeetingApp(
+									data[a].profile_url,
+									data[a].name,
+									data[a].applicant_time,
+									data[a].approval,
+									data[a].contents
+								);
+							// 본인 댓글이면
 							if ("${ session_id }" == a_user) {
-								au.append('<li>'
-										+ '<div class="app_list_caption">'
-											+'<img class="app_list_profile" alt="app_list_profile" src="' + data.app_list[a].profile_url + '">'
-											+ '<div class="app_list_info">'
-												+ '<label class="app_list_name">' + data.app_list[a].name + '</label>'
-												+ '<label class="app_list_time">' + data.app_list[a].applicant_time + '</label>'
-											+ '</div>'
-											+ '<label class="app_list_approval">' + data.app_list[a].approval + '</label>'					
-										+ '</div>'
-										+ '<div class="app_list_contents">'
-											+ '<p>' + data.app_list[a].contents + '</p>'
-										+ '</div>'
-										+ '<div class="app_list_btn">'
-											+ '<input id="app_list_change" type="button" value="수정">'
-											+ '<input id="app_list_cancel" type="button" value="삭제">'
-										+ '</div>'
-									+ '</li>');
+								au.append(ma.printLiMy());
 							}	// if end
+							// 본인 댓글이 아니면
 							else {
-								au.append('<li>'
-										+ '<div class="app_list_caption">'
-											+'<img class="app_list_profile" alt="app_list_profile" src="' + data.app_list[a].profile_url + '">'
-											+ '<div class="app_list_info">'
-												+ '<label class="app_list_name">' + data.app_list[a].name + '</label>'
-												+ '<label class="app_list_time">' + data.app_list[a].applicant_time + '</label>'
-											+ '</div>'
-											+ '<label class="app_list_approval">' + data.app_list[a].approval + '</label>'					
-										+ '</div>'
-										+ '<div class="app_list_contents">'
-											+ '<p>' + data.app_list[a].contents + '</p>'
-										+ '</div>'
-									+ '</li>');
+								au.append(ma.printLi());
 							}	// else end
 						}	// for end
-						
-						// 페이징
-						$("#applicant_page_nums").show();
-						
-						let totalCnt = data.total_cnt;
-						let divNum = data.div_num;
-						let totalPage = totalCnt / divNum;
-						if (totalCnt % divNum != 0) {
-							totalPage++;
-						}
-						
-						$("#applicant_page_nums").html("");
-						for (let p = 1; p <= totalPage; p++) {
-							if (p == 1) {
-								$("#applicant_page_nums").append("&nbsp;<a class='page_a page_active' href='' data-target='" + p + "'>" + p + "</a>&nbsp;");
-							}
-							else {								
-								$("#applicant_page_nums").append("&nbsp;<a class='page_a' href='' data-target='" + p + "'>" + p + "</a>&nbsp;");
-							}
-						} // for end
 					}	// success end
 				});	// ajax end
 			});	// sort ajax event end
@@ -179,54 +213,34 @@
 				let page = $(this).data("target");
 				
 				$.ajax({
-					url: "/applicantPage",
+					url: "/meeting/applicantPage",
 					data: {seq: seq, page: page},
 					type: "post",
 					dataType: "json",
 					success: function(data) {
 						// page active event
-						$(".page_a").removeClass("page_active");
-						$(".page_a[data-target='" + page + "']").addClass("page_active");
+						pageActive("time", page);
 						
-						// 게시글 목록
+						// 신청 댓글 목록
 						let au = $("#applicant_ul");
 						au.html("");
 						
 						for (let a = 0; a < data.length; a++) {
 							let a_user = data[a].user_id;
+							let ma = new MeetingApp(
+									data[a].profile_url,
+									data[a].name,
+									data[a].applicant_time,
+									data[a].approval,
+									data[a].contents
+								);
+							// 본인 댓글이면
 							if ("${ session_id }" == a_user) {
-								au.append('<li>'
-										+ '<div class="app_list_caption">'
-											+'<img class="app_list_profile" alt="app_list_profile" src="' + data[a].profile_url + '">'
-											+ '<div class="app_list_info">'
-												+ '<label class="app_list_name">' + data[a].name + '</label>'
-												+ '<label class="app_list_time">' + data[a].applicant_time + '</label>'
-											+ '</div>'
-											+ '<label class="app_list_approval">' + data[a].approval + '</label>'					
-										+ '</div>'
-										+ '<div class="app_list_contents">'
-											+ '<p>' + data[a].contents + '</p>'
-										+ '</div>'
-										+ '<div class="app_list_btn">'
-											+ '<input id="app_list_change" type="button" value="수정">'
-											+ '<input id="app_list_cancel" type="button" value="삭제">'
-										+ '</div>'
-									+ '</li>');
+								au.append(ma.printLiMy());
 							}	// if end
+							// 본인 댓글이 아니면
 							else {
-								au.append('<li>'
-										+ '<div class="app_list_caption">'
-											+'<img class="app_list_profile" alt="app_list_profile" src="' + data[a].profile_url + '">'
-											+ '<div class="app_list_info">'
-												+ '<label class="app_list_name">' + data[a].name + '</label>'
-												+ '<label class="app_list_time">' + data[a].applicant_time + '</label>'
-											+ '</div>'
-											+ '<label class="app_list_approval">' + data[a].approval + '</label>'					
-										+ '</div>'
-										+ '<div class="app_list_contents">'
-											+ '<p>' + data[a].contents + '</p>'
-										+ '</div>'
-									+ '</li>');
+								au.append(ma.printLi());
 							}	// else end
 						}	// for end
 					}	// success end
@@ -240,44 +254,123 @@
 				let user_id = "${ session_id }";
 				
 				$.ajax({
-					url: "/applicantMy",
+					url: "/meeting/applicantMy",
 					data: {seq: seq, user_id: user_id},
 					type: "post",
 					dataType: "json",
 					success: function(data) {
 						// page active event
-						$(".sort_a").removeClass("page_active");
-						$(".sort_a[data-target='my']").addClass("page_active");
+						pageActive("my", 1);
+						$("#applicant_page_nums").hide();
 						
-						// 게시글 목록
+						// 신청 댓글 목록
 						let au = $("#applicant_ul");
 						au.html("");
 						
 						if (data.user_id != "none") {
-							au.append('<li>'
-									+ '<div class="app_list_caption">'
-										+'<img class="app_list_profile" alt="app_list_profile" src="' + data.profile_url + '">'
-										+ '<div class="app_list_info">'
-											+ '<label class="app_list_name">' + data.name + '</label>'
-											+ '<label class="app_list_time">' + data.applicant_time + '</label>'
-										+ '</div>'
-										+ '<label class="app_list_approval">' + data.approval + '</label>'					
-									+ '</div>'
-									+ '<div class="app_list_contents">'
-										+ '<p>' + data.contents + '</p>'
-									+ '</div>'
-									+ '<div class="app_list_btn">'
-										+ '<input id="app_list_change" type="button" value="수정">'
-										+ '<input id="app_list_cancel" type="button" value="삭제">'
-									+ '</div>'
-								+ '</li>');
+							let ma = new MeetingApp(
+									data.profile_url,
+									data.name,
+									data.applicant_time,
+									data.approval,
+									data.contents
+								);
+							au.html(ma.printLiMy());
 						}
-						
-						// 페이징
-						$("#applicant_page_nums").hide();
 					}	// success end
 				});	// ajax end
 			});	// my event end
+			
+			// 신청 댓글 수정 event
+			$(document).on("click", "#app_list_change", function() {
+				let myAppHtml = $("#my_app").html();
+				let appCon = $("#my_app .app_list_contents p").text();
+				let appLen = appCon.length;
+				$("#my_app").html(`<form id="my_app_form">
+								<input type="hidden" name="seq" value="${ dto.seq }">
+								<input type="hidden" name="user_id" value="${ session_id }">
+								<div id="my_app_caption">
+									<label>신청자</label>
+									<input id="my_app_user_name" name="name" type="text" value="${ user_dto.name }" readonly>
+								</div>
+								<textarea id="my_app_contents" name="contents" rows="4" cols="80" placeholder="신청 댓글을 입력하세요.">\${ appCon }</textarea>
+								<div id="my_app_bottom">
+									<p id="my_app_th">\${ appLen }/500</p>
+									<div>
+										<input id="my_app_cancel" type="button" value="취소">
+										<input id="my_app_submit" type="button" value="수정">
+									</div>
+								</div>
+							</form>`);
+				$("#my_app_cancel").on("click", function() {
+					$("#my_app").html(myAppHtml);
+				});	// cancel end
+				$("#my_app_submit").on("click", function() {
+					let formData = $("#my_app_form").serialize();
+					$.ajax({
+						url: "/meeting/applicantChange",
+						data: formData,
+						type: "post",
+						dataType: "json",
+						success: function(data) {
+							// page active event
+							pageActive("my", 1);
+							$("#applicant_page_nums").hide();
+							
+							// 신청 댓글 목록
+							let au = $("#applicant_ul");
+							let ma = new MeetingApp(
+									data.profile_url,
+									data.name,
+									data.applicant_time,
+									data.approval,
+									data.contents
+								);
+							au.html(ma.printLiMy());
+						}
+					});	// ajax end
+				});	// submit end
+			});	// 신청 댓글 수정 event end
+			
+			// 신청 댓글 삭제 event end
+			$(document).on("click", "#app_list_cancel", function() {
+				let reallyDelete = confirm("정말 삭제하시겠습니까?");
+				if (reallyDelete) {
+					let seq = ${ dto.seq };
+					let user_id = "${ session_id }";
+					
+					$.ajax({
+						url: "/meeting/applicantDelete",
+						data: {seq: seq, user_id: user_id},
+						type: "post",
+						dataType: "json",
+						success: function(data) {
+							// page active event
+							$("#applicant_page_nums").show();
+							$("#applicant_page_nums").html(makePage(data.total_cnt, data.div_num));
+							pageActive("time", 1);
+							
+							// 모임신청 총 개수
+							$("#applicant_ul_caption h2").text("모임신청 총 " + data.total_cnt + "개");
+							
+							// 신청 댓글 목록
+							let au = $("#applicant_ul");
+							au.html("");
+							
+							for (let a = 0; a < data.app_list.length; a++) {
+								let ma = new MeetingApp(
+										data.app_list[a].profile_url,
+										data.app_list[a].name,
+										data.app_list[a].applicant_time,
+										data.app_list[a].approval,
+										data.app_list[a].contents
+									);
+								au.append(ma.printLi());
+							}	// for end
+						}
+					});	// ajax end
+				}	// if end
+			});	// 신청 댓글 삭제 event end
 		});	// document ready end
 	</script>
 </head>
@@ -340,7 +433,7 @@
 		</div>
 		
 		<div id="meeting_applicant">
-			<form id="applicant_form" action="/meeting/applicantInsert" method="post">
+			<form id="applicant_form">
 				<input type="hidden" name="seq" value="${ dto.seq }">
 				<input type="hidden" name="user_id" value="${ session_id }">
 				<input type="hidden" name="approval" value="대기">
@@ -375,46 +468,50 @@
 			
 			<ul id="applicant_ul">
 				<c:forEach items="${ app_list }" var="a">
-					<li>
-						<div class="app_list_caption">
-							<img class="app_list_profile" alt="app_list_profile" src="${ a.profile_url }">
-							<div class="app_list_info">
-								<label class="app_list_name">${ a.name }</label>
-								<label class="app_list_time">${ a.applicant_time }</label>
-							</div>
-							<label class="app_list_approval">${ a.approval }</label>						
-						</div>
-						
-						<div class="app_list_contents">
-							<p>${ a.contents }</p>
-						</div>
-						
-						<c:choose>
-							<c:when test="${ session_id == a.user_id }">
+					<c:choose>
+						<c:when test="${ session_id == a.user_id }">
+							<li id="my_app">
+								<div class="app_list_caption">
+									<img class="app_list_profile" alt="app_list_profile" src="${ a.profile_url }">
+									<div class="app_list_info">
+										<label class="app_list_name">${ a.name }</label>
+										<label class="app_list_time">${ a.applicant_time }</label>
+									</div>
+									<label class="app_list_approval">${ a.approval }</label>						
+								</div>
+								
+								<div class="app_list_contents">
+									<p>${ a.contents }</p>
+								</div>
+								
 								<div class="app_list_btn">
 									<input id="app_list_change" type="button" value="수정">
 									<input id="app_list_cancel" type="button" value="삭제">
 								</div>
-							</c:when>
-						</c:choose>
-					</li>
+							</li>
+						</c:when>
+						<c:otherwise>
+							<li>
+								<div class="app_list_caption">
+									<img class="app_list_profile" alt="app_list_profile" src="${ a.profile_url }">
+									<div class="app_list_info">
+										<label class="app_list_name">${ a.name }</label>
+										<label class="app_list_time">${ a.applicant_time }</label>
+									</div>
+									<label class="app_list_approval">${ a.approval }</label>						
+								</div>
+								
+								<div class="app_list_contents">
+									<p>${ a.contents }</p>
+								</div>
+							</li>
+						</c:otherwise>
+					</c:choose>
+					
 				</c:forEach>
 			</ul>
 			
-			<div id="applicant_page_nums">
-			<%	
-				int seq = Integer.parseInt(request.getParameter("seq"));
-				int totalCnt = (Integer)request.getAttribute("total_cnt");
-				int divNum = (Integer)request.getAttribute("div_num");
-				int totalPage = totalCnt / divNum;
-				
-				if (totalCnt % divNum != 0)
-	        		totalPage++;
-			%>
-				<c:forEach begin="1" end="<%= totalPage %>" var="p">
-					&nbsp;<a class="page_a" href="" data-target="${ p }">${ p }</a>&nbsp;
-				</c:forEach>
-			</div>
+			<div id="applicant_page_nums"></div>
 		</div>
 	</div>
 	

@@ -1,11 +1,15 @@
 package dto;
 
+import java.util.ArrayList;
+
 public class MeetingPagingDTO {
 	String category, sort_type;
 	int start, end;
 	String user_id;
 	int seq;
+	ArrayList<Integer> seq_list;
 	
+	// getter & setter
 	public String getCategory() {
 		return category;
 	}
@@ -42,7 +46,14 @@ public class MeetingPagingDTO {
 	public void setSeq(int seq) {
 		this.seq = seq;
 	}
+	public ArrayList<Integer> getSeq_list() {
+		return seq_list;
+	}
+	public void setSeq_list(ArrayList<Integer> seq_list) {
+		this.seq_list = seq_list;
+	}
 	
+	// 메소드
 	public void calcNum(int page, int divNum) {
 		this.start = (page - 1) * divNum;
 		this.end = divNum;

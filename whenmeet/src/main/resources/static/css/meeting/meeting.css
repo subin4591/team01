@@ -25,13 +25,17 @@ a:hover {
 	justify-content: space-between;
 	margin-top: 10px;	
 }
-#contents_btns *, 
+#mycon_btn,
+#myapp_btn, 
+#write_btn,
 #write_form_btn *, 
 #contents_btn_left *,
 #contents_btn_right *,
 #change_form_btn *,
 #popup_btn *,
-#app_submit {
+#app_submit,
+#my_app_submit,
+#my_app_cancel {
 	width: 85px;
 	height: 35px;
 	font-size: 16px;
@@ -39,11 +43,13 @@ a:hover {
 	border-radius: 10px;
 }
 #mycon_btn,
+#myapp_btn,
 #change_form_cancel_btn,
 #write_form_cancel_btn,
 #contents_list_btn,
 #contents_change_btn,
-#popup_cancel {
+#popup_cancel,
+#my_app_cancel {
 	font-weight: bold;
 	color: #F25287;
 	background-color: #F9F3F3;
@@ -54,7 +60,8 @@ a:hover {
 #write_form_write_btn,
 #app_submit,
 #contents_delete_btn, 
-#popup_confirm {
+#popup_confirm,
+#my_app_submit {
 	font-weight: bold;
 	color: white;
 	background-color: #F25287;

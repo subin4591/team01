@@ -53,6 +53,39 @@
 		where user_id = #{user_id} and category = #{category}
 	</select>
 	
+	<!-- 유저 신청 게시글 목록 -->
+	<select id="userAppSeqList" parameterType="String" resultType="int">
+		select seq from applicant_table
+		where user_id = #{user_id}
+	</select>
+	
+	<select id="userAppMeetingListAll" parameterType="meetingpagingdto" resultType="meetingdto">
+		select * from meeting_table where
+		<foreach collection="seq_list" item="seq" separator=" or ">seq = #{seq}</foreach>
+		order by ${sort_type} desc
+		limit #{start}, #{end}
+	</select>
+	
+	<select id="userAppMeetingListCategory" parameterType="meetingpagingdto" resultType="meetingdto">
+		select * from meeting_table where
+		(<foreach collection="seq_list" item="seq" separator=" or ">seq = #{seq}</foreach>)
+		and category = #{category}
+		order by ${sort_type} desc
+		limit #{start}, #{end}
+	</select>
+	
+	<select id="userAppMeetingCountCategory" parameterType="meetingpagingdto" resultType="int">
+		select count(*) from meeting_table where
+		(<foreach collection="seq_list" item="seq" separator=" or ">seq = #{seq}</foreach>)
+		and category = #{category}
+	</select>
+	
+	<!-- 유저 신청 게시글 목록 결과 -->
+	<select id="userAppSeqListResult" parameterType="meetingpagingdto" resultType="int">
+		select seq from applicant_table
+		where user_id = #{user_id} and approval = #{sort_type}
+	</select>
+	
 	<!-- 게시글 상세 -->
 	<select id="meetingDetailed" parameterType="int" resultType="meetingdto">
 		select * from meeting_table
@@ -83,7 +116,7 @@
 		where seq = #{seq} and user_id = #{user_id}
 	</select>
 	
-	<!-- 중복 확인 -->
+	<!-- 신청 댓글 중복 확인 -->
 	<select id="applicantUserCount" parameterType="meetingpagingdto" resultType="int">
 		select count(*) from applicant_table
 		where seq = #{seq} and user_id = #{user_id}
@@ -111,10 +144,10 @@
 		where seq = #{seq}
 	</update>
 	
-	<!-- 신청자수 증가 -->
-	<update	id="updateMeetingApp" parameterType="int">
+	<!-- 신청자수 증가 혹은 감소 -->
+	<update	id="updateMeetingAppNum" parameterType="hashmap">
 		update meeting_table
-		set applicant_cnt = applicant_cnt + 1
+		set applicant_cnt = applicant_cnt + #{num}
 		where seq = #{seq}
 	</update>
 	
@@ -124,4 +157,29 @@
 		set title = #{title}, contents = #{contents}, category = #{category}, hidden = #{hidden}
 		where seq = #{seq}
 	</update>
+	
+	<!-- 댓글 수정 -->
+	<update id="updateAppContents" parameterType="applicantdto">
+		update applicant_table
+		set contents = #{contents}, applicant_time = now()
+		where seq = #{seq} and user_id = #{user_id}
+	</update>
+	
+	<!-- Meeting delete -->
+	<!-- 게시글 삭제 -->
+	<delete id="deleteMeeting" parameterType="int">
+		delete from meeting_table
+		where seq = #{seq}
+	</delete>
+
+	<delete id="deleteAppAll" parameterType="int">
+		delete from applicant_table
+		where seq = #{seq}
+	</delete>
+	
+	<!-- 본인 댓글 삭제 -->
+	<delete id="deleteAppOne" parameterType="meetingpagingdto">
+		delete from applicant_table
+		where seq = #{seq} and user_id = #{user_id}
+	</delete>
 </mapper>
