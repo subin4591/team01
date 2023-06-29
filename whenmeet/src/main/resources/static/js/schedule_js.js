@@ -1,6 +1,55 @@
 /**
  * 
  */
+//디데이 달력, 시간 표시하기
+function changeDate(){
+	var result = $("#finalDate").val();
+	$("#DdayEditDate").text("날짜 : " + result);
+}
+function changeTime1(){
+	var result = $("#finalStartTime").val();
+	$("#DdayEditTime1").text("시작 시각 : " + result);
+}
+function changeTime2(){
+	var result = $("#finalEndTime").val();
+	$("#DdayEditTime2").text("종료 시각 : " + result);
+}
+//일정표 기간 표시하기
+function getDayOfWeek(string){
+	var day = new Date(string[0], string[1], string[2]);
+    const week = ['일', '월', '화', '수', '목', '금', '토'];
+
+    const dayOfWeek = week[day.getDay()];
+
+    return dayOfWeek;
+
+}
+function changeWeek(){
+	var result1 = $("#firstDate").val();
+	var result2 = $("#EndDate").val();
+	
+	if (result1 == "" || result2 == ""){
+		alert("올바른 기간을 입력해주세요.");
+		return false;
+	}
+	
+	var results1 = result1.split("-")
+	var results2 = result2.split("-")
+	var temp1 = results1[0]+results1[1]+results1[2];
+	var temp2 = results2[0]+results2[1]+results2[2];
+	temp1 *= 1;
+	temp2 *= 1;
+	
+	if (temp1 > temp2){
+		alert("올바른 기간을 입력해주세요.");
+		return false;
+	}else{
+		$("#updateDateView .first").text(results1[0]+"/"+results1[1]+"/"+results1[2]+ " ("+getDayOfWeek(results1)+")");
+		$("#updateDateView .second").text(results2[0]+"/"+results2[1]+"/"+results2[2]+ " ("+getDayOfWeek(results2)+")");	
+		WpopClose();
+	}
+}
+
 // table 컬러 바꾸기
 function tbColorChange(element){
 	if( $(element).attr("alt") != "1"){
@@ -29,6 +78,20 @@ function popOpen(element){
 function popClose(){
 	var modalPop = $('.user_modal');
 	var modalBg = $('.user_modal_bg');
+	$(modalPop).hide();
+	$(modalBg).hide();
+}
+//주 팝업을 열기
+function WpopOpen(){
+	var modalPop = $('.week_modal');
+	var modalBg = $('.week_modal_bg');
+	$(modalPop).show();
+	$(modalBg).show();
+}
+//주 팝업 닫기
+function WpopClose(){
+	var modalPop = $('.week_modal');
+	var modalBg = $('.week_modal_bg');
 	$(modalPop).hide();
 	$(modalBg).hide();
 }
@@ -117,10 +180,16 @@ $(document).ready(function () {
 /* 미팅 일정 */
 $("#ScheduleSaveBtn").click(function(){
 	$("#total_table").show();
+	$("#chart_area").css({
+		"border" : "None"
+	});
 	$("#timeTable").hide();
 })
 $("#ScheduleEditBtn").click(function(){
 	$("#total_table").hide();
+	$("#chart_area").css({
+		"border" : "5px solid #F25287"
+	});
 	$("#timeTable").show();
 })
 $("#editDate").click(function(){
@@ -128,6 +197,10 @@ $("#editDate").click(function(){
 	$("#Dday").hide();
 })
 $("#endEditDate").click(function(){
+	$("#Dday_edit").hide();
+	$("#Dday").show();
+})
+$(".submitBtn").click(function(){
 	$("#Dday_edit").hide();
 	$("#Dday").show();
 })
