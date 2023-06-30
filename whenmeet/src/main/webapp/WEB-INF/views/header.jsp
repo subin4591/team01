@@ -13,13 +13,14 @@
 		});
 		
 		// input event
+
 		let sInput = $("#search_input");
 		
 		// submit event
 		let sSubmit = $("#search_submit_btn");
 		sSubmit.on("click", function(event) {
 			event.preventDefault();
-			if (sInput.val().length == 0) {
+			if (sInput.val().length == 0 || sInput.val() == "검색어를 입력하세요.") {
 				alert("검색어를 입력하세요.")
 			}
 			else {
