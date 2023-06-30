@@ -29,60 +29,48 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       initialDate: formattedDate,
       navLinks: true, // can click day/week names to navigate views
+      businessHours: true,
       editable: true,
+      selectable: true,
       dayMaxEvents: true, // allow "more" link when too many events
       events: [
+	   	{
+            start: '2023-06-24',
+            end: '2023-06-28',
+            overlap: false,
+            display: 'background',
+            color: '#ff9f89'
+        },
         {
-          title: 'All Day Event',
+          title: '일하기',
           start: formattedDate
         },
         {
-          title: 'Long Event',
-          start: '2023-06-07',
-          end: '2023-06-10'
-        },
-        {
           groupId: 999,
-          title: 'Repeating Event',
+          title: '반복',
           start: '2023-06-09T16:00:00'
         },
         {
           groupId: 999,
-          title: 'Repeating Event',
+          title: '반복',
           start: '2023-06-16T16:00:00'
         },
         {
-          title: 'Conference',
+          title: '회의',
           start: '2023-06-11',
           end: '2023-06-13'
         },
         {
-          title: 'Meeting',
+          title: '미팅',
           start: '2023-06-12T10:30:00',
           end: '2023-06-12T12:30:00'
         },
         {
-          title: 'Lunch',
+          title: '점식약속',
           start: '2023-06-12T12:00:00'
         },
         {
-          title: 'Meeting',
-          start: '2023-06-12T14:30:00'
-        },
-        {
-          title: 'Happy Hour',
-          start: '2023-06-12T17:30:00'
-        },
-        {
-          title: 'Dinner',
-          start: '2023-06-12T20:00:00'
-        },
-        {
-          title: 'Birthday Party',
-          start: '2023-06-13T07:00:00'
-        },
-        {
-          title: 'Click for Google',
+          title: 'url이동',
           url: 'http://google.com/',
           start: '2023-06-28'
         }
@@ -104,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   #calendar {
     max-width: 600px;
-    margin-left: 55px;
+    margin-left: 60px;
   }
 
 </style>
@@ -114,7 +102,6 @@ $(document).ready(function(){
 	if(element.get(0).innerText.includes('January')){
 	    element.innerText = element.innerText.replace("January","1월");
 	  }
-		
 });
 </script>
 </head>
@@ -127,24 +114,37 @@ $(document).ready(function(){
     </div>
     <div id="body">
 	    <div id="content">
-		    <div id="group">
-		    	<h1 class="text">나의 그룹</h1>
-		    	<c:forEach items="${mygroup}" var="group" begin="0" end="4">
-		    		<h2 class="group_list">${group}</h2>
-		    	</c:forEach>
+	    	<div id="my_page">
+			    <div id="group">
+			    	<h1 class="text">
+			    		나의 그룹
+			    		<span class="more">전체보기</span>
+			    	</h1>
+			    	
+			    	<c:forEach items="${mygroup}" var="group" begin="0" end="4">
+			    		<h3 class="group_list">${group}</h3>
+			    	</c:forEach>
+			    </div>
 		    	<div id="writing">
-			    	<h1>작성한 구인글</h1>
+			    	<h1 class="text">
+			    		작성한 구인글
+			    		<span class="more">전체보기</span>
+			    	</h1>
 			    	<c:forEach items="${mywrite}" var="write" begin="0" end="4">
-		    			<h2 class="writing_list">${write}</h2>
+		    			<h3 class="writing_list">${write}</h3>
 		    		</c:forEach>
 			    </div>
 			    <div id="apply">
-			    	<h1>신청한 구인글</h1>
+			    	<h1 class="text">
+			    		신청한 구인글
+			    		<span class="more">전체보기</span>
+			    	</h1>
 			    	<c:forEach items="${myapplication}" var="application" begin="0" end="4">
-		    			<h2 class="writing_list">${application}</h2>
+		    			<h3 class="apply_list">${application}</h3>
 		    		</c:forEach>
 			    </div>
-		    </div>
+			    
+			</div>
 		    <div id="schedule">
 		    	<h1 class="text">나의 일정</h1>
 		    	<div id='calendar'></div>
@@ -153,7 +153,7 @@ $(document).ready(function(){
 		    <div id="rank">
 		    	<h1>인기 글</h1>
 			    <c:forEach items="${ranklist}" var="rank" begin="0" end="4">
-		    			<h2 class="writing_list">${rank}</h2>
+		    			<h2 class="rank_list">${rank}</h2>
 		    	</c:forEach>
 			</div>
 	    </div>
