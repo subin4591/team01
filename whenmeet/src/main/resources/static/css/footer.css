@@ -1,12 +1,25 @@
+/* footer */
 @charset "UTF-8";
 
-/* footer */
-footer {
+/*
+  채수원님 footer
+  footer {
     width: 100%;
     border-top: 3px solid #F25287;
     padding: 20px 0;
     text-align: center;
     margin-top: 150px; /* 낮추기 위해 margin-top 값 조정 */
+}
+*/
+ 
+/* footer */
+footer {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	width: 100%;
+	margin-top: 50px;
+	color: #DB9F9F;
 }
 #footer_left {
 	margin-top: 32px;
@@ -14,5 +27,5 @@ footer {
 	font-size: 20px;
 }
 #footer_right {
-	margin-left: 25%;
+	margin_left: 25%;
 }
