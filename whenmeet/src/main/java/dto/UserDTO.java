@@ -1,7 +1,7 @@
 package dto;
 
 public class UserDTO {
-	String user_id, pw, name, address, phone, email, profile_url;
+	private String user_id, pw, name, address, phone, email, profile_url;
 
 	public String getUser_id() {
 		return user_id;
