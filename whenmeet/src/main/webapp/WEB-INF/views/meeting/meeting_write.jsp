@@ -14,6 +14,15 @@
 	<script>
 		$(document).ready(function() {
 			// password event
+			$("#contents_password").on("keyup", function() {
+				let text_len = $(this).val().length;
+	            let text_max = 20;
+	            if (20 - text_len <= 0) {
+	            	alert(text_max + "자 까지 입력할 수 있습니다.");
+	                $(this).val("");
+	            }
+			});
+			
 			$("#hidden_radio input").change(function() {
 				if ($(this).val() == "공개") {
 					$("#contents_password").val("");
@@ -21,16 +30,42 @@
 				$("#write_form_password").slideToggle(400);
 			});
 			
+			// title event
+			$("#title").on("keyup", function() {
+				let text_len = $(this).val().length;
+	            let text_max = 100;
+	            if (100 - text_len <= 0) {
+	            	alert(text_max + "자 까지 입력할 수 있습니다.");
+	                $(this).val($(this).val().slice(0, 90));
+	            }
+			});
+			
 			// editor
-			ClassicEditor.create(document.querySelector( '#editor' ));
+			let editor;
+			ClassicEditor
+				.create(document.querySelector( '#editor' ))
+				.then(newEditor => {
+					editor = newEditor;
+				})
+				.catch(error => {
+					console.error(error);
+				});
 			
 			// submit event
 			let title = $("#title");
 			let wSubmit = $("#write_form_write_btn");
  			wSubmit.on("click", function() {
+ 				let conLen = editor.getData().length;
+ 				
  				if (title.val() == "" || title.val() == "제목을 입력하세요.") {
 					alert("제목을 입력하세요.");
 				}
+ 				else if (conLen == 0) {
+ 					alert("내용을 입력하세요.");
+ 				}
+ 				else if (conLen > 4000) {
+ 					alert("4000자 까지 입력할 수 있습니다.");
+ 				}
 				else {
 					$("#write_form").submit();
 				}

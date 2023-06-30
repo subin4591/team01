@@ -54,7 +54,7 @@
 				}
 				
 				$.ajax({
-					url: "/meeting/meetingMySort",
+					url: "/meeting/meetingMyAppSort",
 					data: {category: category, sort: sort, user_id: user_id},
 					type: "post",
 					dataType: "json",
@@ -97,7 +97,7 @@
 				}
 				
 				$.ajax({
-					url: "/meeting/meetingMyPage",
+					url: "/meeting/meetingMyAppPage",
 					data: {category: category, sort: sort, page: page, user_id: user_id},
 					type: "post",
 					dataType: "json",
@@ -132,17 +132,18 @@
 	<%@ include file="../header.jsp" %>
 	
 	<div id="my_title">
-		<h1>${ user_dto.name }님의 모임모집</h1>	
+		<h1>${ user_dto.name }님의 모임신청</h1>	
 	</div>
 	
 	<!-- category -->
 	<div id="category_list">
 		<ul id="category_ul">
-			<li class="category_li" data-target="all"><a class="category_a" href="/meeting/my">전체</a></li>
-			<li class="category_li" data-target="exercise"><a class="category_a" href="/meeting/my?category=exercise">운동</a></li>
-			<li class="category_li" data-target="hobby"><a class="category_a" href="/meeting/my?category=hobby">취미</a></li>
-			<li class="category_li" data-target="study"><a class="category_a" href="/meeting/my?category=study">공부</a></li>
-			<li class="category_li" data-target="etc"><a class="category_a" href="/meeting/my?category=etc">기타</a></li>
+			<li class="category_li" data-target="all"><a class="category_a" href="/meeting/myapp">전체</a></li>
+			<li class="category_li" data-target="exercise"><a class="category_a" href="/meeting/myapp?category=exercise">운동</a></li>
+			<li class="category_li" data-target="hobby"><a class="category_a" href="/meeting/myapp?category=hobby">취미</a></li>
+			<li class="category_li" data-target="study"><a class="category_a" href="/meeting/myapp?category=study">공부</a></li>
+			<li class="category_li" data-target="etc"><a class="category_a" href="/meeting/myapp?category=etc">기타</a></li>
+			<li class="category_li" data-target="result"><a class="category_a" href="/meeting/myapp/result">결과</a></li>
 		</ul>
 	</div>
 	

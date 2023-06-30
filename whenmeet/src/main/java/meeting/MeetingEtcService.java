@@ -1,5 +1,6 @@
 package meeting;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 import dto.ApplicantDTO;
 import dto.MeetingDTO;
 import dto.MeetingPagingDTO;
-import dto.UserDTO;
 
 @Service("meetingetcservice")
 public class MeetingEtcService {
@@ -63,6 +63,15 @@ public class MeetingEtcService {
 		}
 		else if(sort.equals("hits")) {	// 조회순
 			sortResult = "hits";
+		}
+		else if(sort.equals("yes")) {
+			sortResult = "승인";
+		}
+		else if(sort.equals("no")) {
+			sortResult = "거절";
+		}
+		else if(sort.equals("yet")) {
+			sortResult = "대기";
 		}
 		
 		return sortResult;
@@ -173,6 +182,51 @@ public class MeetingEtcService {
 		return total_cnt;
 	}
 	
+	// 유저 모임모집 신청 댓글 목록 메소드
+	public List<MeetingDTO> getMeetingList(String category, String sort, int page, ArrayList<Integer> seq_list) {
+		// 게시글 목록 생성
+		MeetingPagingDTO page_dto = new MeetingPagingDTO();
+		page_dto.setSeq_list(seq_list);
+		
+		// 글목록 정렬
+		page_dto.setSort_type(convertSort(sort));
+		
+		// 페이징 작업
+		int div_num = 10;	// 한 페이지당 글 개수
+		page_dto.calcNum(page, div_num);
+		
+		// 글 목록 생성
+		List<MeetingDTO> meeting_list;	// 글 목록
+		
+		if (category.equals("all")) {
+			meeting_list = service.userAppMeetingListAll(page_dto);
+		}
+		else {
+			page_dto.setCategory(convertCategory(category));
+			meeting_list = service.userAppMeetingListCategory(page_dto);
+		}
+		
+		return meeting_list;
+	}
+	
+	// 유저 모임모집 신청 댓글 개수 메소드
+	public int getMeetingCount(String category, ArrayList<Integer> seq_list) {
+		int total_cnt = 0;	// 전체 글 개수
+
+		if (category.equals("all")) {
+			total_cnt = seq_list.size();
+		}
+		else {
+			MeetingPagingDTO page_dto = new MeetingPagingDTO();
+			page_dto.setCategory(convertCategory(category));
+			page_dto.setSeq_list(seq_list);
+			
+			total_cnt = service.userAppMeetingCountCategory(page_dto);
+		}
+		
+		return total_cnt;
+	}
+	
 	// 신청 댓글 목록 메소드
 	public List<ApplicantDTO> getApplicantList(int seq, int page) {
 		// 신청 댓글 목록 페이징 작업
@@ -192,6 +246,15 @@ public class MeetingEtcService {
 		page_dto.setUser_id(user_id);
 		
 		return service.applicantOneUser(page_dto);
+	}
+	
+	// 모집글 신청자수 업데이트
+	public void setApplicantCnt(int seq, int num) {
+		HashMap<String, Integer> hash = new HashMap<>();
+		hash.put("seq", seq);
+		hash.put("num", num);
+		
+		service.updateMeetingAppNum(hash);
 	}
 		
 }

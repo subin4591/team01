@@ -33,7 +33,6 @@
 		$("#study_contents").text(banner_text_list[3]);
 		$("#etc_contents").text(banner_text_list[4]);
 		
-		
 		// banner size
 		let banner = $("#banner").find("ul");
 		let bannerWidth = banner.children().outerWidth();
@@ -61,7 +60,7 @@
 		let rollingId = setInterval(rollingRight, 10000);
 	});
 </script>
-
+	
 <div id="banner_background">
 	<div id="banner">
 		<ul>

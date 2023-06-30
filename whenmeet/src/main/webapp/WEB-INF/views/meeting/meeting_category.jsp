@@ -27,23 +27,17 @@
 	
 	<link href="/css/meeting/meeting.css" rel=stylesheet>
 	<link href="/css/meeting/meeting_category.css" rel=stylesheet>
+	<link href="/css/meeting/meeting_banner.css" rel=stylesheet>
 	<script src="/js/jquery-3.6.4.min.js"></script>
+	<script src="/js/meeting.js"></script>
 	<script>
 		$(document).ready(function() {
-			/// Function
-			function tryLogin() {
-				alert("로그인이 필요합니다.");
-			};
-			
 			/// category active event
-			let category_li = $(".category_li[data-target='${ category }']");
-			category_li.addClass("category_active");
-			category_li.find("a").addClass("category_active");
+			categoryActive("${ category }");
 			
-			/// page active event
-			$(".sort_a[data-target='${ sort }']").addClass("page_active");
-			$(".page_a:contains('${ page }')").addClass("page_active");
-			
+			/// 기본 page active event
+			$("#page_nums").html(makePage(${ total_cnt }, ${ div_num }));
+			pageActive("time", 1);
 			
 			/// contents btns event
 			$("#mycon_btn").on("click", function() {
@@ -54,7 +48,14 @@
 					window.location.href = "/meeting/my";
 				}
 			});
-			
+			$("#myapp_btn").on("click", function() {
+				if (${ session_id == null }) {
+					tryLogin();
+				}
+				else {
+					window.location.href = "/meeting/myapp";
+				}
+			});
 			$("#write_btn").on("click", function() {
 				if (${ session_id == null }) {
 					tryLogin();
@@ -78,56 +79,29 @@
 				}
 				
 				$.ajax({
-					url: "/meetingSort",
+					url: "/meeting/meetingSort",
 					data: {category: category, sort: sort},
 					type: "post",
 					dataType: "json",
 					success: function(data) {
 						// page active event
-						$(".sort_a, .page_a").removeClass("page_active");
-						$(".sort_a[data-target='" + sort + "']").addClass("page_active");
+						pageActive(sort, 1);
 						
 						// 게시글 목록
 						let ct = $("#contents_table");
-						ct.html("<tr>"
-									+ "<th>번호</th>"
-									+ "<th colspan='2'>제목</th>"
-									+ "<th>작성자</th>"
-									+ "<th>작성일</th>"
-									+ "<th>신청자수</th>"
-									+ "<th>조회</th>"
-								+ "</tr>");
+						ct.html(setConTableTh());
 						
-						for (let c = 0; c < data.meeting_list.length; c++) {
-							ct.append("<tr>"
-										+ "<td>" + data.meeting_list[c].seq + "</td>"
-										+ "<td>" + data.meeting_list[c].category + "</td>"
-										+ "<td><a href='/meeting/detailed?seq=" + data.meeting_list[c].seq + "'>" 
-												+ data.meeting_list[c].title 
-												+ "</a></td>"
-										+ "<td>" + data.meeting_list[c].writer + "</td>"
-										+ "<td>" + data.meeting_list[c].writing_time + "</td>"
-										+ "<td>" + data.meeting_list[c].applicant_cnt + "</td>"
-										+ "<td>" + data.meeting_list[c].hits + "</td>"
-									+ "</tr>");
-						}
-						
-						// 페이징
-						let totalCnt = data.total_cnt;
-						let divNum = data.div_num;
-						let totalPage = totalCnt / divNum;
-						if (totalCnt % divNum != 0) {
-							totalPage++;
-						}
-						
-						$("#page_nums").html("");
-						for (let p = 1; p <= totalPage; p++) {
-							if (p == 1) {
-								$("#page_nums").append("&nbsp;<a class='page_a page_active' href='' data-target='" + p + "'>" + p + "</a>&nbsp;");
-							}
-							else {								
-								$("#page_nums").append("&nbsp;<a class='page_a' href='' data-target='" + p + "'>" + p + "</a>&nbsp;");
-							}
+						for (let c = 0; c < data.length; c++) {
+							let mc = new MeetingCon(
+										data[c].seq,
+										data[c].category,
+										data[c].title,
+										data[c].writer,
+										data[c].writing_time,
+										data[c].applicant_cnt,
+										data[c].hits
+									);
+							ct.append(mc.printTd());
 						}
 					}
 				});
@@ -147,38 +121,29 @@
 				}
 				
 				$.ajax({
-					url: "/meetingPage",
+					url: "/meeting/meetingPage",
 					data: {category: category, sort: sort, page: page},
 					type: "post",
 					dataType: "json",
 					success: function(data) {
 						// page active event
-						$(".page_a").removeClass("page_active");
-						$(".page_a[data-target='" + page + "']").addClass("page_active");
+						pageActive(sort, page);
 						
 						// 게시글 목록
 						let ct = $("#contents_table");
-						ct.html("<tr>"
-									+ "<th>번호</th>"
-									+ "<th colspan='2'>제목</th>"
-									+ "<th>작성자</th>"
-									+ "<th>작성일</th>"
-									+ "<th>신청자수</th>"
-									+ "<th>조회</th>"
-								+ "</tr>");
+						ct.html(setConTableTh());
 						
 						for (let c = 0; c < data.length; c++) {
-							ct.append("<tr>"
-										+ "<td>" + data[c].seq + "</td>"
-										+ "<td>" + data[c].category + "</td>"
-										+ "<td><a href='/meeting/detailed?seq=" + data[c].seq + "'>" 
-												+ data[c].title 
-												+ "</a></td>"
-										+ "<td>" + data[c].writer + "</td>"
-										+ "<td>" + data[c].writing_time + "</td>"
-										+ "<td>" + data[c].applicant_cnt + "</td>"
-										+ "<td>" + data[c].hits + "</td>"
-									+ "</tr>");
+							let mc = new MeetingCon(
+										data[c].seq,
+										data[c].category,
+										data[c].title,
+										data[c].writer,
+										data[c].writing_time,
+										data[c].applicant_cnt,
+										data[c].hits
+									);
+							ct.append(mc.printTd());
 						}
 					}
 				});
@@ -237,21 +202,12 @@
 			</c:forEach>
 			
 		</table>
-		<div id="page_nums">
-		<%	
-			int totalCnt = (Integer)request.getAttribute("total_cnt");
-			int divNum = (Integer)request.getAttribute("div_num");
-			int totalPage = totalCnt / divNum;
-			
-			if (totalCnt % divNum != 0)
-        		totalPage++;
-		%>
-			<c:forEach begin="1" end="<%= totalPage %>" var="p">
-				&nbsp;<a class="page_a" href="" data-target="${ p }">${ p }</a>&nbsp;
-			</c:forEach>
-		</div>
+		<div id="page_nums"></div>
 		<div id="contents_btns">
-			<input id="mycon_btn" type="button" value="내글보기">
+			<div id="my_contents_btns">
+				<input id="mycon_btn" type="button" value="내 모집">
+				<input id="myapp_btn" type="button" value="내 신청">
+			</div>
 			<input id="write_btn" type="button" value="글쓰기">
 		</div>
 	</div>

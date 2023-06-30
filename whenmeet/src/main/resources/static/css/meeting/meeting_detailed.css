@@ -103,7 +103,7 @@
 	padding: 30px;
 	border: 1px solid #DB9F9F;
 }
-#applicant_form {
+#applicant_form, #my_app_form {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -111,14 +111,14 @@
 	padding: 20px;
 	border: 1px solid #F25287;
 }
-#app_cation {
+#app_cation, #my_app_caption {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	font-size: 18px;
 	margin-bottom: 10px;
 }
-#app_user_name {
+#app_user_name, #my_app_user_name {
 	font-size: 18px;
 	font-weight: bold;
 	height: 20px;
@@ -128,13 +128,13 @@
 	outline: none;
 	margin-left: 10px;
 }
-#app_contents {
+#app_contents, #my_app_contents {
 	font-size: 18px;
     background-color: #F9F3F3;
     border: none;
     outline: none;
 }
-#app_bottom {
+#app_bottom, #my_app_bottom {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
