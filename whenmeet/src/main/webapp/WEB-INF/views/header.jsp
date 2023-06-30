@@ -13,7 +13,7 @@
 		});
 		
 		// input event
-		let sInput = $("#search_input")
+		let sInput = $("#search_input");
 		
 		// submit event
 		let sSubmit = $("#search_submit_btn");
@@ -34,7 +34,7 @@
 		<a href=""><img id="main_logo" src="/img/logo.svg" alt="main_logo"></a>
 		<img id="search_btn" src="/img/search.svg" alt="search_btn">
 		<c:choose>
-			<c:when test="${ param.session_id != null }">
+			<c:when test="${ session_id != null }">
 				<a href=""><img id="user_profile" src="/img/user_logo.png" alt="user_profile"></a>
 				<button class="login_btn" onclick="location.href=''">LOGOUT</button>
 			</c:when>
