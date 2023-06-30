@@ -452,6 +452,6 @@ String userImgErr = "img/user_logo.png";
 	<div>
 		<%@ include file="../footer.jsp" %>
 	</div>
-
+</div>
 </body>
 </html>
