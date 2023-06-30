@@ -13,25 +13,14 @@
 		});
 		
 		// input event
-		let sInput = $("#search_input")
-		sInput.on({
-			focusin: function() {
-				if (sInput.val() == "검색어를 입력하세요.") {
-					sInput.val("");
-				}
-			},
-			focusout: function() {
-				if (sInput.val() == "") {
-					sInput.val("검색어를 입력하세요.");
-				}
-			}
-		});
+
+		let sInput = $("#search_input");
 		
 		// submit event
 		let sSubmit = $("#search_submit_btn");
 		sSubmit.on("click", function(event) {
 			event.preventDefault();
-			if (sInput.val() == "" || sInput.val() == "검색어를 입력하세요.") {
+			if (sInput.val().length == 0 || sInput.val() == "검색어를 입력하세요.") {
 				alert("검색어를 입력하세요.")
 			}
 			else {
@@ -46,7 +35,7 @@
 		<a href=""><img id="main_logo" src="/img/logo.svg" alt="main_logo"></a>
 		<img id="search_btn" src="/img/search.svg" alt="search_btn">
 		<c:choose>
-			<c:when test="${ param.session_id != null }">
+			<c:when test="${ session_id != null }">
 				<a href=""><img id="user_profile" src="/img/user_logo.png" alt="user_profile"></a>
 				<button class="login_btn" onclick="location.href=''">LOGOUT</button>
 			</c:when>
@@ -57,7 +46,7 @@
 	</div>
 	<div id="pop_search">
 		<form id="search_form" action="">
-			<input type="text" id="search_input" name="searchInput" value="검색어를 입력하세요.">
+			<input type="text" id="search_input" name="searchInput" placeholder="검색어를 입력하세요.">
 			<img id="search_submit_btn" src="/img/search.svg" alt="search_submit_btn">
 		</form>
 	</div>

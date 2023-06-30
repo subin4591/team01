@@ -1,3 +1,4 @@
+
 /* header */
 body {
 	margin: 0;
@@ -7,17 +8,16 @@ header {
 	width: 100%;
 	border-bottom: 3px solid #F25287;
 }
-
 /* main_header */
 #main_header {
 	height: 70px;
 }
 #user_profile {
 	position: absolute;
-	top: 12px;
+	top: 10px;
 	left: 20px;
-	width: 40px;
-	height: 40px;
+	width: 45px;
+	height: 45px;
 	border: 3px solid #F25287;
 	border-radius: 50%;
 }
