@@ -1,0 +1,67 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #fff; /* 하얀색 배경색 */
+}
+
+.container {
+    width: 400px; /* 프레임의 너비 조정 */
+    background-color: #fff; /* 하얀색 배경색 */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    margin: 20px auto; /* 본문을 수직으로 가운데로 정렬 */
+    text-align: center;
+}
+
+header {
+    margin-bottom: 20px; /* 헤더와 본문 사이 간격 추가 */
+}
+
+h2 {
+    color: #333;
+}
+
+form div {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+label {
+    display: inline-block;
+    width: 100px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="tel"],
+input[type="email"] {
+    flex: 1;
+    padding: 5px;
+}
+
+button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #da6a82;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+input[type="submit"] {
+    margin : 20px auto;
+    padding: 10px 20px;
+    background-color: #da6a82;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover,
+button:hover {
+    background-color: #da6a82;
+}
+
