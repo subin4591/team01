@@ -16,6 +16,7 @@ import dto.ApplicantDTO;
 import dto.MeetingDTO;
 import dto.MeetingPagingDTO;
 import dto.UserDTO;
+import dto.WriterModeDTO;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -43,16 +44,12 @@ public class MeetingController {
 		mv.addObject("etc_banner", bannerMap.get("etc"));
 		
 		// 게시글 목록 생성
-		String sort = "time";	// 기본 정렬 : 최신순
-		int page = 1;	// 기본 페이지 : 1 page
-		List<MeetingDTO> meeting_list = etcService.getMeetingList(category, sort, page);
+		List<MeetingDTO> meeting_list = etcService.getMeetingList(category, "time", 1);
 		
 		// 게시글 개수
-		int total_cnt = etcService.getMeetingCount(category);
+		int total_cnt = service.meetingCount(etcService.convertCategory(category));
 		
 		mv.addObject("category", category);
-		mv.addObject("sort", sort);
-		mv.addObject("page", page);
 		mv.addObject("total_cnt", total_cnt);
 		mv.addObject("div_num", 10);
 		mv.addObject("meeting_list", meeting_list);
@@ -107,10 +104,8 @@ public class MeetingController {
 		UserDTO user_dto = service.userInfo(session_id);
 		
 		// 신청 댓글 목록 페이징 작업
-		String sort = "time";
-		int page = 1;
 		int total_cnt = service.applicantCount(seq);
-		List<ApplicantDTO> app_list = etcService.getApplicantList(seq, page);
+		List<ApplicantDTO> app_list = etcService.getApplicantList(seq, 1);
 		
 		// 신청 댓글 중복 확인
 		MeetingPagingDTO page_dto = new MeetingPagingDTO();
@@ -119,14 +114,18 @@ public class MeetingController {
 		
 		int user_app_cnt = service.applicantUserCount(page_dto);
 		
+		// writer mode 신청 댓글 목록 페이징 작업
+		int total_cnt_wt = etcService.getApplicantCount(seq, "yet");
+		List<ApplicantDTO> app_list_wt = etcService.getApplicantList(seq, 1, "yet");
+		
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("dto", dto);
 		mv.addObject("user_dto", user_dto);
-		mv.addObject("sort", sort);
-		mv.addObject("page", page);
 		mv.addObject("total_cnt", total_cnt);
+		mv.addObject("total_cnt_wt", total_cnt_wt);
 		mv.addObject("div_num", 10);
 		mv.addObject("app_list", app_list);
+		mv.addObject("app_list_wt", app_list_wt);
 		mv.addObject("user_app_cnt", user_app_cnt);
 		if (dto == null) {
 			mv.setViewName("meeting/meeting_not_found");
@@ -231,6 +230,44 @@ public class MeetingController {
 		return app;
 	}
 	
+	@RequestMapping("/meeting/writerMode")
+	@ResponseBody
+	public HashMap<String, Object> writerMode(WriterModeDTO dto) {
+		int seq = dto.getSeq();
+		String sort = "yet";
+		
+		// 승인 혹은 거절
+		service.updateApproval(dto);
+		
+		// 신청 목록
+		List<ApplicantDTO> app_list = etcService.getApplicantList(seq, 1, sort);
+		
+		// 결과
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("total_cnt", etcService.getApplicantCount(seq, sort));
+		map.put("div_num", 10);
+		map.put("app_list", app_list);
+		
+		return map;
+	}
+	
+	@RequestMapping("/meeting/writerModeSort")
+	@ResponseBody
+	public HashMap<String, Object> writerModeSort(int seq, String sort) {
+		// 신청 목록
+		List<ApplicantDTO> app_list = etcService.getApplicantList(seq, 1, sort);
+		
+		// 총 개수
+		int total_cnt = etcService.getApplicantCount(seq, sort);
+		
+		// 결과
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("total_cnt", total_cnt);
+		map.put("div_num", 10);
+		map.put("app_list", app_list);
+		return map;
+	}
+	
 	@RequestMapping("/meeting/applicantPage")
 	@ResponseBody
 	public List<ApplicantDTO> applicantPage(int seq, int page) {
@@ -279,16 +316,18 @@ public class MeetingController {
 		mv.addObject("user_dto", user_dto);
 		
 		// 게시글 목록 생성
-		String sort = "time";
-		int page = 1;
-		List<MeetingDTO> meeting_list = etcService.getMeetingList(category, sort, page, user_id);
-		
-		// 게시글 개수
-		int total_cnt = etcService.getMeetingCount(category, user_id);
+		List<MeetingDTO> meeting_list;
+		int total_cnt = 0;
+		if (category.equals("result")) {
+			meeting_list = etcService.getMeetingList(category, "notfinish_open", 1, user_id);
+			total_cnt = etcService.getMeetingCount(category, "notfinish_open", user_id);
+		}
+		else {
+			meeting_list = etcService.getMeetingList(category, "time", 1, user_id);
+			total_cnt = etcService.getMeetingCount(category, "time", user_id);
+		}
 		
 		mv.addObject("category", category);
-		mv.addObject("sort", sort);
-		mv.addObject("page", page);
 		mv.addObject("total_cnt", total_cnt);
 		mv.addObject("div_num", 10);
 		mv.addObject("meeting_list", meeting_list);
@@ -299,8 +338,17 @@ public class MeetingController {
 	
 	@RequestMapping("/meeting/meetingMySort")
 	@ResponseBody
-	public List<MeetingDTO> meetingMySort(String category, String sort, String user_id) {
-		return etcService.getMeetingList(category, sort, 1, user_id);
+	public HashMap<String, Object> meetingMySort(String category, String sort, String user_id) {
+		// 게시글 목록
+		List<MeetingDTO> meeting_list = etcService.getMeetingList(category, sort, 1, user_id);
+		int total_cnt = etcService.getMeetingCount(category, sort, user_id);
+		
+		// 결과
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("meeting_list", meeting_list);
+		map.put("total_cnt", total_cnt);
+		map.put("div_num", 10);
+		return map;
 	}
 	
 	@RequestMapping("/meeting/meetingMyPage")
@@ -320,18 +368,32 @@ public class MeetingController {
 		mv.addObject("user_dto", user_dto);
 		
 		// 게시글 목록 생성
-		ArrayList<Integer> seq_list = new ArrayList<>(service.userAppSeqList(user_id));
+		ArrayList<Integer> seq_list;
+		List<MeetingDTO> meeting_list;
+		int total_cnt = 0;
 		
-		String sort = "time";
-		int page = 1;
-		List<MeetingDTO> meeting_list = etcService.getMeetingList(category, sort, page, seq_list);
-		
-		// 게시글 개수
-		int total_cnt = etcService.getMeetingCount(category, seq_list);
+		if (category.equals("result")) {
+			MeetingPagingDTO page_dto = new MeetingPagingDTO();
+			page_dto.setUser_id(user_id);
+			page_dto.setSort_type("승인");
+			
+			seq_list = new ArrayList<>(service.userAppSeqListResult(page_dto));
+			
+			if (seq_list.size() != 0) {
+				meeting_list = etcService.getMeetingList("all", "time", 1, seq_list);
+			}
+			else {
+				meeting_list = null;
+			}
+			total_cnt = seq_list.size();
+		}
+		else {
+			seq_list = new ArrayList<>(service.userAppSeqList(user_id));
+			meeting_list = etcService.getMeetingList(category, "time", 1, seq_list);
+			total_cnt = etcService.getMeetingCount(category, seq_list);
+		}
 		
 		mv.addObject("category", category);
-		mv.addObject("sort", sort);
-		mv.addObject("page", page);
 		mv.addObject("total_cnt", total_cnt);
 		mv.addObject("div_num", 10);
 		mv.addObject("meeting_list", meeting_list);
@@ -353,52 +415,34 @@ public class MeetingController {
 	@ResponseBody
 	public List<MeetingDTO> meetingMyAppPage(String category, String sort, int page, String user_id) {
 		// 게시글 목록 생성
-		ArrayList<Integer> seq_list = new ArrayList<>(service.userAppSeqList(user_id));
-				
-		return etcService.getMeetingList(category, sort, 1, seq_list);
-	}
-	
-	@RequestMapping("/meeting/myapp/result")
-	public ModelAndView meetingMyAppResult(HttpSession session) {
-		// ModelAndView 생성
-		ModelAndView mv = new ModelAndView();
-		
-		// user_dto 생성
-		String user_id = (String)session.getAttribute("session_id");
-		UserDTO user_dto = service.userInfo(user_id);
-		mv.addObject("user_dto", user_dto);
-		
-		// 게시글 목록 생성
-		MeetingPagingDTO page_dto = new MeetingPagingDTO();
-		page_dto.setUser_id(user_id);
-		page_dto.setSort_type("승인");
-		
-		ArrayList<Integer> seq_list = new ArrayList<>(service.userAppSeqListResult(page_dto));
+		ArrayList<Integer> seq_list;
 		List<MeetingDTO> meeting_list;
 		
-		if (seq_list.size() != 0) {
-			meeting_list = etcService.getMeetingList("all", "time", 1, seq_list);
+		if (category.equals("result")) {
+			MeetingPagingDTO page_dto = new MeetingPagingDTO();
+			page_dto.setUser_id(user_id);
+			page_dto.setSort_type(etcService.convertSort(sort));
+			
+			seq_list = new ArrayList<>(service.userAppSeqListResult(page_dto));
+			
+			if (seq_list.size() != 0) {
+				meeting_list = etcService.getMeetingList("all", "time", page, seq_list);
+			}
+			else {
+				meeting_list = null;
+			}
 		}
 		else {
-			meeting_list = null;
+			seq_list = new ArrayList<>(service.userAppSeqList(user_id));
+			meeting_list = etcService.getMeetingList(category, sort, 1, seq_list);
 		}
 		
-		// 게시글 개수
-		int total_cnt = seq_list.size();
-		
-		mv.addObject("sort", "yes");
-		mv.addObject("page", 1);
-		mv.addObject("total_cnt", total_cnt);
-		mv.addObject("div_num", 10);
-		mv.addObject("meeting_list", meeting_list);
-		mv.setViewName("meeting/meeting_myapp_result");
-		
-		return mv;
+		return meeting_list;
 	}
 	
 	@RequestMapping("/meeting/meetingMyAppResultSort")
 	@ResponseBody
-	public HashMap<String, Object> meetingMyAppResultSort(String sort, String user_id) {
+	public HashMap<String, Object> meetingMyAppResultSort(String category, String sort, String user_id) {
 		// 게시글 목록 생성
 		MeetingPagingDTO page_dto = new MeetingPagingDTO();
 		page_dto.setUser_id(user_id);
@@ -421,26 +465,5 @@ public class MeetingController {
 		map.put("div_num", 10);
 		
 		return map;
-	}
-	
-	@RequestMapping("/meeting/meetingMyAppResultPage")
-	@ResponseBody
-	public List<MeetingDTO> meetingMyAppResultPage(String sort, int page, String user_id) {
-		// 게시글 목록 생성
-		MeetingPagingDTO page_dto = new MeetingPagingDTO();
-		page_dto.setUser_id(user_id);
-		page_dto.setSort_type(etcService.convertSort(sort));
-		
-		ArrayList<Integer> seq_list = new ArrayList<>(service.userAppSeqListResult(page_dto));
-		List<MeetingDTO> meeting_list;
-		
-		if (seq_list.size() != 0) {
-			meeting_list = etcService.getMeetingList("all", "time", page, seq_list);
-		}
-		else {
-			meeting_list = null;
-		}
-				
-		return meeting_list;
 	}
 }
