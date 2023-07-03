@@ -17,9 +17,9 @@ public class mainController {
 
 	@GetMapping("/")
 	public ModelAndView start(){
-		List<String> mygroup = service.myGroup("g");
-		List<String> mywrite= service.myWrite("g");
-		List<String> myapplication= service.myApplication("g");
+		List<String> mygroup = service.myGroup("member1");
+		List<String> mywrite= service.myWrite("member1");
+		List<String> myapplication= service.myApplication("member1");
 		List<String> ranklist= service.rankList();
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("mygroup", mygroup);
@@ -29,5 +29,8 @@ public class mainController {
 		mv.setViewName("main/main");
 		return mv;
 	}
-	
+	@GetMapping("/schedule")
+	public String schedule() {
+		return "schedule/schedule";
+	}
 }
