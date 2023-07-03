@@ -31,7 +31,7 @@
 </script>
 <header>
 	<div id="main_header">
-		<a href=""><img id="main_logo" src="/img/logo.svg" alt="main_logo"></a>
+		<a href="/"><img id="main_logo" src="/img/logo.svg" alt="main_logo"></a>
 		<img id="search_btn" src="/img/search.svg" alt="search_btn">
 		<c:choose>
 			<c:when test="${ session_id != null }">

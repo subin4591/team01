@@ -210,6 +210,9 @@ $(".submitBtn").click(function(){
 /* 간트 차트 */
   	$("#ganttCreateBtn").click(function(){
 		$("#ganttFirstEdit").show();
+		$("#ganttFirstEdit").css({
+			"display" : "flex"
+		});
 		$("#ganttCreate").hide();
 	})
   	$("#ganttFirstEditCancelBtn").click(function(){
@@ -222,44 +225,59 @@ $(".submitBtn").click(function(){
 	})	
 	$("#ganttResultEditBtn").click(function(){
 		$("#ganttFirstEdit").show();
+		$("#ganttFirstEdit").css({
+			"display" : "flex"
+		});
 		$("#ganttResult").hide();
 	})
-	
-	
 	/*구글 차트 api*/
     google.charts.load('current', {'packages':['gantt']});
     google.charts.setOnLoadCallback(drawChart);
+    
+	function daysToMilliseconds(days) {
+      return days * 24 * 60 * 60 * 1000;
+    }
+    
+    var valueName = [];
+    var valueSDate = [];
+    var valueEDate = [];
+    var valueDur = [];
+    var valuePC = [];
+    
+    valueName.push('테스트');
+    valueSDate.push(null);
+    valueEDate.push(new Date(2023, 8));
+    valueDur.push(null);
+    valuePC.push(0);
 
     function drawChart() {
 
       var data = new google.visualization.DataTable();
       data.addColumn('string', 'Task ID');
       data.addColumn('string', 'Task Name');
-      /*data.addColumn('string', 'Resource');*/
       data.addColumn('date', 'Start Date');
       data.addColumn('date', 'End Date');
       data.addColumn('number', 'Duration');
       data.addColumn('number', 'Percent Complete');
-      data.addColumn('string', 'Dependencies');
-
-      data.addRows([
-        ['0', '주제 정하기',
-         null, new Date(2023, 7, 28), null, 50, null],
-        ['1', '토의하기',
-         new Date(2023, 6, 25), new Date(2023, 8, 20), null, 10, null],
-        ['2', '개발하기',
-         new Date(2023, 8, 21), new Date(2023, 11, 20), null, 100, null],
-        ['3', '간식 먹기',
-         new Date(2023, 11, 21), new Date(2023, 12, 21), null, 100, null],
-         ]);
+      data.addColumn('string', 'Dependencies'); 
+      
+      for (var i = 0; i < valueName.length; i ++){
+		  var index = i+"";
+      	data.addRow([
+        	index, valueName.at(i), valueSDate.at(i), valueEDate.at(i),
+      		valueDur.at(i), valuePC.at(i), null
+			]);
+		}
 
 	let today = new Date();
+  	var rowHeight = 50;
+
       var options = {
-		width : 1000,
-        height: 280,
-        gantt: {
-			barHeight: 45,
-			trackHeight: 70,
+		width : 650,
+		height: data.getNumberOfRows() * rowHeight+rowHeight*3,      
+		gantt: {
+			barHeight: 40,
+			trackHeight: 50,
 			defaultStartDate: today,
 			
 			innerGridHorizLine:{
@@ -270,22 +288,31 @@ $(".submitBtn").click(function(){
 			},
 			
 			labelStyle: {
-				fontSize : 20
+				fontSize : 22
 			},
 			
 			palette: [{
 				"color" : "#FF86AE",
 				"dark" : "#F25287",
 				"light" : "#FFB4CD"
-			}]
+			}]		
+        },
+        
+        hAxis:{
+        	format: 'yy-MM-dd'
+        	}
 
-        }
       };
 
-      var chart = new google.visualization.Gantt(document.getElementById('chart_div'));
+      var chart1 = new google.visualization.Gantt(document.getElementById('chart_div1'));
+      var chart2 = new google.visualization.Gantt(document.getElementById('chart_div2'));
 
-      chart.draw(data, options);
+	
+      chart1.draw(data, options);
+      chart2.draw(data, options);
     }
+	
+	
 
 	/* 미팅 위치 */
   	locateB.on("click", function () {

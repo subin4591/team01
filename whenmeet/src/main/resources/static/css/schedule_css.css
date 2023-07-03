@@ -686,7 +686,7 @@ li {
 
 /*간트 차트*/
 
-#ganttCreate, #ganttEdit, #ganttResult{
+#ganttCreate, #ganttFirstEdit, #ganttResult{
 	width : 95%;
 	height : 90%;
 	margin : auto;
@@ -737,6 +737,7 @@ li {
 #ganttCreateBtn:click{
 	background : #DF2D68;
 }
+/*
 #ganttResult .loader{
 	position : absolute;
 	width : 95%;
@@ -771,5 +772,133 @@ li {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+ */
  
+ #leftGanttFirstEdit{
+ 	display : flex; 
+ 	align-items : center;
+ 	justify-content: center;
+ 	flex-direction : column; 
+ 	width : 40%;
+ 	height : 100%;
+ }
+ #rightGanttFirstEdit{
+ 	display : flex; 
+ 	align-items : center;
+ 	justify-content: center;
+ 	flex-direction : column; 
+ 	width : 60%;
+ 	height : 100%;
+ 	
+ }
+ #leftGanttFirstEdit input[type = "date"]{
+	text-align : center;
+	margin : 2px;
+	font-family: "Pretendard-Regular";
+	font-size : 20px;
+	font-weight : bold;
+	line-height : 40px;
+	border : 2px solid #f25287;
+	position : relative;
+	background : url(/img/캘린더_버튼.svg) no-repeat;
+	background-size: 30px 30px;
+	background-position : 315px 5px;
+	background-color : #f9f3f3;
+	height : 40px;
+	width : 350px;
+ }
+ #leftGanttFirstEdit input[type = "date"]::-webkit-calendar-picker-indicator{
+	position: absolute;
+  	width: 100%;
+  	height: 100%;
+  	background: transparent;
+  	color: transparent;
+  	cursor : pointer;
+}
+#leftGanttFirstEdit #GFEDate{
+	height : 17%;
+}
+#leftGanttFirstEdit #GFEDoIt{
+	height : 83%;
+}
+#DoItContainer{
+	position : relative;
+	display : flex;
+	flex-direction : column; 
+	background : #f9f3f3;
+	overflow-y : scroll;
+	overflow-x : hidden;
+	height : 70%;
+	
+}
+.DoItList{
+	width : 100%;
+	height : 70px;
+	font-size : 24px;
+	font-weight : bold;
+	line-height : 70px;
+	background : white;
+	border : 5px solid #f9f3f3;
+	
+}
+.DoItList #DoItListEditBtn{
+	position : absolute;
+	cursor : pointer;
+	width : 30px;
+	height: 30px;
+	right : 5px;
+	top : 24px;
+}
+#rightGanttFirstEdit #chart_div1_container{
+	margin-top : 20px;
+	height : 80%;
+	width : 95%;
+	overflow : scroll;
+	border : 3px solid #f25287;
+}
+#DoItContainer::-webkit-scrollbar, #chart_div1_container::-webkit-scrollbar{
+	width : 15px;
+}
+#DoItContainer::-webkit-scrollbar, #chart_div1_container::-webkit-scrollbar-thumb {
+    background-color: #F25287;
+}
+#DoItContainer::-webkit-scrollbar, #chart_div1_container::-webkit-scrollbar-track {
+    background-color: #D9D9D9;
+}
+#rightGanttFirstEdit #chart_div1{
+	position : relative;
+	top : 10%;
+	left : 5%;
+	height : 100%;
+	width :100%;
+	margin : auto;
+}
+#GFESubmitBtn{
+	display : flex; 
+	margin : auto; 
+	width : 80%; 
+	flex-direction : row;
+	justify-content : flex-end;
+}
 
+#GFESubmitBtn button{
+	margin : 10px;
+  	width: 130px;
+ 	height: 50px;
+
+ 	display : block;
+	
+  	border-radius: 30px;
+  	border: 3px solid #f25287;
+  	background: #f25287;
+  	color: white;
+
+  	cursor: pointer;
+  	font-size: 20px;
+  	font-weight: 700;
+}
+#GFESubmitBtn button:hover{
+	background : white;
+	color : black;
+	transition: 0.5s;
+}
