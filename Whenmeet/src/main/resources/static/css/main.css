@@ -43,7 +43,6 @@ body{
 #schedule{
 	background:white;
 	width:40%;
-	padding-left: 40px;
 	border-radius:5px;
 }
 #rank{
@@ -59,10 +58,14 @@ body{
 }
 #schedule .text{
 	text-align:center;
+	border-bottom: 2px solid #F25287;
+	padding-left: 30px;
+    padding-bottom: 15px;
 }
-#my_page .text{
+#my_page .text,#rank .text{
 	margin:0;
 	padding:15px 0;
+	border-bottom: 2px solid #F25287;
 }
 .group_list,.writing_list,.rank_list,.apply_list{
 	border-bottom:2px solid #e3e5e8;
@@ -84,8 +87,32 @@ footer{
 	background:white;
 	height:199px;
 }
-.more{
+.more a{
 	float:right;
 	font-size:20px;
 	padding:10px 5px 0 0;
+	text-decoration:none;
+}
+h1{
+	color: #F25287;
+}
+a{
+	text-decoration:none;
+	color:black;
+}
+#calendar {
+    max-width: 650px;
+    margin-left: 55px;
+  }
+
+.rank_contents p{
+	padding:10px;
+	margin:0;
+	height:43px;
+	font-size:16px;
+	overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }

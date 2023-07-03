@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import dto.MainDTO;
+
 @Controller
 public class mainController {
 	
@@ -16,12 +18,13 @@ public class mainController {
 	MainService service;
 
 	@GetMapping("/")
-	public ModelAndView start(){
-		List<String> mygroup = service.myGroup("g");
-		List<String> mywrite= service.myWrite("g");
-		List<String> myapplication= service.myApplication("g");
-		List<String> ranklist= service.rankList();
+	public ModelAndView start(String id){
+		List<String> mygroup = service.myGroup(id);
+		List<MainDTO> mywrite= service.myWrite(id);
+		List<MainDTO> myapplication= service.myApplication(id);
+		List<MainDTO> ranklist= service.rankList();
 		ModelAndView mv = new ModelAndView();
+		mv.addObject("id",id);
 		mv.addObject("mygroup", mygroup);
 		mv.addObject("mywrite", mywrite);
 		mv.addObject("myapplication", myapplication);

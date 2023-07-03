@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="main.MainDAO">
+<select id="myApplication" resultType="maindto" parameterType = "String" >
+	select title,seq from meeting_table where seq in 
+	(select seq from applicant_table where user_id =#{user_id});
+</select>
+<select id="myWrite" resultType="maindto" parameterType = "String" >
+	select title,seq from meeting_table where user_id = #{user_id};
+</select>
+<select id="myGroup" resultType="String" parameterType = "String" >
+	select group_name from group_table where group_id in	
+	(select group_id from group_user_table where user_id = #{user_id});
+</select>
+<select id="rankList" resultType="maindto">
+	select title,seq,contents from meeting_table order by hits desc limit 0,5;
+</select>
+</mapper>
+
+
+
+
+
+
