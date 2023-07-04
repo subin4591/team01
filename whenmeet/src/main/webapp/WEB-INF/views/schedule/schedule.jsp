@@ -6,6 +6,7 @@
 <head>
   <meta charset="UTF-8">
   <title>일정|언제만나</title>
+  <link rel="icon" href="/img/icon.svg">
   <link rel = "stylesheet" href = "css/schedule_css.css">
   <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -422,10 +423,63 @@ String userImgErr = "img/user_logo.png";
 				  <button id = "ganttCreateBtn"><h1><img src = "img/plusIcon.svg">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;새로운 차트</h1></button>
 			  </div>	
 
-			  <div id = "ganttFirstEdit" style = "display : None">
-			  	<div id="chart_div"></div>
-				<button id = "ganttFirstEditCancelBtn"><h1>취소</h1></button>
-				<button id = "ganttFirstEditSaveBtn"><h1>저장</h1></button>				
+			  <div id = "ganttFirstEdit" style = "display : None;">
+			  	<div id = "leftGanttFirstEdit">
+			  		<div id = "GFEDate">
+			  			<h2 style = "display : inline">시작일 : <input type = "date" name = "startDate"/><br>
+			  			종료일 : <input type = "date" name = "EndDate"/></h2>
+			  		</div>
+			  		<div id = "GFEDoIt" style = "background : white; width : 80%; height : 70%">
+			  			<h2 style = "margin : 0px; text-align : center">할 일 목록</h2>
+			  			<hr style = "border : 3px solid #f25287">
+			  			<div id = "DoItContainer">
+			  				<ul style = "list-style:none; margin : 0px; padding : 0">
+			  					<%
+			  					List<String> DoIt = new ArrayList<String>();
+			  					DoIt.add("주제 정하기");
+			  					
+			  					List<String>[] DoItDetail = new ArrayList[DoIt.size()];
+			  					for (int i =0; i < DoIt.size(); i++){
+			  						DoItDetail[i] = new ArrayList<String>();
+			  					}
+			  					DoItDetail[0].add("하위메뉴 1");
+
+			  					for (int i = 0; i < DoIt.size(); i++){
+			  					%>
+			  						<li>
+			  							<div class = "DoItList">
+			  								<input type = "checkbox" class = "DoItCheck">&nbsp;&nbsp;<%= DoIt.get(i) %>
+			  								<img src = "img/방장용_수정_버튼.svg" id ="DoItListEditBtn"/>
+			  								<ul style = "list-style:none; margin : 0px; padding : 0">
+			  									<% for (int j = 0; j < DoItDetail[i].size(); j++){ %>
+			  									<li>
+			  										<div class = "DoItList" style = "width : 85%; float : right;">
+			  											&nbsp;&nbsp;<%=DoItDetail[i].get(j) %>
+			  										</div>
+			  									</li>
+			  									<% } %>
+			  								</ul>
+			  							</div>
+			  						</li>
+			  					<%} %>
+			  				</ul>	
+			  			</div>	  		
+			  			<div>
+			  				<input type = "text" placeholder = "새 작업 추가하기" name = "newValue"/>
+			  				<button name = "newValueBtn">입력</button>
+			  			</div>
+			  		</div>
+			  	</div>
+			  	<div id = "rightGanttFirstEdit">
+			  		<div id = "chart_div1_container">
+			  		<h2 style = "text-align : center">차트 미리보기</h2>
+			  			<div id="chart_div1" ></div>
+			  		</div>
+			  		<div id = "GFESubmitBtn" >
+						<button id = "ganttFirstEditCancelBtn">취소</button>
+						<button id = "ganttFirstEditSaveBtn" type = "submit">저장</button>				
+			  		</div>
+			  	</div>
 			  </div>
 
 			  <div id = "ganttResult" style = "display:None">
@@ -435,7 +489,7 @@ String userImgErr = "img/user_logo.png";
 			    </div>
 			    -->
 				  <div id = "ganttChart">
-					  <div id="chart_div"></div>
+					  <div id="chart_div2"></div>
 				  </div>
 				  <button id = "ganttInitBtn"><h1>초기화</h1></button>
 				  <button id = "ganttResultEditBtn"><h1>수정</h1></button>
@@ -444,7 +498,33 @@ String userImgErr = "img/user_logo.png";
 	  </div>
 	
 	  <div id = "group_detail" style = "display : none;">
-		  <div class="group_info">상세</div>
+		  <div class="group_info">
+			<div class = "group_information" style = "display : flex; margin : auto; background : white; width : 95%; height : 90%">
+				<div style= " display : flex;  margin : auto; width : 90%; height : 80%">
+					<div id = "group_detail_left" >
+						<h1>감자 프로젝트 그룹</h1>
+						<h3>개설자 : 방장쓰</h3>
+						<h3></h3>
+						
+						<img src = "img/user_logo.png" style = "width : 100px; height : 100px; border-radius : 50%;">
+						<img src = "img/액자.png" style = "position : absolute; width : 150px; height : 150px; top : 400px"/>
+					</div>
+					<div id = "group_detail_right" >
+						<img src = "img/twocat.png" style = "position : absolute; width : 200px; height : 200px; bottom : 110px; right: 120px; z-index:0; opacity : 0.3;">
+						<br><br>
+						<div>
+							<h2>개설일 <span>|</span> </h2>
+							<p>2022-12-25</p>
+							<h2>종료일 <span>|</span> </h2>
+							<p>2023-12-24</p>
+						</div>
+						<br><br>
+						<h2>그룹 설명 <span>|</span> </h2>
+						<p style = "color : black">감자를 캐는 그룹입니다.</p>
+					</div>
+				</div>
+			</div>
+		</div>
 	  </div>	
   </div>	
 	<!-- footer -->
