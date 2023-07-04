@@ -1,6 +1,21 @@
 /**
  * 
  */
+//간트차트 수정화면 자식리스트 열기
+function openDoItList(element){
+	var var1 = "#DoItCheck" + element;
+	var var2 = "#DoItListChild" + element;
+	var checkbox = $(var1);
+	var childUl = $(var2);
+	
+	if($(checkbox).attr("alt") == "0"){
+		childUl.show();
+		$(checkbox).attr("alt" , "1");
+	}else{
+		childUl.hide();
+		$(checkbox).attr("alt",  "0");
+	}
+}
 //디데이 달력, 시간 표시하기
 function changeDate(){
 	var result = $("#finalDate").val();
@@ -230,6 +245,7 @@ $(".submitBtn").click(function(){
 		});
 		$("#ganttResult").hide();
 	})
+
 	/*구글 차트 api*/
     google.charts.load('current', {'packages':['gantt']});
     google.charts.setOnLoadCallback(drawChart);
