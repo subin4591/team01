@@ -10,28 +10,24 @@ import dto.ApplicantDTO;
 import dto.MeetingDTO;
 import dto.MeetingPagingDTO;
 import dto.UserDTO;
+import dto.WriterModeDTO;
 
 @Mapper
 @Repository
 public interface MeetingDAO {
 	/// Meeting select
 	// 기본 게시글 목록
-	public List<MeetingDTO> meetingListAll(MeetingPagingDTO dto);
-	public int meetingCountAll();
-	public List<MeetingDTO> meetingListCategory(MeetingPagingDTO dto);
-	public int meetingCountCategory(String category);
+	public List<MeetingDTO> meetingList(MeetingPagingDTO dto);
+	public int meetingCount(String category);
 	
 	// 유저 게시글 목록
-	public List<MeetingDTO> meetingListAllUser(MeetingPagingDTO dto);
-	public int meetingCountAllUser(String user_id);
-	public List<MeetingDTO> meetingListCategoryUser(MeetingPagingDTO dto);
-	public int meetingCountCategoryUser(MeetingPagingDTO dto);
+	public List<MeetingDTO> meetingListUser(MeetingPagingDTO dto);
+	public int meetingCountUser(MeetingPagingDTO dto);
 	
 	// 유저 신청 게시글 목록
 	public List<Integer> userAppSeqList(String user_id);
-	public List<MeetingDTO> userAppMeetingListAll(MeetingPagingDTO dto);
-	public List<MeetingDTO> userAppMeetingListCategory(MeetingPagingDTO dto);
-	public int userAppMeetingCountCategory(MeetingPagingDTO dto);
+	public List<MeetingDTO> userAppMeetingList(MeetingPagingDTO dto);
+	public int userAppMeetingCount(MeetingPagingDTO dto);
 	
 	// 유저 신청 게시글 결과
 	public List<Integer> userAppSeqListResult(MeetingPagingDTO dto);
@@ -49,6 +45,10 @@ public interface MeetingDAO {
 	
 	// 신청 댓글 중복 확인
 	public int applicantUserCount(MeetingPagingDTO dto);
+	
+	// writer mode 신청 댓글 정보
+	public List<ApplicantDTO> writerModeList(MeetingPagingDTO dto);
+	public int writerModeCount(MeetingPagingDTO dto);
 	
 	
 	/// Meeting insert
@@ -71,6 +71,9 @@ public interface MeetingDAO {
 	
 	// 댓글 수정
 	public void updateAppContents(ApplicantDTO dto);
+	
+	// 모집 신청 승인/거절
+	public void updateApproval(WriterModeDTO dto);
 	
 	
 	/// Meeting delete

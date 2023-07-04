@@ -24,7 +24,7 @@
 	font-size: 18px;
 }
 #category {
-	width: 100px;
+	width: 80px;
 	height: 30px;
 	border: 2px solid #DB9F9F;
 	border-radius: 10px;
@@ -32,9 +32,7 @@
 	color: #DB9F9F;
 	background-color: #F9F3F3;
 	font-size: 18px;
-}
-#category option:hover {
-	background-color: #F25287;
+	text-align: center;
 }
 
 /* hidden_radio */

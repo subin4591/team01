@@ -5,7 +5,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<link rel="icon" href="/img/footlogo.svg">
+	<link rel="icon" href="/img/icon.svg">
 	
 	<c:choose>
 		<c:when test="${ category == 'all' }">
@@ -37,7 +37,12 @@
 			
 			/// 기본 page active event
 			$("#page_nums").html(makePage(${ total_cnt }, ${ div_num }));
-			pageActive("time", 1);
+			if ("${ category }" == "result") {
+				pageActive("notfinish_open", 1);
+			}
+			else {
+				pageActive("time", 1);
+			}
 			
 			/// sort ajax
 			$(".sort_a").on("click", function(event) {
@@ -60,21 +65,22 @@
 					dataType: "json",
 					success: function(data) {
 						// page active event
+						$("#page_nums").html(makePage(data.total_cnt, data.div_num));
 						pageActive(sort, 1);
 						
 						// 게시글 목록
 						let ct = $("#contents_table");
 						ct.html(setConTableTh());
 						
-						for (let c = 0; c < data.length; c++) {
+						for (let c = 0; c < data.meeting_list.length; c++) {
 							let mc = new MeetingCon(
-										data[c].seq,
-										data[c].category,
-										data[c].title,
-										data[c].writer,
-										data[c].writing_time,
-										data[c].applicant_cnt,
-										data[c].hits
+										data.meeting_list[c].seq,
+										data.meeting_list[c].category,
+										data.meeting_list[c].title,
+										data.meeting_list[c].writer,
+										data.meeting_list[c].writing_time,
+										data.meeting_list[c].applicant_cnt,
+										data.meeting_list[c].hits
 									);
 							ct.append(mc.printTd());
 						}
@@ -143,6 +149,7 @@
 			<li class="category_li" data-target="hobby"><a class="category_a" href="/meeting/my?category=hobby">취미</a></li>
 			<li class="category_li" data-target="study"><a class="category_a" href="/meeting/my?category=study">공부</a></li>
 			<li class="category_li" data-target="etc"><a class="category_a" href="/meeting/my?category=etc">기타</a></li>
+			<li class="category_li" data-target="result"><a class="category_a" href="/meeting/my?category=result">결과</a></li>
 		</ul>
 	</div>
 	
@@ -151,9 +158,19 @@
 		<div id="contents_table_caption">
 			<p>총 ${ total_cnt }개</p>
 			<div id="contents_sort">
-				<a href="" class="sort_a" data-target="time">최신순</a>
-				<a href="" class="sort_a" data-target="appl">신청순</a>
-				<a href="" class="sort_a" data-target="hits">조회순</a>			
+				<c:choose>
+					<c:when test="${ category == 'result' }">
+						<a href="" class="sort_a" data-target="notfinish_open">진행:공개</a>
+						<a href="" class="sort_a" data-target="notfinish_hidden">진행:비공개</a>
+						<a href="" class="sort_a" data-target="finish_open">완료:공개</a>
+						<a href="" class="sort_a" data-target="finish_hidden">완료:비공개</a>	
+					</c:when>
+					<c:otherwise>
+						<a href="" class="sort_a" data-target="time">최신순</a>
+						<a href="" class="sort_a" data-target="appl">신청순</a>
+						<a href="" class="sort_a" data-target="hits">조회순</a>
+					</c:otherwise>
+				</c:choose>			
 			</div>		
 		</div>
 		<table id="contents_table">
