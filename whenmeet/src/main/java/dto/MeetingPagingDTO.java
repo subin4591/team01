@@ -8,6 +8,7 @@ public class MeetingPagingDTO {
 	String user_id;
 	int seq;
 	ArrayList<Integer> seq_list;
+	ArrayList<String> sort_list;
 	
 	// getter & setter
 	public String getCategory() {
@@ -51,6 +52,12 @@ public class MeetingPagingDTO {
 	}
 	public void setSeq_list(ArrayList<Integer> seq_list) {
 		this.seq_list = seq_list;
+	}
+	public ArrayList<String> getSort_list() {
+		return sort_list;
+	}
+	public void setSort_list(ArrayList<String> sort_list) {
+		this.sort_list = sort_list;
 	}
 	
 	// 메소드
