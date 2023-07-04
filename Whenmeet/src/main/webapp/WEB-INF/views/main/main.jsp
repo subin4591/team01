@@ -8,6 +8,7 @@
 <title>언제만나?</title>
 <script src="js/jquery-3.6.4.min.js"></script>
 <script src='js/cal.js'></script>
+<script src="js/main.js"></script>
 
 <link rel="stylesheet" href="css/main.css">
 <script>
@@ -93,12 +94,33 @@ document.addEventListener('DOMContentLoaded', function() {
   
 
 </style>
+
 <script>
-$(document).ready(function(){
-	var element = $("#fc-dom-1");
-	if(element.get(0).innerText.includes('January')){
-	    element.innerText = element.innerText.replace("January","1월");
-	  }
+$(document).ready(function(){	
+	$('#write_more').on('click',function(e){
+	    if ("${session_id}" == "") {
+	      e.preventDefault();
+	      alert('로그인이 필요합니다.');
+    }
+	});
+	$('#apply_more').on('click',function(e){
+	    if ("${session_id}" == "") {
+	      e.preventDefault();
+	      alert('로그인이 필요합니다.');
+	    }
+	});
+	$('#group_more').on('click',function(e){
+	    if ("${session_id}" == "") {
+	      e.preventDefault();
+	      alert('로그인이 필요합니다.');
+	    }
+	});
+	$('#add_btn').on('click',function(e){
+	    if ("${session_id}" == "") {
+	      e.preventDefault();
+	      alert('로그인이 필요합니다.');
+	    }
+	});
 });
 </script>
 </head>
@@ -107,7 +129,7 @@ $(document).ready(function(){
 	<%@ include file="../header.jsp" %>
 	
     <div id="top">
-    	<a href="meeting/write" id="add_btn"><button><h2>모임 생성</h2></button></a>
+    	<a href="meeting/write	" id="add_btn"><button><h2>모임 생성</h2></button></a>
     	<img alt="배경이미지" src="img/back.jpg" id="back">
     </div>
     <div id="body">
@@ -116,7 +138,7 @@ $(document).ready(function(){
 			    <div id="group">
 			    	<h1 class="text">
 			    		나의 모임
-			    		<span class="more"><a href="">전체보기</a></span>
+			    		<span class="more"><a href="" id="group_more">전체보기</a></span>
 			    	</h1>
 			    	
 			    	<c:forEach items="${mygroup}" var="group" begin="0" end="2">
@@ -126,7 +148,7 @@ $(document).ready(function(){
 		    	<div id="writing">
 			    	<h1 class="text">
 			    		작성한 모집글
-			    		<span class="more"><a href="meeting/my">전체보기</a></span>
+			    		<span class="more"><a href="meeting/my" id="write_more">전체보기</a></span>
 			    	</h1>
 			    	<c:forEach items="${mywrite}" var="write" begin="0" end="2">
 		    			<h3 class="writing_list"><a href="meeting/detailed?seq=${write.seq}">${write.title}</a></h3>
@@ -135,7 +157,7 @@ $(document).ready(function(){
 			    <div id="apply">
 			    	<h1 class="text">
 			    		신청한 모집글
-			    		<span class="more"><a href="meeting/myapp">전체보기</a></span>
+			    		<span class="more"><a href="meeting/myapp" id="apply_more">전체보기</a></span>
 			    	</h1>
 			    	<c:forEach items="${myapplication}" var="application" begin="0" end="2">
 		    			<h3 class="apply_list"><a href="meeting/detailed?seq=${application.seq}">${application.title}</a></h3>
@@ -151,7 +173,7 @@ $(document).ready(function(){
 		    <div id="rank">
 		    	<h1 class="text">
 		    		인기 글
-		    		<span class="more"><a href="meeting">전체보기</a></span>
+		    		<span class="more"><a href="meeting" id="rank_more">전체보기</a></span>
 		    	</h1>
 			    <c:forEach items="${ranklist}" var="rank" begin="0" end="4">
 		    			<h2 class="rank_list"><a href="meeting/detailed?seq=${rank.seq}">${rank.title}</a></h2>
@@ -159,6 +181,87 @@ $(document).ready(function(){
 		    	</c:forEach>
 			</div>
 	    </div>
+	    <div class="map_wrap">
+    <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
+
+    <div id="menu_wrap" class="bg_white">
+        <div class="option">
+            <div>
+                <form onsubmit="searchPlaces(); return false;">
+                    키워드 : <input type="text" value="이태원 맛집" id="keyword" size="15"> 
+                    <button type="submit">검색하기</button> 
+                </form>
+            </div>
+        </div>
+        <hr>
+        <ul id="placesList"></ul>
+        <div id="pagination"></div>
+    </div>
+</div>
+		<script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a860b9470c235ea7b99c9c4e99ca3f14&libraries=services"></script>
+		<script>
+		var markers = [];
+
+		var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+		    mapOption = {
+		        center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
+		        level: 3 // 지도의 확대 레벨
+		    };  
+
+		// 지도를 생성합니다    
+		var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+		// 장소 검색 객체를 생성합니다
+		var ps = new kakao.maps.services.Places();  
+		
+		// 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
+		var infowindow = new kakao.maps.InfoWindow({zIndex:1});
+
+		// 키워드로 장소를 검색합니다
+		searchPlaces();
+
+		// 키워드 검색을 요청하는 함수입니다
+		function searchPlaces() {
+
+		    var keyword = document.getElementById('keyword').value;
+
+		    if (!keyword.replace(/^\s+|\s+$/g, '')) {
+		        alert('키워드를 입력해주세요!');
+		        return false;
+		    }
+
+		    // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
+		    ps.keywordSearch( keyword, placesSearchCB); 
+		}
+		
+		// 장소검색이 완료됐을 때 호출되는 콜백함수 입니다
+		function placesSearchCB(data, status, pagination) {
+		    if (status === kakao.maps.services.Status.OK) {
+
+		        // 정상적으로 검색이 완료됐으면
+		        // 검색 목록과 마커를 표출합니다
+		        displayPlaces(data);
+
+		        // 페이지 번호를 표출합니다
+		        displayPagination(pagination);
+
+		    } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+
+		        alert('검색 결과가 존재하지 않습니다.');
+		        return;
+
+		    } else if (status === kakao.maps.services.Status.ERROR) {
+
+		        alert('검색 결과 중 오류가 발생했습니다.');
+		        return;
+
+		    }
+		}
+
+		
+
+		
+		</script>
     </div>
     <div>
     <%@ include file="../footer.jsp" %>
