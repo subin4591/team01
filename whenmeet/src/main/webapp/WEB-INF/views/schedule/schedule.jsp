@@ -498,7 +498,33 @@ String userImgErr = "img/user_logo.png";
 	  </div>
 	
 	  <div id = "group_detail" style = "display : none;">
-		  <div class="group_info">상세</div>
+		  <div class="group_info">
+			<div class = "group_information" style = "display : flex; margin : auto; background : white; width : 95%; height : 90%">
+				<div style= " display : flex;  margin : auto; width : 90%; height : 80%">
+					<div id = "group_detail_left" >
+						<h1>감자 프로젝트 그룹</h1>
+						<h3>개설자 : 방장쓰</h3>
+						<h3></h3>
+						
+						<img src = "img/user_logo.png" style = "width : 100px; height : 100px; border-radius : 50%;">
+						<img src = "img/액자.png" style = "position : absolute; width : 150px; height : 150px; top : 400px"/>
+					</div>
+					<div id = "group_detail_right" >
+						<img src = "img/twocat.png" style = "position : absolute; width : 200px; height : 200px; bottom : 110px; right: 120px; z-index:0; opacity : 0.3;">
+						<br><br>
+						<div>
+							<h2>개설일 <span>|</span> </h2>
+							<p>2022-12-25</p>
+							<h2>종료일 <span>|</span> </h2>
+							<p>2023-12-24</p>
+						</div>
+						<br><br>
+						<h2>그룹 설명 <span>|</span> </h2>
+						<p style = "color : black">감자를 캐는 그룹입니다.</p>
+					</div>
+				</div>
+			</div>
+		</div>
 	  </div>	
   </div>	
 	<!-- footer -->
