@@ -4,53 +4,51 @@
 <mapper namespace="meeting.MeetingDAO">
 	<!-- Meeting select -->
 	<!-- 기본 게시글 목록 -->
-	<select id="meetingListAll" parameterType="meetingpagingdto" resultType="meetingdto">
+	<select id="meetingList" parameterType="meetingpagingdto" resultType="meetingdto">
 		select * from meeting_table
 		where end = "진행" and hidden = "공개"
+		<if test="category != null and category != '전체'">
+			and category = #{category}
+		</if>
 		order by ${sort_type} desc
 		limit #{start}, #{end}
 	</select>
 	
-	<select id="meetingCountAll" resultType="int">
+	<select id="meetingCount" resultType="int">
 		select count(*) from meeting_table
 		where end = "진행" and hidden = "공개"
-	</select>
-	
-	<select id="meetingListCategory" parameterType="meetingpagingdto" resultType="meetingdto">
-		select * from meeting_table
-		where end = "진행" and hidden = "공개" and category = #{category}
-		order by ${sort_type} desc
-		limit #{start}, #{end}
-	</select>
-	
-	<select id="meetingCountCategory" parameterType="String" resultType="int">
-		select count(*) from meeting_table
-		where end = "진행" and hidden = "공개" and category = #{category}
+		<if test="category != null and category != '전체'">
+			and category = #{category}
+		</if>
 	</select>
 	
 	<!-- 유저 게시글 목록 -->
-	<select id="meetingListAllUser" parameterType="meetingpagingdto" resultType="meetingdto">
+	<select id="meetingListUser" parameterType="meetingpagingdto" resultType="meetingdto">
 		select * from meeting_table
 		where user_id = #{user_id}
+		<choose>
+			<when test="category == 'result'">
+				and end = #{sort_list[0]} and hidden = #{sort_list[1]}
+			</when>
+			<when test="category != null and category != '전체'">
+				and category = #{category}
+			</when>
+		</choose>
 		order by ${sort_type} desc
 		limit #{start}, #{end}
 	</select>
 	
-	<select id="meetingCountAllUser" parameterType="String" resultType="int">
+	<select id="meetingCountUser" parameterType="meetingpagingdto" resultType="int">
 		select count(*) from meeting_table
 		where user_id = #{user_id}
-	</select>
-	
-	<select id="meetingListCategoryUser" parameterType="meetingpagingdto" resultType="meetingdto">
-		select * from meeting_table
-		where user_id = #{user_id} and category = #{category}
-		order by ${sort_type} desc
-		limit #{start}, #{end}
-	</select>
-	
-	<select id="meetingCountCategoryUser" parameterType="meetingpagingdto" resultType="int">
-		select count(*) from meeting_table
-		where user_id = #{user_id} and category = #{category}
+		<choose>
+			<when test="category == 'result'">
+				and end = #{sort_list[0]} and hidden = #{sort_list[1]}
+			</when>
+			<when test="category != null and category != '전체'">
+				and category = #{category}
+			</when>
+		</choose>
 	</select>
 	
 	<!-- 유저 신청 게시글 목록 -->
@@ -59,25 +57,22 @@
 		where user_id = #{user_id}
 	</select>
 	
-	<select id="userAppMeetingListAll" parameterType="meetingpagingdto" resultType="meetingdto">
-		select * from meeting_table where
-		<foreach collection="seq_list" item="seq" separator=" or ">seq = #{seq}</foreach>
-		order by ${sort_type} desc
-		limit #{start}, #{end}
-	</select>
-	
-	<select id="userAppMeetingListCategory" parameterType="meetingpagingdto" resultType="meetingdto">
+	<select id="userAppMeetingList" parameterType="meetingpagingdto" resultType="meetingdto">
 		select * from meeting_table where
 		(<foreach collection="seq_list" item="seq" separator=" or ">seq = #{seq}</foreach>)
-		and category = #{category}
+		<if test="category != null and category != '전체'">
+			and category = #{category}
+		</if>
 		order by ${sort_type} desc
 		limit #{start}, #{end}
 	</select>
 	
-	<select id="userAppMeetingCountCategory" parameterType="meetingpagingdto" resultType="int">
+	<select id="userAppMeetingCount" parameterType="meetingpagingdto" resultType="int">
 		select count(*) from meeting_table where
 		(<foreach collection="seq_list" item="seq" separator=" or ">seq = #{seq}</foreach>)
-		and category = #{category}
+		<if test="category != null and category != '전체'">
+			and category = #{category}
+		</if>
 	</select>
 	
 	<!-- 유저 신청 게시글 목록 결과 -->
@@ -122,6 +117,21 @@
 		where seq = #{seq} and user_id = #{user_id}
 	</select>
 	
+	<!-- writer mode 신청 댓글 정보 -->
+	<select id="writerModeList" parameterType="meetingpagingdto" resultType="applicantdto">
+		select * from applicant_table
+		where seq = #{seq} and 
+		(<foreach collection="sort_list" item="sort" separator=" or ">approval = #{sort}</foreach>)
+		order by applicant_time desc
+		limit #{start}, #{end}
+	</select>
+	
+	<select id="writerModeCount" parameterType="meetingpagingdto" resultType="int">
+		select count(*) from applicant_table
+		where seq = #{seq} and 
+		(<foreach collection="sort_list" item="sort" separator=" or ">approval = #{sort}</foreach>)
+	</select>
+	
 	
 	<!-- Meeting insert -->
 	<!-- 게시글 작성 -->
@@ -163,6 +173,14 @@
 		update applicant_table
 		set contents = #{contents}, applicant_time = now()
 		where seq = #{seq} and user_id = #{user_id}
+	</update>
+	
+	<!-- 모집 신청 승인/거절 -->
+	<update id="updateApproval" parameterType="writermodedto">
+		update applicant_table
+		set approval = #{approval} where
+		(<foreach collection="user_id" item="user" separator=" or ">user_id = #{user}</foreach>)
+		and seq = #{seq}
 	</update>
 	
 	<!-- Meeting delete -->

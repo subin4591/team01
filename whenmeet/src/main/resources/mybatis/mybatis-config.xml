@@ -7,5 +7,7 @@
 		<typeAlias type="dto.MeetingPagingDTO" alias="meetingpagingdto"/>
 		<typeAlias type="dto.UserDTO" alias="userdto"/>
 		<typeAlias type="dto.ApplicantDTO" alias="applicantdto"/>
+		<typeAlias type="dto.WriterModeDTO" alias="writermodedto"/>
+		<typeAlias type="dto.MainDTO" alias="maindto"/>
 	</typeAliases>
 </configuration>
