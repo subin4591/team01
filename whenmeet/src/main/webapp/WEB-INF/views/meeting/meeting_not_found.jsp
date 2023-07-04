@@ -5,10 +5,8 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<link rel="icon" href="/img/footlogo.svg">
+	<link rel="icon" href="/img/icon.svg">
 	<title>모집글 | 언제만나</title>
-	<link href="/css/meeting/meeting.css" rel=stylesheet>
-	<link href="/css/meeting/meeting_detailed.css" rel=stylesheet>
 	<script src="/js/jquery-3.6.4.min.js"></script>
 	<script>
 		$(document).ready(function() {

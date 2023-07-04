@@ -5,7 +5,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<link rel="icon" href="/img/footlogo.svg">
+	<link rel="icon" href="/img/icon.svg">
 	
 	<c:choose>
 		<c:when test="${ category == 'all' }">
@@ -23,6 +23,9 @@
 		<c:when test="${ category == 'etc' }">
 			<title>기타모임 | 언제만나</title>	
 		</c:when>
+		<c:when test="${ category == 'result' }">
+			<title>신청결과 | 언제만나</title>	
+		</c:when>
 	</c:choose>
 	
 	<link href="/css/meeting/meeting.css" rel=stylesheet>
@@ -37,14 +40,20 @@
 			
 			/// 기본 page active event
 			$("#page_nums").html(makePage(${ total_cnt }, ${ div_num }));
-			pageActive("time", 1);
+			if ("${ category }" == "result") {
+				pageActive("yes", 1);
+			}
+			else {
+				pageActive("time", 1);
+			}
 			
-			/// sort ajax
+			/// sort event
 			$(".sort_a").on("click", function(event) {
 				event.preventDefault();
 				let sort = $(this).data("target");
 				let user_id = "${ session_id }";
 				
+				// category
 				let category = "";
 				if (${ param.category == null }) {
 					category = "all";
@@ -53,34 +62,68 @@
 					category = "${ param.category }"
 				}
 				
+				// url
+				let url = "";
+				if (category == "result") {
+					url = "/meeting/meetingMyAppResultSort";
+				}
+				else {
+					url = "/meeting/meetingMyAppSort"
+				}
+				
+				// ajax
 				$.ajax({
-					url: "/meeting/meetingMyAppSort",
+					url: url,
 					data: {category: category, sort: sort, user_id: user_id},
 					type: "post",
 					dataType: "json",
 					success: function(data) {
-						// page active event
-						pageActive(sort, 1);
-						
-						// 게시글 목록
+						// 게시글 목록 th
 						let ct = $("#contents_table");
 						ct.html(setConTableTh());
 						
-						for (let c = 0; c < data.length; c++) {
-							let mc = new MeetingCon(
-										data[c].seq,
-										data[c].category,
-										data[c].title,
-										data[c].writer,
-										data[c].writing_time,
-										data[c].applicant_cnt,
-										data[c].hits
-									);
-							ct.append(mc.printTd());
-						}
-					}
-				});
-			});
+						// page active event
+						if (category == "result") {
+							$("#page_nums").html(makePage(data.total_cnt, data.div_num));
+							pageActive(sort, 1);
+							
+							// 게시글 개수
+							$("#contents_table_caption p").text("총 " + data.total_cnt + "개");
+							
+							// 게시글 목록
+							for (let c = 0; c < data.meeting_list.length; c++) {
+								let mc = new MeetingCon(
+											data.meeting_list[c].seq,
+											data.meeting_list[c].category,
+											data.meeting_list[c].title,
+											data.meeting_list[c].writer,
+											data.meeting_list[c].writing_time,
+											data.meeting_list[c].applicant_cnt,
+											data.meeting_list[c].hits
+										);
+								ct.append(mc.printTd());
+							}	// for end
+						}	// if end
+						else {
+							pageActive(sort, 1);
+							
+							// 게시글 목록
+							for (let c = 0; c < data.length; c++) {
+								let mc = new MeetingCon(
+											data[c].seq,
+											data[c].category,
+											data[c].title,
+											data[c].writer,
+											data[c].writing_time,
+											data[c].applicant_cnt,
+											data[c].hits
+										);
+								ct.append(mc.printTd());
+							}	// for end
+						}	// else end
+					}	// success end
+				});	// ajax end
+			});	// sort event end
 			
 			/// page event
 			$(document).on("click", ".page_a", function(event) {
@@ -88,6 +131,8 @@
 				let page = $(this).data("target");
 				let sort = $(".sort_a.page_active").data("target");
 				let user_id = "${ session_id }";
+				
+				// category
 				let category = "";
 				if (${ param.category == null }) {
 					category = "all";
@@ -96,6 +141,7 @@
 					category = "${ param.category }"
 				}
 				
+				// ajax
 				$.ajax({
 					url: "/meeting/meetingMyAppPage",
 					data: {category: category, sort: sort, page: page, user_id: user_id},
@@ -120,11 +166,11 @@
 										data[c].hits
 									);
 							ct.append(mc.printTd());
-						}
-					}
-				});
-			});
-		});
+						}	// for end
+					}	// success end
+				});	// ajax end
+			});	// page event end
+		});	// document event end
 	</script>
 </head>
 <body>
@@ -143,7 +189,7 @@
 			<li class="category_li" data-target="hobby"><a class="category_a" href="/meeting/myapp?category=hobby">취미</a></li>
 			<li class="category_li" data-target="study"><a class="category_a" href="/meeting/myapp?category=study">공부</a></li>
 			<li class="category_li" data-target="etc"><a class="category_a" href="/meeting/myapp?category=etc">기타</a></li>
-			<li class="category_li" data-target="result"><a class="category_a" href="/meeting/myapp/result">결과</a></li>
+			<li class="category_li" data-target="result"><a class="category_a" href="/meeting/myapp?category=result">결과</a></li>
 		</ul>
 	</div>
 	
@@ -152,9 +198,19 @@
 		<div id="contents_table_caption">
 			<p>총 ${ total_cnt }개</p>
 			<div id="contents_sort">
-				<a href="" class="sort_a" data-target="time">최신순</a>
-				<a href="" class="sort_a" data-target="appl">신청순</a>
-				<a href="" class="sort_a" data-target="hits">조회순</a>			
+				<c:choose>
+					<c:when test="${ category == 'result' }">
+						<a href="" class="sort_a" data-target="yes">승인</a>
+						<a href="" class="sort_a" data-target="no">거절</a>
+						<a href="" class="sort_a" data-target="yet">대기</a>	
+					</c:when>
+					<c:otherwise>
+						<a href="" class="sort_a" data-target="time">최신순</a>
+						<a href="" class="sort_a" data-target="appl">신청순</a>
+						<a href="" class="sort_a" data-target="hits">조회순</a>
+					</c:otherwise>
+				</c:choose>
+							
 			</div>		
 		</div>
 		<table id="contents_table">

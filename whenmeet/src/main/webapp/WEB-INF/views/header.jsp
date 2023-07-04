@@ -35,11 +35,11 @@
 		<img id="search_btn" src="/img/search.svg" alt="search_btn">
 		<c:choose>
 			<c:when test="${ session_id != null }">
-				<a href=""><img id="user_profile" src="/img/user_logo.png" alt="user_profile"></a>
+				<a href="/myinfo"><img id="user_profile" src="/img/user_logo.png" alt="user_profile"></a>
 				<button class="login_btn" onclick="location.href=''">LOGOUT</button>
 			</c:when>
 			<c:otherwise>
-				<button class="login_btn" onclick="location.href=''">LOGIN</button>
+				<button class="login_btn" onclick="location.href='/login'">LOGIN</button>
 			</c:otherwise>
 		</c:choose>
 	</div>
