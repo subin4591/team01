@@ -461,7 +461,7 @@ String userImgErr = "img/user_logo.png";
 			  								<input type = "checkbox" class = "DoItCheck" id = "DoItCheck<%=i%>" alt = "0" onclick = "openDoItList('<%=i%>')">
 			  								<label for = "DoItCheck<%=i%>"></label>&nbsp;<%= DoIt.get(i) %>
 			  								<img src = "img/방장용_수정_버튼.svg" class ="DoItListEditBtn" onclick = "DpopOpen('<%=DoIt.get(i) %>', '<%=DoItDetail[i]%>')"/>
-			  								<button type = "button" class = "deleteBtn" onclick="deleteBtn(<%=i%>)">✕</button>
+			  								<button type = "button" class = "deleteBtn" onclick="deleteBtn('<%=i%>')">✕</button>
 			  							</div>
 			  							<div>
 			  								<ul class = "DoItListChild" id = "DoItListChild<%=i%>" style = "display : None; ">

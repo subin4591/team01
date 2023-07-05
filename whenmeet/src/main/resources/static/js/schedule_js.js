@@ -3,6 +3,7 @@
  */
 //리스트 삭제하기
 function deleteBtn(element){
+	var temp = $("#DoItContainer");
 	temp = temp.children();
 	temp = temp.children().eq(element);
 	var result = confirm("하위 항목이 모두 사라집니다. 정말로 삭제하시겠습니까?");
