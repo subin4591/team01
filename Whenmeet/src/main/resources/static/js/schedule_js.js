@@ -1,6 +1,43 @@
 /**
  * 
  */
+//리스트 삭제하기
+function deleteBtn(element){
+	var temp = $("#DoItContainer");
+	temp = temp.children();
+	temp = temp.children().eq(element);
+	var result = confirm("하위 항목이 모두 사라집니다. 정말로 삭제하시겠습니까?");
+	if(result){
+		temp.remove();
+	}else{
+		return false;
+	}	
+}
+function deleteBtn2(element){
+	var temp = $("#DoItListChild");
+	temp = temp.children().eq(element);
+	var result = confirm("정말로 삭제하시겠습니까?");
+	if(result){
+		temp.remove();
+	}else{
+		return false;
+	}	
+}
+//간트차트 수정화면 자식리스트 열기
+function openDoItList(element){
+	var var1 = "#DoItCheck" + element;
+	var var2 = "#DoItListChild" + element;
+	var checkbox = $(var1);
+	var childUl = $(var2);
+	
+	if($(checkbox).attr("alt") == "0"){
+		childUl.show();
+		$(checkbox).attr("alt" , "1");
+	}else{
+		childUl.hide();
+		$(checkbox).attr("alt",  "0");
+	}
+}
 //디데이 달력, 시간 표시하기
 function changeDate(){
 	var result = $("#finalDate").val();
@@ -94,6 +131,36 @@ function WpopClose(){
 	var modalBg = $('.week_modal_bg');
 	$(modalPop).hide();
 	$(modalBg).hide();
+}
+//할일 팝업을 열기
+function DpopOpen(element, childs){
+	var list = $("#DoItListChild");
+	var child = [];
+	child = childs.split(",");
+	child[0] = child[0].replace("[", "");
+	child[child.length-1] = child[child.length-1].replace("]", "");
+	
+	var modalPop = $('.DoIt_modal');
+	var modalBg = $('.DoIt_modal_bg');
+	
+	$(".modalDoItName").text(element);
+	
+		
+	for (var i = 0; i < child.length; i++){
+		list.append('<li><div class = "DoItListItem" style = "width : 98%; " >&nbsp;'+child[i]+'</div></li>');
+		$("#DoItListChild").children().eq(i).children().append('<button type = "button" class = "deleteBtn" onclick="deleteBtn2('+i+')">✕</button>');
+	}
+	$(modalPop).show();
+	$(modalBg).show();
+}
+//할일 팝업 닫기
+function DpopClose(){
+	var list = $("#DoItListChild *");
+	var modalPop = $('.DoIt_modal');
+	var modalBg = $('.DoIt_modal_bg');
+	$(modalPop).hide();
+	$(modalBg).hide();	
+	list.remove();
 }
 
 //로딩창 종료하기
@@ -230,6 +297,7 @@ $(".submitBtn").click(function(){
 		});
 		$("#ganttResult").hide();
 	})
+
 	/*구글 차트 api*/
     google.charts.load('current', {'packages':['gantt']});
     google.charts.setOnLoadCallback(drawChart);
