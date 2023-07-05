@@ -1,6 +1,27 @@
 /**
  * 
  */
+//리스트 삭제하기
+function deleteBtn(element){
+	temp = temp.children();
+	temp = temp.children().eq(element);
+	var result = confirm("하위 항목이 모두 사라집니다. 정말로 삭제하시겠습니까?");
+	if(result){
+		temp.remove();
+	}else{
+		return false;
+	}	
+}
+function deleteBtn2(element){
+	var temp = $("#DoItListChild");
+	temp = temp.children().eq(element);
+	var result = confirm("정말로 삭제하시겠습니까?");
+	if(result){
+		temp.remove();
+	}else{
+		return false;
+	}	
+}
 //간트차트 수정화면 자식리스트 열기
 function openDoItList(element){
 	var var1 = "#DoItCheck" + element;
@@ -126,6 +147,7 @@ function DpopOpen(element, childs){
 		
 	for (var i = 0; i < child.length; i++){
 		list.append('<li><div class = "DoItListItem" style = "width : 98%; " >&nbsp;'+child[i]+'</div></li>');
+		$("#DoItListChild").children().eq(i).children().append('<button type = "button" class = "deleteBtn" onclick="deleteBtn2('+i+')">✕</button>');
 	}
 	$(modalPop).show();
 	$(modalBg).show();

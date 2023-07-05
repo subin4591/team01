@@ -874,7 +874,7 @@ li {
 	 float : right;
 	 border : 2.5px solid #f9f3f3;
 }
-.DoItListChild{
+.DoItListChild, #DoItListChild{
 	position : relative; 
 	list-style:none; 
 	margin : 0px; 
@@ -900,13 +900,24 @@ li {
 .DoItCheck:checked:hover + label{
 	background: url('/img/아래화살표핑.svg') 15px 15px no-repeat;
 }	
-.DoItList .DoItListEditBtn{
+.DoItList .DoItListEditBtn, .deleteBtn{
 	position : absolute;
 	cursor : pointer;
-	width : 30px;
-	height: 30px;
-	right : 5px;
+	width : 25px;
+	height: 25px;
+	right : 50px;
 	margin-top : 20px;
+}
+.deleteBtn{
+	font-size : 28px;
+	background : None;
+	border : None;
+	color : #BBBBBB;
+	right : 20px;
+	top : -8px;
+}
+.DoItList button:hover{
+	color : #f25287;
 }
 #DoItChildDate input[type = "text"],
 #GFEDoIt input[type = "text"]{
