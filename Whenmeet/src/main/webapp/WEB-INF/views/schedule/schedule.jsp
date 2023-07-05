@@ -439,23 +439,37 @@ String userImgErr = "img/user_logo.png";
 			  					<%
 			  					List<String> DoIt = new ArrayList<String>();
 			  					DoIt.add("주제 정하기");
-			  					
+			  					DoIt.add("토의하기");
+			  					DoIt.add("과자먹기");
+	  					
 			  					List<String>[] DoItDetail = new ArrayList[DoIt.size()];
 			  					for (int i =0; i < DoIt.size(); i++){
 			  						DoItDetail[i] = new ArrayList<String>();
 			  					}
-			  					DoItDetail[0].add("하위메뉴 1");
+			  					DoItDetail[0].add("하위메뉴 2");
+			  					DoItDetail[1].add("하위메뉴 3");
+			  					DoItDetail[2].add("하위메뉴 4");
+			  					DoItDetail[2].add("하위메뉴 5");
+			  					DoItDetail[2].add("하위메뉴 6");
+			  					DoItDetail[1].add("하위메뉴 7");
+			  					DoItDetail[2].add("하위메뉴 8");
+
+
 
 			  					for (int i = 0; i < DoIt.size(); i++){
 			  					%>
 			  						<li>
-			  							<div class = "DoItList">
-			  								<input type = "checkbox" class = "DoItCheck">&nbsp;&nbsp;<%= DoIt.get(i) %>
-			  								<img src = "img/방장용_수정_버튼.svg" id ="DoItListEditBtn"/>
-			  								<ul style = "list-style:none; margin : 0px; padding : 0">
+			  							<div class = "DoItList" >
+			  								<input type = "checkbox" class = "DoItCheck" id = "DoItCheck<%=i%>" alt = "0" onclick = "openDoItList('<%=i%>')">
+			  								<label for = "DoItCheck<%=i%>"></label>&nbsp;<%= DoIt.get(i) %>
+			  								<img src = "img/방장용_수정_버튼.svg" class ="DoItListEditBtn" onclick = "DpopOpen('<%=DoIt.get(i) %>', '<%=DoItDetail[i]%>')"/>
+			  								<button type = "button" class = "deleteBtn" onclick="deleteBtn('<%=i%>')">✕</button>
+			  							</div>
+			  							<div>
+			  								<ul class = "DoItListChild" id = "DoItListChild<%=i%>" style = "display : None; ">
 			  									<% for (int j = 0; j < DoItDetail[i].size(); j++){ %>
 			  									<li>
-			  										<div class = "DoItList" style = "width : 85%; float : right;">
+			  										<div class = "DoItListItem" >
 			  											&nbsp;&nbsp;<%=DoItDetail[i].get(j) %>
 			  										</div>
 			  									</li>
@@ -466,9 +480,9 @@ String userImgErr = "img/user_logo.png";
 			  					<%} %>
 			  				</ul>	
 			  			</div>	  		
-			  			<div>
-			  				<input type = "text" placeholder = "새 작업 추가하기" name = "newValue"/>
-			  				<button name = "newValueBtn">입력</button>
+			  			<div style = "display : flex; margin-top : 20px;">
+			  				<input type = "text" placeholder = "  새 작업 추가하기" name = "newValue"/>
+			  				<button name = "newValueBtn" class = "newValueBtn">+</button>
 			  			</div>
 			  		</div>
 			  	</div>
@@ -481,6 +495,9 @@ String userImgErr = "img/user_logo.png";
 						<button id = "ganttFirstEditCancelBtn">취소</button>
 						<button id = "ganttFirstEditSaveBtn" type = "submit">저장</button>				
 			  		</div>
+			  	</div>
+			  	<div id = "rightEditPage" >
+			  		
 			  	</div>
 			  </div>
 
@@ -497,8 +514,7 @@ String userImgErr = "img/user_logo.png";
 				  <button id = "ganttResultEditBtn"><h1>수정</h1></button>
 			  </div>			
 		  </div>			
-	  </div>
-	
+	  </div>	
 	  <div id = "group_detail" style = "display : none;">
 		  <div class="group_info">
 			<div class = "group_information" style = "display : flex; margin : auto; background : white; width : 95%; height : 90%">
@@ -528,7 +544,38 @@ String userImgErr = "img/user_logo.png";
 			</div>
 		</div>
 	  </div>	
+	  
+	  <!-- 모달 팝업 -->
+				<div class = "DoIt_modal_bg" onclick = "DpopClose()"></div>
+					<div class = "DoIt_modal">
+						<div style = "position : relative; top : -3px; background : #F25287; width : 100%; height: 50px;">
+							<h1 style = "position : relative; font-size : 28px; margin : 3px; top : 3px; text-align : center; color : white;" class="modalDoItName">오류가 발생했습니다</h1>
+						</div>
+					<div class = "DoIt_modal_content" >
+						<form action = "#second_section" method = "get" id = "updateDoItForm">
+							<div style = "display : flex;">
+								<div id = "DoItChildDate" style = "margin : 10px">
+			  						<h2 style = "display : inline"> Task 시작일 : <br><input type = "date" name = "startDate"/><br><br>
+			  							Task 종료일 : <br><input type = "date" name = "EndDate"/></h2> <br>
+			  						<input type = "text" placeholder = "  새 작업 추가하기" name = "newValue"/>
+			  						<button name = "newValueBtn" class = "newValueBtn" style = "width : 40px; height : 40px; font-size : 25px;">+</button>
+			  					</div>
+			  					<div id = "DoItChildList">
+			  						<div class = "DoItListChild" >
+			  							<ul id = "DoItListChild">
+			  							
+			  							</ul>
+			  						</div>
+			  					</div>
+			  				</div>
+							<input type = "submit" value = "저장" onclick = "" class = "submitBtn"  style = "left : 42%; margin-top : 10px;"/>
+						</form>
+					</div>		
+  				</div>
+			  </div>
   </div>	
+  
+  
 	<!-- footer -->
 	
 	<div>
