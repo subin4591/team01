@@ -20,6 +20,7 @@ public class mainController {
 	MainService service;
 
 	@GetMapping("/")
+	@CrossOrigin(origins = "http://localhost:8065")
 	public ModelAndView start(HttpSession session){
 		String user_id = (String)session.getAttribute("session_id");
 		List<String> mygroup = service.myGroup(user_id);

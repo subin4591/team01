@@ -8,13 +8,14 @@
   <title>일정|언제만나</title>
   <link rel="icon" href="/img/icon.svg">
   <link rel = "stylesheet" href = "css/schedule_css.css">
+  <link rel = "stylesheet" href = "css/schedule_location.css">
   <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script src = "js/schedule_js.js"></script>
-  <script
+<!--   <script
       type="text/javascript"
       src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2b4c5e3499f85cf245295753dba018dc"
-  ></script>
+  ></script> -->
 </head>
 <%@page import = "java.util.*"%>
 <%
@@ -412,11 +413,24 @@ String userImgErr = "img/user_logo.png";
         </div>
       </div>      
     </div>
-	
+  
 	  <div id = "meeting_location" style = "display : none;">
-		  <div class="group_info">위치</div>
+		    <div class="group_info">
+		      <%@ include file="schedule_location.jsp" %>
+		    </div>
 	  </div>
-	
+	<script>
+	$('#meeting_location_btn').on('click',function(){
+		/* var mapContainer = document.getElementById('map');
+		mapContainer.style.width = '2000px';
+	    mapContainer.style.height = '650px';  */
+	    setTimeout(function() {
+	    	searchPlaces();	
+		    map.relayout();
+	    }, 0); // Delay of 2000 milliseconds (2 seconds)
+	    
+	})
+	</script>
 	  <div id = "gantt_chart" style = "display : none;">
 		  <div class="group_info">		
 			  <div id = "ganttCreate">
