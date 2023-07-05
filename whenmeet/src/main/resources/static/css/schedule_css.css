@@ -111,7 +111,7 @@ body{
 }
 
 /*modal 설정*/
-.user_modal_bg, .week_modal_bg{
+.user_modal_bg, .week_modal_bg, .DoIt_modal_bg{
 	display : None;
 	width : 100%;
 	height : 100%;
@@ -121,7 +121,7 @@ body{
 	background : rgba(0,0,0,0.3);
 	z-index:999;
 }
-.user_modal, .week_modal{
+.user_modal, .week_modal, .DoIt_modal{
 	display : None;
 	position : absolute;
 	width : 650px;
@@ -140,6 +140,12 @@ body{
 	height : 300px;
 	top : -5px;
 	left : -100px;
+}
+.DoIt_modal{
+	width : 800px;
+	height : 600px;
+	top : 0;
+	left :40%;
 }
 .user_modal_content h1{
 	margin : 20px; 
@@ -791,6 +797,7 @@ li {
  	height : 100%;
  	
  }
+ #DoItChildDate input[type = "date"],
  #leftGanttFirstEdit input[type = "date"]{
 	text-align : center;
 	margin : 2px;
@@ -807,6 +814,11 @@ li {
 	height : 40px;
 	width : 350px;
  }
+ #DoItChildDate input[type = "date"]{
+ 	background-position : 260px 5px;
+ 	width : 300px;
+ }
+ #DoItChildDate input[type = "date"]::-webkit-calendar-picker-indicator,
  #leftGanttFirstEdit input[type = "date"]::-webkit-calendar-picker-indicator{
 	position: absolute;
   	width: 100%;
@@ -896,6 +908,7 @@ li {
 	right : 5px;
 	margin-top : 20px;
 }
+#DoItChildDate input[type = "text"],
 #GFEDoIt input[type = "text"]{
 	margin : auto;
 	border : 3px solid #f25287;
@@ -904,6 +917,13 @@ li {
 	font-size : 25px;
 	background : white;	
 	border-radius : 20px;
+}
+#DoItChildDate input[type = "text"]{
+	margin : 3px;
+	width : 80%;
+	height : 40px;
+	font-size : 18px;
+	margin-top : 180px;
 }
 .newValueBtn{
 	border : None;
@@ -922,6 +942,24 @@ li {
 	color : #f25287;
 	transition : 0.7s;
 }
+#DoItChildList{
+	border : 3px solid #f25287;
+	background : #f9f3f3;
+	margin : 20px;
+	width : 80%;
+	height : 420px;
+	overflow-y : scroll;
+}
+#DoItChildList::-webkit-scrollbar{
+	width : 15px;
+}
+#DoItChildList::-webkit-scrollbar-thumb {
+    background-color: #F25287;
+}
+#DoItChildList::-webkit-scrollbar-track {
+    background-color: #D9D9D9;
+}
+
 #rightGanttFirstEdit #chart_div1_container{
 	margin-top : 20px;
 	height : 80%;

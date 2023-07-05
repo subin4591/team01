@@ -110,6 +110,35 @@ function WpopClose(){
 	$(modalPop).hide();
 	$(modalBg).hide();
 }
+//할일 팝업을 열기
+function DpopOpen(element, childs){
+	var list = $("#DoItListChild");
+	var child = [];
+	child = childs.split(",");
+	child[0] = child[0].replace("[", "");
+	child[child.length-1] = child[child.length-1].replace("]", "");
+	
+	var modalPop = $('.DoIt_modal');
+	var modalBg = $('.DoIt_modal_bg');
+	
+	$(".modalDoItName").text(element);
+	
+		
+	for (var i = 0; i < child.length; i++){
+		list.append('<li><div class = "DoItListItem" style = "width : 98%; " >&nbsp;'+child[i]+'</div></li>');
+	}
+	$(modalPop).show();
+	$(modalBg).show();
+}
+//할일 팝업 닫기
+function DpopClose(){
+	var list = $("#DoItListChild *");
+	var modalPop = $('.DoIt_modal');
+	var modalBg = $('.DoIt_modal_bg');
+	$(modalPop).hide();
+	$(modalBg).hide();	
+	list.remove();
+}
 
 //로딩창 종료하기
 function loadingClose(){

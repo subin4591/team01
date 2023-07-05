@@ -460,7 +460,7 @@ String userImgErr = "img/user_logo.png";
 			  							<div class = "DoItList" >
 			  								<input type = "checkbox" class = "DoItCheck" id = "DoItCheck<%=i%>" alt = "0" onclick = "openDoItList('<%=i%>')">
 			  								<label for = "DoItCheck<%=i%>"></label>&nbsp;<%= DoIt.get(i) %>
-			  								<img src = "img/방장용_수정_버튼.svg" class ="DoItListEditBtn"/>
+			  								<img src = "img/방장용_수정_버튼.svg" class ="DoItListEditBtn" onclick = "DpopOpen('<%=DoIt.get(i) %>', '<%=DoItDetail[i]%>')"/>
 			  							</div>
 			  							<div>
 			  								<ul class = "DoItListChild" id = "DoItListChild<%=i%>" style = "display : None; ">
@@ -478,7 +478,7 @@ String userImgErr = "img/user_logo.png";
 			  				</ul>	
 			  			</div>	  		
 			  			<div style = "display : flex; margin-top : 20px;">
-			  				<input type = "text" placeholder = "새 작업 추가하기" name = "newValue"/>
+			  				<input type = "text" placeholder = "  새 작업 추가하기" name = "newValue"/>
 			  				<button name = "newValueBtn" class = "newValueBtn">+</button>
 			  			</div>
 			  		</div>
@@ -512,6 +512,33 @@ String userImgErr = "img/user_logo.png";
 			  </div>			
 		  </div>			
 	  </div>
+	<!-- 모달 팝업 -->
+				<div class = "DoIt_modal_bg" onclick = "DpopClose()"></div>
+					<div class = "DoIt_modal">
+						<div style = "position : relative; top : -3px; background : #F25287; width : 100%; height: 50px;">
+							<h1 style = "position : relative; font-size : 28px; margin : 3px; top : 3px; text-align : center; color : white;" class="modalDoItName">오류가 발생했습니다</h1>
+						</div>
+					<div class = "DoIt_modal_content" >
+						<form action = "#second_section" method = "get" id = "updateDoItForm">
+							<div style = "display : flex;">
+								<div id = "DoItChildDate" style = "margin : 10px">
+			  						<h2 style = "display : inline"> Task 시작일 : <br><input type = "date" name = "startDate"/><br><br>
+			  							Task 종료일 : <br><input type = "date" name = "EndDate"/></h2> <br>
+			  						<input type = "text" placeholder = "  새 작업 추가하기" name = "newValue"/>
+			  						<button name = "newValueBtn" class = "newValueBtn" style = "width : 40px; height : 40px; font-size : 25px;">+</button>
+			  					</div>
+			  					<div id = "DoItChildList">
+			  						<ul class = "DoItListChild" id = "DoItListChild">
+			  							
+			  						</ul>
+			  					</div>
+			  				</div>
+							<input type = "submit" value = "저장" onclick = "" class = "submitBtn"  style = "left : 42%; margin-top : 10px;"/>
+						</form>
+					</div>		
+  				</div>
+			  </div>
+	
 	
 	  <div id = "group_detail" style = "display : none;">
 		  <div class="group_info">
