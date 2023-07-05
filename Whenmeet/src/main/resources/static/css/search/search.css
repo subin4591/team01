@@ -1,0 +1,163 @@
+@charset "UTF-8";
+
+/* body */
+body {
+	display: flex;
+	flex-direction: column;
+	background-color: #F9F3F3;
+}
+input[type="button"] {
+    cursor: pointer;
+}
+a {
+	color: inherit;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+
+/* search_contents */
+#search_contents {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 50px 0;
+	width: 100%;
+}
+#search_table_caption {
+	width: 80%;
+}
+
+/* search_title */
+#search_title span {
+	font-size: 28px;
+}
+#search_title span:nth-child(1) {
+	color: #F25287;
+	font-size: 45px;
+	font-weight: bold;
+}
+#search_title span:nth-child(2) {
+	color: #DB9F9F;
+}
+
+/* search_detailed_form */
+#search_detailed_form {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+#search_detailed_form select {
+	height: 30px;
+	border: 2px solid #DB9F9F;
+	border-radius: 8px;
+	outline: none;
+	color: #DB9F9F;
+	background-color: #F9F3F3;
+	font-size: 18px;
+	text-align: center;
+}
+#search_detailed_form select:nth-child(1) {
+	width: 80px;
+}
+#search_detailed_form select:nth-child(2) {
+	width: 140px;
+	margin-left: 10px;
+}
+
+/* search_box */
+#search_box {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 350px;
+	height: 30px;
+	border: 2px solid #D8D8D8;
+	border-radius: 8px;
+	margin-left: 20px;
+}
+#search_detailed_input {
+	width: 90%;
+	height: 90%;
+	margin-left: 10px;
+	font-size: 18px;
+	color: #424242;
+	background-color: #F9F3F3;
+	border: none;
+	outline: none;
+}
+#search_detailed_submit_btn {
+	width: 15px;
+	height: 15px;
+	cursor: pointer;
+	margin-left: 10px;
+	margin-right: 10px;
+	max-height: 30px;
+	opacity: 0.3;
+}
+
+/* search_list */
+#search_list {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 80%;
+}
+#search_sort {
+	margin-top: 20px;
+	text-align: right;
+}
+#search_table {
+	margin-top: 10px;
+	border-collapse: collapse;
+	border-top: 2px solid #D9D9D9;
+	border-bottom: 2px solid #D9D9D9;
+}
+#search_table tr {
+	height: 30px;
+}
+#search_table tr:first-child {
+	border-bottom: 1px solid #D9D9D9;
+	color: #DB9F9F;
+}
+.td_seq, .td_category, .td_applicant_cnt, .td_hits{
+	/* 번호, 카테고리, 신청자수, 조회 */
+	width: 70px;
+	text-align: center;
+}
+.td_category {
+	/* 카테고리 */
+	color: #DB9F9F;
+}
+.td_writer {
+	/* 작성자 */
+	width: 180px;
+	text-align: center;
+}
+.td_writing_time {
+	/* 작성일 */
+	width: 180px;
+	text-align: center;
+}
+.td_contents {
+	/* 내용 */
+	color: #A4A4A4;
+}
+
+/* page */
+#page_nums {
+	display: flex;
+	justify-content: center;
+	margin-top: 10px;
+}
+.page_active {
+	font-weight: bold;
+	color: #F25287;
+}
+
+/* search color */
+.set_color {
+	font-weight: bold;
+	color: #F25287;
+}

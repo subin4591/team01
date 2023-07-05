@@ -30,7 +30,7 @@ header {
 #main_logo {
 	position: absolute;
 	top: 8px;
-	left: calc(50% - 90px);
+	left: calc(50% - 105px);
 	height: 50px;
 	width: auto;
 }
@@ -84,7 +84,7 @@ header {
 	height: 30px;
 	margin-left: 10px;
 	font-size: 18px;
-	color: #BDBDBD;
+	color: #424242;
 	background-color: #F9F3F3;
 	border: none;
 	outline: none;
