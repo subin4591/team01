@@ -419,18 +419,6 @@ String userImgErr = "img/user_logo.png";
 		      <%@ include file="schedule_location.jsp" %>
 		    </div>
 	  </div>
-	<script>
-	$('#meeting_location_btn').on('click',function(){
-		/* var mapContainer = document.getElementById('map');
-		mapContainer.style.width = '2000px';
-	    mapContainer.style.height = '650px';  */
-	    setTimeout(function() {
-	    	searchPlaces();	
-		    map.relayout();
-	    }, 0); // Delay of 2000 milliseconds (2 seconds)
-	    
-	})
-	</script>
 	  <div id = "gantt_chart" style = "display : none;">
 		  <div class="group_info">		
 			  <div id = "ganttCreate">

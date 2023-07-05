@@ -108,7 +108,7 @@ function displayPlaces(places) {
     // 지도에 표시되고 있는 마커를 제거합니다
     removeMarker();
     
-    for ( var i=0; i<places.length; i++ ) {
+    for ( let i=0; i<places.length; i++ ) {
 
         // 마커를 생성하고 지도에 표시합니다
         var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
@@ -131,12 +131,7 @@ function displayPlaces(places) {
                 infowindow.close();
             });
             kakao.maps.event.addListener(marker, 'click', function() {
-            	var jsonData = places;
-            	var parsedData = JSON.parse(jsonData);
-            	var address = parsedData[i].address_name;
-            	var spanElement = itemEl.querySelector('div > span');
-            	
-            	$('#result').html("<h1>" + title + "</h1>" +"<h2>" + address + "</h2>");
+            	$('#result').html("<h1>" + title + "</h1>" +"<h2>" + places[i].address_name + "</h2>");
             	map.setLevel(3);
             	map.setCenter(marker.getPosition());
             	displayInfowindow(marker, title);
@@ -155,7 +150,7 @@ function displayPlaces(places) {
             itemEl.onmouseout =  function () {
                 infowindow.close();
             };
-        })(marker, places[i].place_name);
+        })(marker, places[i].place_name,itemEl);
 
         fragment.appendChild(itemEl);
     }
