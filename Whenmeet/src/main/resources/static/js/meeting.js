@@ -79,12 +79,13 @@ function MeetingCon(seq, category, title, writer, writing_time, applicant_cnt, h
 };
 
 // 댓글 생성자
-function MeetingApp(profile_url, name, applicant_time, approval, contents) {
+function MeetingApp(profile_url, name, applicant_time, approval, contents, user_id) {
 	this.profile_url = profile_url;
 	this.name = name;
 	this.applicant_time = applicant_time;
 	this.approval = approval;
 	this.contents = contents;
+	this.user_id = user_id;
 	this.printLi = function() {
 		return `<li>
 					<div class="app_list_caption">
@@ -119,4 +120,23 @@ function MeetingApp(profile_url, name, applicant_time, approval, contents) {
 					</div>
 				</li>`;
 	};
+	this.printLiWt = function() {
+		return `<li>
+					<div class="man_chk_list">
+						<input id="ch_${ this.user_id }" class="man_checkboxs" type="checkbox" name="user_id" value="${ this.user_id }">
+						<label for="ch_${ this.user_id }"></label>
+					</div>
+					<div class="man_list_caption">
+						<img class="man_list_profile" alt="man_list_profile" src="${ this.profile_url }">
+						<div class="man_list_info">
+							<label class="man_list_name">${ this.name }</label>
+							<label class="man_list_time">${ this.applicant_time }</label>
+						</div>
+						<label class="man_list_approval">${ this.approval }</label>
+					</div>
+					<div class="man_list_contents">
+						<p>${ this.contents }</p>
+					</div>
+				</li>`;
+	}
 };

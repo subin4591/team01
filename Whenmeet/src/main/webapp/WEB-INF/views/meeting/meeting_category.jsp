@@ -5,7 +5,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<link rel="icon" href="/img/footlogo.svg">
+	<link rel="icon" href="/img/icon.svg">
 	
 	<c:choose>
 		<c:when test="${ category == 'all' }">

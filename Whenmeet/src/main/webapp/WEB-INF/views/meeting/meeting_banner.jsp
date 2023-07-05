@@ -17,7 +17,7 @@
 		for (let i = 0; i < banner_text_list.length; i++) {
 			let b = banner_text_list[i];
 			
-			// 태그 제거
+			// 모집글 내용 html 태그 제거
 			b = $("<div>").html(b).text();
 			
 			// 글자수 제한

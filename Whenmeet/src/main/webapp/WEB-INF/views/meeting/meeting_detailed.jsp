@@ -5,7 +5,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<link rel="icon" href="/img/footlogo.svg">
+	<link rel="icon" href="/img/icon.svg">
 	<title>모집글 | 언제만나</title>
 	<link href="/css/meeting/meeting.css" rel=stylesheet>
 	<link href="/css/meeting/meeting_detailed.css" rel=stylesheet>
@@ -15,7 +15,7 @@
 		$(document).ready(function() {
 			/// 게시글
 			// 비공개 게시글 event
-			if ("${ dto.hidden }" == "비공개") {
+			if ("${ dto.hidden }" == "비공개" && "${ session_id }" != "${ dto.user_id }") {
 				$("#meeting_detailed_all").hide();
 				$("#hidden_popup").show();
 				
@@ -38,11 +38,18 @@
 			
 			// 링크복사 event
 			$("#copy_link_btn").on("click", function() {
-				let temp = $("<input>");
-				let link = location.href;
+				let temp = $("<textarea>");
+				let title = "[" + "${ dto.title }" + "]\n"
+				let link = "URL : " + location.href + "\n";
+				let password = "PW : " + "${ dto.contents_password }";
 				
 				$("body").append(temp);
-				temp.val(link).select();
+				
+				if (${ dto.contents_password == null } || ${ dto.contents_password == "" }) {
+					password = "PW : 없음";
+				}
+				
+				temp.val(title + link + password).select();
 				document.execCommand("copy");
 				temp.remove();
 				alert("복사되었습니다.");
@@ -69,8 +76,23 @@
 			
 			/// 신청 댓글
 			// 기본 page active event
-			$("#applicant_page_nums").html(makePage(${ total_cnt }, ${ div_num }));
-			pageActive("time", 1);
+			if ("${ session_id }" != "${ dto.user_id }") {
+				$("#applicant_page_nums").html(makePage(${ total_cnt }, ${ div_num }));
+				pageActive("time", 1);				
+			}
+			else {
+				if (${ dto.end != '완료'}) {
+					$("#management_page_nums").html(makePage(${ total_cnt_wt }, ${ div_num }));
+					pageActive("yet", 1);
+					
+					$("#meeting_applicant").hide();
+					$("#writer_mode").show();
+				}
+				else {
+					$("#applicant_page_nums").html(makePage(${ total_cnt }, ${ div_num }));
+					pageActive("time", 1);	
+				}
+			}
 			
 			// 신청 댓글 글자수 제한 event
 			$("#app_contents").on("keyup", function() {
@@ -104,12 +126,8 @@
 			$("#app_submit").on("click", function() {
 				// 로그인 여부 확인
 				if (${ session_id != null }) {
-					// 작성자 여부 확인
-					if ("${ dto.user_id }" == "${ session_id }") {
-						alert("모집 글 작성자는 신청할 수 없습니다.");
-					}
 					// 중복 여부 확인
-					else if (${ user_app_cnt } > 0) {
+					if (${ user_app_cnt } > 0) {
 						alert("신청은 한 번만 할 수 있습니다.");
 					}
 					else {
@@ -367,10 +385,94 @@
 									);
 								au.append(ma.printLi());
 							}	// for end
-						}
+						}	// success end
 					});	// ajax end
 				}	// if end
 			});	// 신청 댓글 삭제 event end
+			
+			// writer mode 전체 선택 event
+			$("#select_all").on("click", function() {
+				if($(this).is(":checked")) {
+					$("#management_ul").find("input[type='checkbox']").prop("checked", true);
+				}
+				else {
+					$("#management_ul").find("input[type='checkbox']").prop("checked", false);
+				}
+			});	// writer mode 전체 선택 event end
+			
+			// writer mode 결정 event
+			$("#man_ok_btn").on("click", function() {
+				let formData = $("#writer_mode_form").serialize();
+				let total_cnt = ${ total_cnt };
+				$.ajax({
+					url: "/meeting/writerMode",
+					data: formData,
+					type: "post",
+					dataType: "json",
+					success: function(data) {
+						// page active event
+						$("#management_page_nums").html(makePage(data.total_cnt, data.div_num));
+						pageActive("yet", 1);
+						
+						// 모임신청 총 개수
+						$("#management_ul_caption h2").text("모임신청 총 (" + data.total_cnt + "/" + total_cnt + ")개");
+						
+						// 신청 댓글 목록
+						let au = $("#management_ul");
+						au.html("");
+						
+						for (let a = 0; a < data.app_list.length; a++) {
+							let ma = new MeetingApp(
+									data.app_list[a].profile_url,
+									data.app_list[a].name,
+									data.app_list[a].applicant_time,
+									data.app_list[a].approval,
+									data.app_list[a].contents,
+									data.app_list[a].user_id
+								);
+							au.append(ma.printLiWt());
+						}	// for end
+					}	// success end
+				});	// ajax end
+			});	// writer mode 결정 event end
+			
+			// writer mode sort event
+			$("#management_sort a").on("click", function(event) {
+				event.preventDefault();
+				let seq = ${ dto.seq };
+				let sort = $(this).data("target");
+				
+				$.ajax({
+					url: "/meeting/writerModeSort",
+					data: {seq: seq, sort: sort},
+					type: "post",
+					dataType: "json",
+					success: function(data) {
+						// page active event
+						$("#management_page_nums").html(makePage(data.total_cnt, data.div_num));
+						pageActive(sort, 1);
+						
+						// 총 개수
+						$("#management_ul_caption h2").text("모임신청 총 (" + data.total_cnt + "/" + ${ total_cnt } + ")개");
+						
+						// 신청 댓글 목록
+						let au = $("#management_ul");
+						au.html("");
+						
+						for (let a = 0; a < data.app_list.length; a++) {
+							let ma = new MeetingApp(
+									data.app_list[a].profile_url,
+									data.app_list[a].name,
+									data.app_list[a].applicant_time,
+									data.app_list[a].approval,
+									data.app_list[a].contents,
+									data.app_list[a].user_id
+								);
+							au.append(ma.printLiWt());
+						}	// for end
+					}
+				});
+			});
 		});	// document ready end
 	</script>
 </head>
@@ -433,6 +535,7 @@
 		</div>
 		
 		<div id="meeting_applicant">
+			<!-- not writer mode -->
 			<form id="applicant_form">
 				<input type="hidden" name="seq" value="${ dto.seq }">
 				<input type="hidden" name="user_id" value="${ session_id }">
@@ -507,11 +610,64 @@
 							</li>
 						</c:otherwise>
 					</c:choose>
-					
 				</c:forEach>
 			</ul>
 			
 			<div id="applicant_page_nums"></div>
+		</div>
+		
+		<!-- writer mode -->
+		<div id="writer_mode">
+			<div id="management_ul_caption">
+				<h2>모임신청 총 (${ total_cnt_wt }/${ total_cnt })개</h2>
+				<div id="management_sort">
+					<a href="" class="sort_a" data-target="yet">대기</a>
+					<a href="" class="sort_a" data-target="ready">완료</a>
+				</div>
+			</div>
+			
+			<form id="writer_mode_form">
+				<input type="hidden" name="seq" value="${ dto.seq }">
+				<div id="management_caption">
+					<div id="man_select_all">
+						<label>전체선택</label>
+						<input id="select_all" class="man_checkboxs" type="checkbox">
+						<label for="select_all"></label>					
+					</div>
+					<div id="man_right">
+						<select id="man_select" name="approval">
+							<option value="승인" selected>승인</option>
+							<option value="거절">거절</option>
+						</select>
+						<input id="man_ok_btn" type="button" value="결정">
+					</div>
+				</div>
+				
+				<ul id="management_ul">
+					<c:forEach items="${ app_list_wt }" var="a">
+						<li>
+							<div class="man_chk_list">
+								<input id="ch_${ a.user_id }" class="man_checkboxs" type="checkbox" name="user_id" value="${ a.user_id }">
+								<label for="ch_${ a.user_id }"></label>
+							</div>
+							<div class="man_list_caption">
+								<img class="man_list_profile" alt="man_list_profile" src="${ a.profile_url }">
+								<div class="man_list_info">
+									<label class="man_list_name">${ a.name }</label>
+									<label class="man_list_time">${ a.applicant_time }</label>
+								</div>
+								<label class="man_list_approval">${ a.approval }</label>						
+							</div>
+							
+							<div class="man_list_contents">
+								<p>${ a.contents }</p>
+							</div>
+						</li>
+					</c:forEach>
+				</ul>
+			</form>
+			
+			<div id="management_page_nums"></div>
 		</div>
 	</div>
 	

@@ -902,3 +902,44 @@ li {
 	color : black;
 	transition: 0.5s;
 }
+
+/*그룹 상세 설명*/
+#group_detail_left{
+	display : flex; 
+	font-family:'코트라'; 
+	color : white; 
+	align-items : center; 
+	flex-direction : column; 
+	justify-content : center; 
+	margin : 0;  
+	border: 5px solid #F25287; 
+	background : #F25287; 
+	width : 30%; 
+	height : 100%;
+}
+#group_detail_right{
+	display : flex; 
+	margin : 0; 
+	border: 5px dashed #F25287; 
+	flex-direction : column;  
+	border-left: 5px solid #F25287;  
+	background : white; 
+	width : 70%; 
+	height : 100%;
+}
+#group_detail_right p, #group_detail_right h2{
+	z-index:1;
+	margin-left : 5%;
+	width:90%;
+	display : inline;
+	word-break:break-all;
+	text-overflow:clip;
+}
+#group_detail_right p{
+	font-size : 22px;
+	font-weight : bold;
+	color : #AAAAAA;
+}
+#group_detail_right span{
+	color : #F25287
+}

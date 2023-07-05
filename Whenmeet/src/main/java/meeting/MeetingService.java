@@ -10,6 +10,7 @@ import dto.ApplicantDTO;
 import dto.MeetingDTO;
 import dto.MeetingPagingDTO;
 import dto.UserDTO;
+import dto.WriterModeDTO;
 
 @Service("meetingservice")
 public class MeetingService {
@@ -18,45 +19,30 @@ public class MeetingService {
 	
 	/// Meeting select
 	// 기본 게시글 목록
-	public List<MeetingDTO> meetingListAll(MeetingPagingDTO dto) {
-		return dao.meetingListAll(dto);
+	public List<MeetingDTO> meetingList(MeetingPagingDTO dto) {
+		return dao.meetingList(dto);
 	}
-	public int meetingCountAll() {
-		return dao.meetingCountAll();
-	}
-	public List<MeetingDTO> meetingListCategory(MeetingPagingDTO dto) {
-		return dao.meetingListCategory(dto);
-	}
-	public int meetingCountCategory(String category) {
-		return dao.meetingCountCategory(category);
+	public int meetingCount(String category) {
+		return dao.meetingCount(category);
 	}
 	
 	// 유저 게시글 목록
-	public List<MeetingDTO> meetingListAllUser(MeetingPagingDTO dto) {
-		return dao.meetingListAllUser(dto);
+	public List<MeetingDTO> meetingListUser(MeetingPagingDTO dto) {
+		return dao.meetingListUser(dto);
 	}
-	public int meetingCountAllUser(String user_id) {
-		return dao.meetingCountAllUser(user_id);
-	}
-	public List<MeetingDTO> meetingListCategoryUser(MeetingPagingDTO dto) {
-		return dao.meetingListCategoryUser(dto);
-	}
-	public int meetingCountCategoryUser(MeetingPagingDTO dto) {
-		return dao.meetingCountCategoryUser(dto);
+	public int meetingCountUser(MeetingPagingDTO dto) {
+		return dao.meetingCountUser(dto);
 	}
 	
 	// 유저 신청 게시글 목록
 	public List<Integer> userAppSeqList(String user_id) {
 		return dao.userAppSeqList(user_id);
 	}
-	public List<MeetingDTO> userAppMeetingListAll(MeetingPagingDTO dto) {
-		return dao.userAppMeetingListAll(dto);
+	public List<MeetingDTO> userAppMeetingList(MeetingPagingDTO dto) {
+		return dao.userAppMeetingList(dto);
 	}
-	public List<MeetingDTO> userAppMeetingListCategory(MeetingPagingDTO dto) {
-		return dao.userAppMeetingListCategory(dto);
-	}
-	public int userAppMeetingCountCategory(MeetingPagingDTO dto) {
-		return dao.userAppMeetingCountCategory(dto);
+	public int userAppMeetingCount(MeetingPagingDTO dto) {
+		return dao.userAppMeetingCount(dto);
 	}
 	
 	// 유저 신청 게시글 결과
@@ -90,6 +76,13 @@ public class MeetingService {
 		return dao.applicantUserCount(dto);
 	}
 	
+	// writer mode 신청 댓글 정보
+	public List<ApplicantDTO> writerModeList(MeetingPagingDTO dto) {
+		return dao.writerModeList(dto);
+	}
+	public int writerModeCount(MeetingPagingDTO dto) {
+		return dao.writerModeCount(dto);
+	}
 	
 	/// Meeting insert
 	// 게시글 작성
@@ -122,6 +115,11 @@ public class MeetingService {
 	// 댓글 수정
 	public void updateAppContents(ApplicantDTO dto) {
 		dao.updateAppContents(dto);
+	}
+	
+	// 모집 신청 승인/거절
+	public void updateApproval(WriterModeDTO dto) {
+		dao.updateApproval(dto);
 	}
 	
 	

@@ -8,8 +8,10 @@
 <title>언제만나?</title>
 <script src="js/jquery-3.6.4.min.js"></script>
 <script src='js/cal.js'></script>
+<script src="js/main.js"></script>
 
 <link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/schedule_location.css">
 <script>
 var currentDate = new Date();
 
@@ -93,12 +95,33 @@ document.addEventListener('DOMContentLoaded', function() {
   
 
 </style>
+
 <script>
-$(document).ready(function(){
-	var element = $("#fc-dom-1");
-	if(element.get(0).innerText.includes('January')){
-	    element.innerText = element.innerText.replace("January","1월");
-	  }
+$(document).ready(function(){	
+	$('#write_more').on('click',function(e){
+	    if ("${session_id}" == "") {
+	      e.preventDefault();
+	      alert('로그인이 필요합니다.');
+    }
+	});
+	$('#apply_more').on('click',function(e){
+	    if ("${session_id}" == "") {
+	      e.preventDefault();
+	      alert('로그인이 필요합니다.');
+	    }
+	});
+	$('#group_more').on('click',function(e){
+	    if ("${session_id}" == "") {
+	      e.preventDefault();
+	      alert('로그인이 필요합니다.');
+	    }
+	});
+	$('#add_btn').on('click',function(e){
+	    if ("${session_id}" == "") {
+	      e.preventDefault();
+	      alert('로그인이 필요합니다.');
+	    }
+	});
 });
 </script>
 </head>
@@ -107,7 +130,7 @@ $(document).ready(function(){
 	<%@ include file="../header.jsp" %>
 	
     <div id="top">
-    	<a href="meeting/write" id="add_btn"><button><h2>모임 생성</h2></button></a>
+    	<a href="meeting/write	" id="add_btn"><button><h2>모임 생성</h2></button></a>
     	<img alt="배경이미지" src="img/back.jpg" id="back">
     </div>
     <div id="body">
@@ -116,7 +139,7 @@ $(document).ready(function(){
 			    <div id="group">
 			    	<h1 class="text">
 			    		나의 모임
-			    		<span class="more"><a href="">전체보기</a></span>
+			    		<span class="more"><a href="" id="group_more">전체보기</a></span>
 			    	</h1>
 			    	
 			    	<c:forEach items="${mygroup}" var="group" begin="0" end="2">
@@ -126,7 +149,7 @@ $(document).ready(function(){
 		    	<div id="writing">
 			    	<h1 class="text">
 			    		작성한 모집글
-			    		<span class="more"><a href="meeting/my">전체보기</a></span>
+			    		<span class="more"><a href="meeting/my" id="write_more">전체보기</a></span>
 			    	</h1>
 			    	<c:forEach items="${mywrite}" var="write" begin="0" end="2">
 		    			<h3 class="writing_list"><a href="meeting/detailed?seq=${write.seq}">${write.title}</a></h3>
@@ -135,7 +158,7 @@ $(document).ready(function(){
 			    <div id="apply">
 			    	<h1 class="text">
 			    		신청한 모집글
-			    		<span class="more"><a href="meeting/myapp">전체보기</a></span>
+			    		<span class="more"><a href="meeting/myapp" id="apply_more">전체보기</a></span>
 			    	</h1>
 			    	<c:forEach items="${myapplication}" var="application" begin="0" end="2">
 		    			<h3 class="apply_list"><a href="meeting/detailed?seq=${application.seq}">${application.title}</a></h3>
@@ -151,7 +174,7 @@ $(document).ready(function(){
 		    <div id="rank">
 		    	<h1 class="text">
 		    		인기 글
-		    		<span class="more"><a href="meeting">전체보기</a></span>
+		    		<span class="more"><a href="meeting" id="rank_more">전체보기</a></span>
 		    	</h1>
 			    <c:forEach items="${ranklist}" var="rank" begin="0" end="4">
 		    			<h2 class="rank_list"><a href="meeting/detailed?seq=${rank.seq}">${rank.title}</a></h2>
@@ -159,6 +182,9 @@ $(document).ready(function(){
 		    	</c:forEach>
 			</div>
 	    </div>
+	    <div>
+		<%@include file="../schedule/schedule_location.jsp" %>
+		</div>
     </div>
     <div>
     <%@ include file="../footer.jsp" %>
