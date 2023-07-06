@@ -57,7 +57,7 @@ function makePage(totalCnt, divNum) {
 }
 
 // 게시글 생성자
-function MeetingCon(seq, category, title, writer, writing_time, applicant_cnt, hits) {
+function MeetingCon(seq, category, title, writer, writing_time, applicant_cnt, hits, contents) {
 	this.seq = seq;
 	this.category = category;
 	this.title = title;
@@ -65,6 +65,7 @@ function MeetingCon(seq, category, title, writer, writing_time, applicant_cnt, h
 	this.writing_time = writing_time;
 	this.applicant_cnt = applicant_cnt;
 	this.hits = hits;
+	this.contents = contents;
 	this.printTd = function() {
 		return `<tr>
 					<td>${ this.seq }</td>
@@ -74,6 +75,20 @@ function MeetingCon(seq, category, title, writer, writing_time, applicant_cnt, h
 					<td>${ this.writing_time }</td>
 					<td>${ this.applicant_cnt }</td>
 					<td>${ this.hits }</td>
+				</tr>`;
+	};
+	this.printSearch = function() {
+		return `<tr>
+					<td rowspan="2" class="td_seq">${ this.seq }</td>
+					<td rowspan="2" class="td_category">${ this.category }</td>
+					<td class="td_title"><a href="/meeting/detailed?seq=${ this.seq }">${ this.title }</a></td>
+					<td class="td_writer">${ this.writer }</td>
+					<td class="td_writing_time">${ this.writing_time }</td>
+					<td class="td_applicant_cnt">${ this.applicant_cnt }</td>
+					<td class="td_hits">${ this.hits }</td>
+				</tr>
+				<tr>
+					<td colspan="4" class="td_contents">${ this.contents }</td>
 				</tr>`;
 	};
 };

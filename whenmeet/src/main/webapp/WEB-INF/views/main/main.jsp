@@ -5,11 +5,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>언제만나?</title>
+<title>메인|언제만나</title>
 <script src="js/jquery-3.6.4.min.js"></script>
 <script src='js/cal.js'></script>
 <script src="js/main.js"></script>
-
+<link rel="icon" href="/img/icon.svg">
 <link rel="stylesheet" href="css/main.css">
 <link rel="stylesheet" href="css/schedule_location.css">
 <script>
@@ -168,7 +168,14 @@ $(document).ready(function(){
 			</div>
 		    <div id="schedule">
 		    	<h1 class="text">나의 일정</h1>
-		    	<div id='calendar'></div>
+		    	<c:choose>
+				    <c:when test="${id == null}">
+				        <a href="login"><button id="null"><h2>로그인이 필요합니다.</h2></button></a>
+				    </c:when>
+				    <c:otherwise>
+				        <div id='calendar'></div>
+				    </c:otherwise>
+				</c:choose>
 		    	
 		    </div>
 		    <div id="rank">
@@ -183,7 +190,6 @@ $(document).ready(function(){
 			</div>
 	    </div>
 	    <div>
-		<%@include file="../schedule/schedule_location.jsp" %>
 		</div>
     </div>
     <div>

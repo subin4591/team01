@@ -66,7 +66,7 @@
 #contents_table td:nth-child(2),
 #contents_table td:nth-child(6),
 #contents_table td:nth-child(7) {
-	/* 번호, 신청자수, 조회 */
+	/* 번호, 카테고리, 신청자수, 조회 */
 	width: 70px;
 }
 #contents_table td:nth-child(2) {
