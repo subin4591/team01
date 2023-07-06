@@ -30,8 +30,14 @@
 				});
 			};
 			
-			// 완료 모집글 event
-			if (${ dto.end == '완료'}) {
+			// 대기, 완료 모집글 event
+			if (${ dto.end == '대기' }) {
+				$("#meeting_detailed_all").prepend("<div id='end_text'><h1>그룹 생성 대기 중인 모집</h1></div>");
+				$("#applicant_form").hide();
+				$("#app_list_change").hide();
+				$("#app_list_cancel").hide();
+			}
+			else if (${ dto.end == '완료' }) {
 				$("#meeting_detailed_all").prepend("<div id='end_text'><h1>완료된 모집</h1></div>");
 				$("#applicant_form").hide();
 			}
@@ -148,8 +154,8 @@
 									$("#applicant_page_nums").html(makePage(data.total_cnt, data.div_num));
 									pageActive("time", 1);
 									
-									// 모임신청 총 개수
-									$("#applicant_ul_caption h2").text("모임신청 총 " + data.total_cnt + "개");
+									// 그룹신청 총 개수
+									$("#applicant_ul_caption h2").text("그룹신청 총 " + data.total_cnt + "개");
 									
 									// 신청 댓글 목록
 									let au = $("#applicant_ul");
@@ -211,13 +217,21 @@
 									data[a].approval,
 									data[a].contents
 								);
-							// 본인 댓글이면
-							if ("${ session_id }" == a_user) {
-								au.append(ma.printLiMy());
-							}	// if end
-							// 본인 댓글이 아니면
-							else {
+							
+							// 대기 중인 모집글이면
+							if (${ dto.end == '대기' }) {
 								au.append(ma.printLi());
+							}	// if end
+							// 대기 중이 아니라면
+							else {
+								// 본인 댓글이면
+								if ("${ session_id }" == a_user) {
+									au.append(ma.printLiMy());
+								}	// if end
+								// 본인 댓글이 아니면
+								else {
+									au.append(ma.printLi());
+								}	// else end
 							}	// else end
 						}	// for end
 					}	// success end
@@ -225,7 +239,7 @@
 			});	// sort ajax event end
 			
 			/// page event
-			$(document).on("click", ".page_a", function(event) {
+			$(document).on("click", "#applicant_page_nums a", function(event) {
 				event.preventDefault();
 				let seq = ${ dto.seq };
 				let page = $(this).data("target");
@@ -252,13 +266,20 @@
 									data[a].approval,
 									data[a].contents
 								);
-							// 본인 댓글이면
-							if ("${ session_id }" == a_user) {
-								au.append(ma.printLiMy());
-							}	// if end
-							// 본인 댓글이 아니면
-							else {
+							// 대기 중인 모집글이면
+							if (${ dto.end == '대기' }) {
 								au.append(ma.printLi());
+							}	// if end
+							// 대기 중이 아니라면
+							else {
+								// 본인 댓글이면
+								if ("${ session_id }" == a_user) {
+									au.append(ma.printLiMy());
+								}	// if end
+								// 본인 댓글이 아니면
+								else {
+									au.append(ma.printLi());
+								}	// else end
 							}	// else end
 						}	// for end
 					}	// success end
@@ -293,8 +314,15 @@
 									data.approval,
 									data.contents
 								);
-							au.html(ma.printLiMy());
-						}
+							// 대기 중인 모집글이면
+							if (${ dto.end == '대기' }) {
+								au.append(ma.printLi());
+							}	// if end
+							// 대기 중이 아니라면
+							else {
+								au.html(ma.printLiMy());
+							}	// else end
+						}	// if end
 					}	// success end
 				});	// ajax end
 			});	// my event end
@@ -368,8 +396,8 @@
 							$("#applicant_page_nums").html(makePage(data.total_cnt, data.div_num));
 							pageActive("time", 1);
 							
-							// 모임신청 총 개수
-							$("#applicant_ul_caption h2").text("모임신청 총 " + data.total_cnt + "개");
+							// 그룹신청 총 개수
+							$("#applicant_ul_caption h2").text("그룹신청 총 " + data.total_cnt + "개");
 							
 							// 신청 댓글 목록
 							let au = $("#applicant_ul");
@@ -400,12 +428,12 @@
 				}
 			});	// writer mode 전체 선택 event end
 			
-			// writer mode 결정 event
+			// writer mode 승인 event
 			$("#man_ok_btn").on("click", function() {
 				let formData = $("#writer_mode_form").serialize();
 				let total_cnt = ${ total_cnt };
 				$.ajax({
-					url: "/meeting/writerMode",
+					url: "/meeting/writerModeOk",
 					data: formData,
 					type: "post",
 					dataType: "json",
@@ -414,8 +442,8 @@
 						$("#management_page_nums").html(makePage(data.total_cnt, data.div_num));
 						pageActive("yet", 1);
 						
-						// 모임신청 총 개수
-						$("#management_ul_caption h2").text("모임신청 총 (" + data.total_cnt + "/" + total_cnt + ")개");
+						// 그룹신청 총 개수
+						$("#management_ul_caption h2").text("그룹신청 총 (" + data.total_cnt + "/" + total_cnt + ")개");
 						
 						// 신청 댓글 목록
 						let au = $("#management_ul");
@@ -434,7 +462,47 @@
 						}	// for end
 					}	// success end
 				});	// ajax end
-			});	// writer mode 결정 event end
+			});	// writer mode 승인 event end
+			
+			// writer mode 대기 event
+			$("#man_re_btn").on("click", function() {
+				let formData = $("#writer_mode_form").serialize();
+				let total_cnt = ${ total_cnt };
+				$.ajax({
+					url: "/meeting/writerModeRe",
+					data: formData,
+					type: "post",
+					dataType: "json",
+					success: function(data) {
+						// page active event
+						$("#management_page_nums").html(makePage(data.total_cnt, data.div_num));
+						pageActive("yet", 1);
+						
+						// 그룹신청 총 개수
+						$("#management_ul_caption h2").text("그룹신청 총 (" + data.total_cnt + "/" + total_cnt + ")개");
+						
+						// 신청 댓글 목록
+						let au = $("#management_ul");
+						au.html("");
+						
+						for (let a = 0; a < data.app_list.length; a++) {
+							let ma = new MeetingApp(
+									data.app_list[a].profile_url,
+									data.app_list[a].name,
+									data.app_list[a].applicant_time,
+									data.app_list[a].approval,
+									data.app_list[a].contents,
+									data.app_list[a].user_id
+								);
+							au.append(ma.printLiWt());
+						}	// for end
+						
+						// 승인/대기 버튼
+						$("#man_ok_btn").show();
+						$("#man_re_btn").hide();
+					}	// success end
+				});	// ajax end
+			});	// writer mode 대기 event end
 			
 			// writer mode sort event
 			$("#management_sort a").on("click", function(event) {
@@ -453,7 +521,7 @@
 						pageActive(sort, 1);
 						
 						// 총 개수
-						$("#management_ul_caption h2").text("모임신청 총 (" + data.total_cnt + "/" + ${ total_cnt } + ")개");
+						$("#management_ul_caption h2").text("그룹신청 총 (" + data.total_cnt + "/" + ${ total_cnt } + ")개");
 						
 						// 신청 댓글 목록
 						let au = $("#management_ul");
@@ -470,8 +538,89 @@
 								);
 							au.append(ma.printLiWt());
 						}	// for end
-					}
-				});
+						
+						// 승인/대기 버튼
+						if (sort == "ready") {
+							$("#man_ok_btn").hide();
+							$("#man_re_btn").show();
+						}
+						else {
+							$("#man_ok_btn").show();
+							$("#man_re_btn").hide();
+						}
+					}	// success end
+				});	// ajax end
+			});	// writer mode sort event end
+			
+			// writer mode page event
+			$(document).on("click", "#management_page_nums a", function(event) {
+				event.preventDefault();
+				let seq = ${ dto.seq };
+				let sort = $(".sort_a.page_active").data("target");
+				let page = $(this).data("target");
+				
+				$.ajax({
+					url: "/meeting/writerModePage",
+					data: {seq: seq, sort: sort, page: page},
+					type: "post",
+					dataType: "json",
+					success: function(data) {
+						// page active event
+						pageActive(sort, page);
+						
+						// 신청 댓글 목록
+						let au = $("#management_ul");
+						au.html("");
+						
+						for (let a = 0; a < data.length; a++) {
+							let ma = new MeetingApp(
+									data[a].profile_url,
+									data[a].name,
+									data[a].applicant_time,
+									data[a].approval,
+									data[a].contents,
+									data[a].user_id
+								);
+							au.append(ma.printLiWt());
+						}	// for end
+					}	// success end
+				});	// ajax end
+			});	// writer mode page event end
+			
+			// 신청그만받기 event
+			$("#stop_btn").on("click", function() {
+				let really = confirm("더 이상 신청을 받을 수 없습니다.\n계속하시겠습니까?");
+				if (really) {
+					let seq = ${ dto.seq };
+					
+					// form 태그 생성 및 submit
+					let stopForm = $("<form></form>");
+					stopForm.attr("action", "/meeting/detailed/stopApp");
+					stopForm.attr("method", "post");
+					stopForm.append($("<input>", {type: "hidden", name: "seq", value: seq}));
+					
+					$("body").append(stopForm);
+					
+					stopForm.submit();
+				}
+			});
+			
+			// 그룹생성 event
+			$("#make_group_btn").on("click", function() {
+				let really = confirm("그룹을 생성하면 신청이 완료됩니다.\n계속하시겠습니까?");
+				if (really) {
+					let seq = ${ dto.seq };
+					
+					// form 태그 생성 및 submit
+					let makeForm = $("<form></form>");
+					makeForm.attr("action", "");
+					makeForm.attr("method", "post");
+					makeForm.append($("<input>", {type: "hidden", name: "seq", value: seq}));
+					
+					$("body").append(makeForm);
+					
+					makeForm.submit();
+				}
 			});
 		});	// document ready end
 	</script>
@@ -517,17 +666,8 @@
 				<c:choose>
 					<c:when test="${ session_id == dto.user_id }">
 						<div id="contents_btn_right">
-						
-						<c:choose>
-							<c:when test="${ dto.end == '완료' }">
-								<input id="contents_delete_btn" type="button" value="삭제">						
-							</c:when>
-							<c:otherwise>
-								<input id="contents_change_btn" type="button" value="수정" onclick="location.href='/meeting/change?seq=${ dto.seq }'">
-								<input id="contents_delete_btn" type="button" value="삭제">											
-							</c:otherwise>					
-						</c:choose>
-						
+							<input id="contents_change_btn" type="button" value="수정" onclick="location.href='/meeting/change?seq=${ dto.seq }'">
+							<input id="contents_delete_btn" type="button" value="삭제">
 						</div>				
 					</c:when>
 				</c:choose>
@@ -562,7 +702,7 @@
 			</form>
 			
 			<div id="applicant_ul_caption">
-				<h2>모임신청 총 ${ total_cnt }개</h2>
+				<h2>그룹신청 총 ${ total_cnt }개</h2>
 				<div id="applicant_sort">
 					<a href="" class="sort_a" data-target="time">최신순</a>
 					<a href="" class="sort_a" data-target="my">내신청</a>
@@ -619,10 +759,10 @@
 		<!-- writer mode -->
 		<div id="writer_mode">
 			<div id="management_ul_caption">
-				<h2>모임신청 총 (${ total_cnt_wt }/${ total_cnt })개</h2>
+				<h2>그룹신청 총 (${ total_cnt_wt }/${ total_cnt })개</h2>
 				<div id="management_sort">
 					<a href="" class="sort_a" data-target="yet">대기</a>
-					<a href="" class="sort_a" data-target="ready">완료</a>
+					<a href="" class="sort_a" data-target="ready">승인</a>
 				</div>
 			</div>
 			
@@ -635,11 +775,8 @@
 						<label for="select_all"></label>					
 					</div>
 					<div id="man_right">
-						<select id="man_select" name="approval">
-							<option value="승인" selected>승인</option>
-							<option value="거절">거절</option>
-						</select>
-						<input id="man_ok_btn" type="button" value="결정">
+						<input id="man_ok_btn" type="button" value="승인">
+						<input id="man_re_btn" type="button" value="대기" style="display: none;">
 					</div>
 				</div>
 				
@@ -668,6 +805,17 @@
 			</form>
 			
 			<div id="management_page_nums"></div>
+			
+			<div id="management_bottom">
+				<c:choose>
+					<c:when test="${ dto.end == '진행' }">
+						<input id="stop_btn" type="button" value="신청그만받기">
+					</c:when>
+					<c:when test="${ dto.end == '대기' }">
+						<input id="make_group_btn" type="button" value="그룹생성">
+					</c:when>
+				</c:choose>
+			</div>
 		</div>
 	</div>
 	

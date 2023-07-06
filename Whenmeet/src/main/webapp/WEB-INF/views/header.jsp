@@ -6,6 +6,14 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
 	$(document).ready(function() {
+		// 유저 아이콘
+		if (${ session_id != null }) {
+			$("#user_profile").show();
+		}
+		else {
+			$("#user_profile").hide();
+		}
+		
 		// 검색창 Toggle
 		$("#pop_search").hide();
 		$("#search_btn").on("click", function() {
@@ -17,8 +25,7 @@
 		
 		// submit event
 		let sSubmit = $("#search_submit_btn");
-		sSubmit.on("click", function(event) {
-			event.preventDefault();
+		sSubmit.on("click", function() {
 			if (sInput.val().length == 0) {
 				alert("검색어를 입력하세요.")
 			}
@@ -44,8 +51,8 @@
 		</c:choose>
 	</div>
 	<div id="pop_search">
-		<form id="search_form" action="">
-			<input type="text" id="search_input" name="searchInput" placeholder="검색어를 입력하세요.">
+		<form id="search_form" action="/search">
+			<input type="text" id="search_input" name="search_input" placeholder="검색어를 입력하세요.">
 			<img id="search_submit_btn" src="/img/search.svg" alt="search_submit_btn">
 		</form>
 	</div>
