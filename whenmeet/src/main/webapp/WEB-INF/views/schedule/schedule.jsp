@@ -567,7 +567,7 @@ String userImgErr = "/img/user_logo.png";
 			    		<br>
 			    		<h2 style = "margin : 0px; margin-top : 2px; text-align : center">그룹 차트</h2>
 			  			<hr style = "border : 3px solid #f25287; width : 90%">
-				  		<div id = "chart_div2_container" style = "border : None; width : 100%; height : 68%">
+				  		<div id = "chart_div2_container" style = "border : None; width : 97%; height : 65%; background : #f9f3f3; margin-top : 0px">
 					  		<br>
 					  		<div id="chart_div2"></div>
 				  		</div>
