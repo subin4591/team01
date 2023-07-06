@@ -120,16 +120,14 @@
 	<!-- writer mode 신청 댓글 정보 -->
 	<select id="writerModeList" parameterType="meetingpagingdto" resultType="applicantdto">
 		select * from applicant_table
-		where seq = #{seq} and 
-		(<foreach collection="sort_list" item="sort" separator=" or ">approval = #{sort}</foreach>)
-		order by applicant_time desc
+		where seq = #{seq} and approval = #{sort_type}
+		order by applicant_time asc
 		limit #{start}, #{end}
 	</select>
 	
 	<select id="writerModeCount" parameterType="meetingpagingdto" resultType="int">
 		select count(*) from applicant_table
-		where seq = #{seq} and 
-		(<foreach collection="sort_list" item="sort" separator=" or ">approval = #{sort}</foreach>)
+		where seq = #{seq} and approval = #{sort_type}
 	</select>
 	
 	
@@ -175,12 +173,19 @@
 		where seq = #{seq} and user_id = #{user_id}
 	</update>
 	
-	<!-- 모집 신청 승인/거절 -->
+	<!-- 모집 신청 승인 -->
 	<update id="updateApproval" parameterType="writermodedto">
 		update applicant_table
 		set approval = #{approval} where
 		(<foreach collection="user_id" item="user" separator=" or ">user_id = #{user}</foreach>)
 		and seq = #{seq}
+	</update>
+	
+	<!-- 모집글 상태 변경 -->
+	<update id="updateEnd" parameterType="hashmap">
+		update meeting_table
+		set end = #{end}
+		where seq = #{seq}
 	</update>
 	
 	<!-- Meeting delete -->

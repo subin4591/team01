@@ -75,6 +75,9 @@ public interface MeetingDAO {
 	// 모집 신청 승인/거절
 	public void updateApproval(WriterModeDTO dto);
 	
+	// 모집글 상태 변경
+	public void updateEnd(HashMap<String, Object> map);
+	
 	
 	/// Meeting delete
 	// 게시글 삭제
