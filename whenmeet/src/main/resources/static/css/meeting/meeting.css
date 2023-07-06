@@ -1,0 +1,73 @@
+@charset "UTF-8";
+
+/* body */
+body {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: #F9F3F3;
+}
+input[type="button"] {
+    cursor: pointer;
+}
+a {
+	color: inherit;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+
+/* btns */
+#contents_btns, #write_form_btn, #contents_btn, #change_form_btn, #popup_btn {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin-top: 10px;	
+}
+#mycon_btn,
+#myapp_btn, 
+#write_btn,
+#write_form_btn *, 
+#contents_btn_left *,
+#contents_btn_right *,
+#change_form_btn *,
+#popup_btn *,
+#app_submit,
+#my_app_submit,
+#my_app_cancel,
+#man_ok_btn,
+#man_re_btn {
+	width: 85px;
+	height: 35px;
+	font-size: 16px;
+	border: 2px solid;
+	border-radius: 10px;
+}
+#mycon_btn,
+#myapp_btn,
+#change_form_cancel_btn,
+#write_form_cancel_btn,
+#contents_list_btn,
+#contents_change_btn,
+#popup_cancel,
+#my_app_cancel {
+	font-weight: bold;
+	color: #F25287;
+	background-color: #F9F3F3;
+	border-color: #F25287;
+}
+#write_btn,
+#change_form_change_btn,
+#write_form_write_btn,
+#app_submit,
+#contents_delete_btn, 
+#popup_confirm,
+#my_app_submit,
+#man_ok_btn,
+#man_re_btn {
+	font-weight: bold;
+	color: white;
+	background-color: #F25287;
+	border-color: #F25287;	
+}

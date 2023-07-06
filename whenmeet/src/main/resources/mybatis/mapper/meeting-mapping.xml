@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="meeting.MeetingDAO">
+	<!-- Meeting select -->
+	<!-- 기본 게시글 목록 -->
+	<select id="meetingList" parameterType="meetingpagingdto" resultType="meetingdto">
+		select * from meeting_table
+		where end = "진행" and hidden = "공개"
+		<if test="category != null and category != '전체'">
+			and category = #{category}
+		</if>
+		order by ${sort_type} desc
+		limit #{start}, #{end}
+	</select>
+	
+	<select id="meetingCount" resultType="int">
+		select count(*) from meeting_table
+		where end = "진행" and hidden = "공개"
+		<if test="category != null and category != '전체'">
+			and category = #{category}
+		</if>
+	</select>
+	
+	<!-- 유저 게시글 목록 -->
+	<select id="meetingListUser" parameterType="meetingpagingdto" resultType="meetingdto">
+		select * from meeting_table
+		where user_id = #{user_id}
+		<choose>
+			<when test="category == 'result'">
+				and end = #{sort_list[0]} and hidden = #{sort_list[1]}
+			</when>
+			<when test="category != null and category != '전체'">
+				and category = #{category}
+			</when>
+		</choose>
+		order by ${sort_type} desc
+		limit #{start}, #{end}
+	</select>
+	
+	<select id="meetingCountUser" parameterType="meetingpagingdto" resultType="int">
+		select count(*) from meeting_table
+		where user_id = #{user_id}
+		<choose>
+			<when test="category == 'result'">
+				and end = #{sort_list[0]} and hidden = #{sort_list[1]}
+			</when>
+			<when test="category != null and category != '전체'">
+				and category = #{category}
+			</when>
+		</choose>
+	</select>
+	
+	<!-- 유저 신청 게시글 목록 -->
+	<select id="userAppSeqList" parameterType="String" resultType="int">
+		select seq from applicant_table
+		where user_id = #{user_id}
+	</select>
+	
+	<select id="userAppMeetingList" parameterType="meetingpagingdto" resultType="meetingdto">
+		select * from meeting_table where
+		(<foreach collection="seq_list" item="seq" separator=" or ">seq = #{seq}</foreach>)
+		<if test="category != null and category != '전체'">
+			and category = #{category}
+		</if>
+		order by ${sort_type} desc
+		limit #{start}, #{end}
+	</select>
+	
+	<select id="userAppMeetingCount" parameterType="meetingpagingdto" resultType="int">
+		select count(*) from meeting_table where
+		(<foreach collection="seq_list" item="seq" separator=" or ">seq = #{seq}</foreach>)
+		<if test="category != null and category != '전체'">
+			and category = #{category}
+		</if>
+	</select>
+	
+	<!-- 유저 신청 게시글 목록 결과 -->
+	<select id="userAppSeqListResult" parameterType="meetingpagingdto" resultType="int">
+		select seq from applicant_table
+		where user_id = #{user_id} and approval = #{sort_type}
+	</select>
+	
+	<!-- 게시글 상세 -->
+	<select id="meetingDetailed" parameterType="int" resultType="meetingdto">
+		select * from meeting_table
+		where seq = #{seq}
+	</select>
+	
+	<!-- 유저 정보 -->
+	<select id="userInfo" parameterType="String" resultType="userdto">
+		select * from user_table
+		where user_id = #{user_id}
+	</select>
+	
+	<!-- 신청 댓글 정보 -->
+	<select id="applicantList" parameterType="meetingpagingdto" resultType="applicantdto">
+		select * from applicant_table
+		where seq = #{seq}
+		order by applicant_time desc
+		limit #{start}, #{end}
+	</select>
+	
+	<select id="applicantCount" parameterType="int" resultType="int">
+		select count(*) from applicant_table
+		where seq = #{seq}
+	</select>
+	
+	<select id="applicantOneUser" parameterType="meetingpagingdto" resultType="applicantdto">
+		select * from applicant_table
+		where seq = #{seq} and user_id = #{user_id}
+	</select>
+	
+	<!-- 신청 댓글 중복 확인 -->
+	<select id="applicantUserCount" parameterType="meetingpagingdto" resultType="int">
+		select count(*) from applicant_table
+		where seq = #{seq} and user_id = #{user_id}
+	</select>
+	
+	<!-- writer mode 신청 댓글 정보 -->
+	<select id="writerModeList" parameterType="meetingpagingdto" resultType="applicantdto">
+		select * from applicant_table
+		where seq = #{seq} and approval = #{sort_type}
+		order by applicant_time asc
+		limit #{start}, #{end}
+	</select>
+	
+	<select id="writerModeCount" parameterType="meetingpagingdto" resultType="int">
+		select count(*) from applicant_table
+		where seq = #{seq} and approval = #{sort_type}
+	</select>
+	
+	
+	<!-- Meeting insert -->
+	<!-- 게시글 작성 -->
+	<insert id="insertMeetingTable" parameterType="meetingdto">
+		insert into meeting_table(user_id, writer, title, contents, category, hidden, writing_time, hits, end, applicant_cnt, profile_url, contents_password)
+		values(#{user_id}, #{writer}, #{title}, #{contents}, #{category}, #{hidden}, now(), 0, "진행", 0, #{profile_url}, #{contents_password})
+	</insert>
+	
+	<!-- 신청 댓글 작성 -->
+	<insert id="insertApplicantTable" parameterType="applicantdto">
+		insert into applicant_table(seq, user_id, contents, approval, applicant_time, name, profile_url)
+		values(#{seq}, #{user_id}, #{contents}, #{approval}, now(), #{name}, #{profile_url})
+	</insert>
+	
+	<!-- Meeting update -->
+	<!-- 조회수 증가 -->
+	<update	id="updateMeetingHits" parameterType="int">
+		update meeting_table
+		set hits = hits + 1
+		where seq = #{seq}
+	</update>
+	
+	<!-- 신청자수 증가 혹은 감소 -->
+	<update	id="updateMeetingAppNum" parameterType="hashmap">
+		update meeting_table
+		set applicant_cnt = applicant_cnt + #{num}
+		where seq = #{seq}
+	</update>
+	
+	<!-- 게시글 수정 -->
+	<update id="updateMeetingContents" parameterType="meetingdto">
+		update meeting_table
+		set title = #{title}, contents = #{contents}, category = #{category}, hidden = #{hidden}
+		where seq = #{seq}
+	</update>
+	
+	<!-- 댓글 수정 -->
+	<update id="updateAppContents" parameterType="applicantdto">
+		update applicant_table
+		set contents = #{contents}, applicant_time = now()
+		where seq = #{seq} and user_id = #{user_id}
+	</update>
+	
+	<!-- 모집 신청 승인 -->
+	<update id="updateApproval" parameterType="writermodedto">
+		update applicant_table
+		set approval = #{approval} where
+		(<foreach collection="user_id" item="user" separator=" or ">user_id = #{user}</foreach>)
+		and seq = #{seq}
+	</update>
+	
+	<!-- 모집글 상태 변경 -->
+	<update id="updateEnd" parameterType="hashmap">
+		update meeting_table
+		set end = #{end}
+		where seq = #{seq}
+	</update>
+	
+	<!-- Meeting delete -->
+	<!-- 게시글 삭제 -->
+	<delete id="deleteMeeting" parameterType="int">
+		delete from meeting_table
+		where seq = #{seq}
+	</delete>
+
+	<delete id="deleteAppAll" parameterType="int">
+		delete from applicant_table
+		where seq = #{seq}
+	</delete>
+	
+	<!-- 본인 댓글 삭제 -->
+	<delete id="deleteAppOne" parameterType="meetingpagingdto">
+		delete from applicant_table
+		where seq = #{seq} and user_id = #{user_id}
+	</delete>
+</mapper>
