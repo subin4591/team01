@@ -1,15 +1,14 @@
 package dto;
 
 public class GroupDTO {
-	int group_id;
-	String group_name, group_create_time;
-	int group_hidden;
-	String group_description, final_schedule, final_location, project_end_time;
+	private String group_id;
+	private String group_name, group_create_time;
+	private String group_description, final_schedule, final_location, project_end_time;
 	
-	public int getGroup_id() {
+	public String getGroup_id() {
 		return group_id;
 	}
-	public void setGroup_id(int group_id) {
+	public void setGroup_id(String group_id) {
 		this.group_id = group_id;
 	}
 	public String getGroup_name() {
@@ -23,12 +22,6 @@ public class GroupDTO {
 	}
 	public void setGroup_create_time(String group_create_time) {
 		this.group_create_time = group_create_time;
-	}
-	public int getGroup_hidden() {
-		return group_hidden;
-	}
-	public void setGroup_hidden(int group_hidden) {
-		this.group_hidden = group_hidden;
 	}
 	public String getGroup_description() {
 		return group_description;
@@ -54,6 +47,8 @@ public class GroupDTO {
 	public void setProject_end_time(String project_end_time) {
 		this.project_end_time = project_end_time;
 	}
+	
+	
 	
 	
 }

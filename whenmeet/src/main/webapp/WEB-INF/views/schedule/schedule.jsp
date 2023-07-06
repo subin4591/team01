@@ -7,11 +7,11 @@
   <meta charset="UTF-8">
   <title>일정|언제만나</title>
   <link rel="icon" href="/img/icon.svg">
-  <link rel = "stylesheet" href = "css/schedule_css.css">
+  <link rel = "stylesheet" href = "/css/schedule_css.css">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script src = "js/schedule_js.js"></script>
+  <script src = "/js/schedule_js.js"></script>
   <script
       type="text/javascript"
       src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2b4c5e3499f85cf245295753dba018dc"
@@ -20,7 +20,7 @@
 <%@page import = "java.util.*"%>
 <%
 // 사용자 프로필 에러났을 때
-String userImgErr = "img/user_logo.png";
+String userImgErr = "/img/user_logo.png";
 %>
 
 <body>
@@ -49,7 +49,7 @@ String userImgErr = "img/user_logo.png";
 			
 			//누가 방장인가
 			for(int i = 0; i < memberName.size(); i++){
-				String Img = "img/방장표시.svg";
+				String Img = "/img/방장표시.svg";
 				boolean host = false;
 				boolean subhost = false;
 				if (i == 0){ 	//첫 번째 자리면 방장
@@ -57,7 +57,7 @@ String userImgErr = "img/user_logo.png";
 				}
 				if (i == 1){ 
 					subhost = true;
-					Img = "img/부방장표시.svg";
+					Img = "/img/부방장표시.svg";
 				}
 			%>
 				<li>
@@ -118,7 +118,7 @@ String userImgErr = "img/user_logo.png";
 	
 	<!-- 그룹 정보 -->
 	<div id="section_two">
-    <p class="main_header">감자 프로젝트 그룹</p>
+    <p class="main_header">${groupName}</p>
         
     <div id="section_two_right">
 			<div id="review_area" >
@@ -330,20 +330,20 @@ String userImgErr = "img/user_logo.png";
         
         <div id="Dday_area" >
         	<div id="Dday" style = "display : None" >
-          	<a><img class = "editDate" src = "img/방장용_수정_버튼.svg" /></a>
+          	<a><img class = "editDate" src = "/img/방장용_수정_버튼.svg" /></a>
             <span>D-day</span>
             <span>14</span>
             <span>2022년 12월 31일 (토)</span>
             <span>14:00 - 15:30</span>
           </div>
           <div id="DdayInit" >
-          	<a><img class = "editDate" src = "img/방장용_수정_버튼.svg" /></a>
+          	<a><img class = "editDate" src = "/img/방장용_수정_버튼.svg" /></a>
             <span>D-day가<br>아직 등록되지 않았습니다.</span>
           </div>
           		
           <div id = "Dday_edit" style = "display : None;">
-          	<img class = "etc" src = "img/수정중.svg">
-          	<img ID = "endEditDate" src = "img/엑스.svg">
+          	<img class = "etc" src = "/img/수정중.svg">
+          	<img ID = "endEditDate" src = "/img/엑스.svg">
           	<!-- 이 부분은 최종 결정 난 날짜와 시각을 방장 or 부방장이 수동으로 입력 -->
           	<!-- 편집 표시 자체를 방장들만 볼 수 있게 -->
           	<!-- 이미지버튼으로 캘린더 띄우기 참고 : https://velog.io/@rkio/CSS-input-type-date-캘린더-아이콘-커스텀하기 -->
@@ -427,7 +427,7 @@ String userImgErr = "img/user_logo.png";
 	  <div id = "gantt_chart" style = "display : none;">
 		  <div class="group_info">		
 			  <div id = "ganttCreate">
-				  <button id = "ganttCreateBtn"><h1><img src = "img/plusIcon.svg">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;새로운 차트</h1></button>
+				  <button id = "ganttCreateBtn"><h1><img src = "/img/plusIcon.svg">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;새로운 차트</h1></button>
 			  </div>	
 
 			  <div id = "ganttFirstEdit" style = "display : None;">
@@ -479,7 +479,7 @@ String userImgErr = "img/user_logo.png";
 			  							<div class = "DoItList" >
 			  								<input type = "checkbox" class = "DoItCheck" id = "DoItCheck<%=i%>" alt = "0" onclick = "openDoItList('<%=i%>')">
 			  								<label for = "DoItCheck<%=i%>"></label>&nbsp;<%= DoIt.get(i) %>
-			  								<img src = "img/방장용_수정_버튼.svg" class ="DoItListEditBtn" onclick = "DpopOpen('<%=DoIt.get(i) %>', '<%=DoItDetail[i]%>')"/>
+			  								<img src = "/img/방장용_수정_버튼.svg" class ="DoItListEditBtn" onclick = "DpopOpen('<%=DoIt.get(i) %>', '<%=DoItDetail[i]%>')"/>
 			  								<button type = "button" class = "deleteBtn" onclick="deleteBtn('<%=i%>')">✕</button>
 			  							</div>
 			  							<div>
@@ -782,21 +782,21 @@ String userImgErr = "img/user_logo.png";
 						<h3>개설자 : 방장쓰</h3>
 						<h3></h3>
 						
-						<img src = "img/user_logo.png" style = "width : 100px; height : 100px; border-radius : 50%;">
-						<img src = "img/액자.png" style = "position : absolute; width : 150px; height : 150px; top : 400px"/>
+						<img src = "/img/user_logo.png" style = "width : 100px; height : 100px; border-radius : 50%;">
+						<img src = "/img/액자.png" style = "position : absolute; width : 150px; height : 150px; top : 400px"/>
 					</div>
 					<div id = "group_detail_right" >
-						<img src = "img/twocat.png" style = "position : absolute; width : 200px; height : 200px; bottom : 110px; right: 120px; z-index:0; opacity : 0.3;">
+						<img src = "/img/twocat.png" style = "position : absolute; width : 200px; height : 200px; bottom : 110px; right: 120px; z-index:0; opacity : 0.3;">
 						<br><br>
 						<div>
 							<h2>개설일 <span>|</span> </h2>
-							<p>2022-12-25</p>
+							<p>${groupCreateTime}</p>
 							<h2>종료일 <span>|</span> </h2>
-							<p>2023-12-24</p>
+							<p>${ProjectEndTime}</p>
 						</div>
 						<br><br>
 						<h2>그룹 설명 <span>|</span> </h2>
-						<p style = "color : black">감자를 캐는 그룹입니다.</p>
+						<p style = "color : black">${groupDescription}</p>
 					</div>
 				</div>
 			</div>
