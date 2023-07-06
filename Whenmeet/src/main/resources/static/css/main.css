@@ -37,9 +37,7 @@ body{
     margin-left:15px;
     transform: translate(-50%, -50%);
 }
-#null a{
-	color:white;
-}
+
 #content{
 	display: flex;
   	justify-content: space-between;
