@@ -230,13 +230,36 @@ public class MeetingController {
 		return app;
 	}
 	
-	@RequestMapping("/meeting/writerMode")
+	@RequestMapping("/meeting/writerModeOk")
 	@ResponseBody
-	public HashMap<String, Object> writerMode(WriterModeDTO dto) {
+	public HashMap<String, Object> writerModeOk(WriterModeDTO dto) {
 		int seq = dto.getSeq();
 		String sort = "yet";
+		dto.setApproval("승인");
 		
-		// 승인 혹은 거절
+		// 승인
+		service.updateApproval(dto);
+		
+		// 신청 목록
+		List<ApplicantDTO> app_list = etcService.getApplicantList(seq, 1, sort);
+		
+		// 결과
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("total_cnt", etcService.getApplicantCount(seq, sort));
+		map.put("div_num", 10);
+		map.put("app_list", app_list);
+		
+		return map;
+	}
+	
+	@RequestMapping("/meeting/writerModeRe")
+	@ResponseBody
+	public HashMap<String, Object> writerModeRe(WriterModeDTO dto) {
+		int seq = dto.getSeq();
+		String sort = "yet";
+		dto.setApproval("대기");
+		
+		// 승인
 		service.updateApproval(dto);
 		
 		// 신청 목록
@@ -268,6 +291,12 @@ public class MeetingController {
 		return map;
 	}
 	
+	@RequestMapping("/meeting/writerModePage")
+	@ResponseBody
+	public List<ApplicantDTO> writerModePage(int seq, String sort, int page) {
+		return etcService.getApplicantList(seq, page, sort);
+	}
+	
 	@RequestMapping("/meeting/applicantPage")
 	@ResponseBody
 	public List<ApplicantDTO> applicantPage(int seq, int page) {
@@ -290,7 +319,7 @@ public class MeetingController {
 		service.updateMeetingContents(meeting_dto);
 		
 		ModelAndView mv = new ModelAndView();
-		mv.setViewName("redirect:/meeting");
+		mv.setViewName("redirect:/meeting/detailed?seq=" + meeting_dto.getSeq());
 		return mv;
 	}
 	
@@ -303,6 +332,19 @@ public class MeetingController {
 		service.deleteAppAll(seq);
 		
 		return "redirect:/meeting";
+	}
+	
+	@RequestMapping("/meeting/detailed/stopApp")
+	public String meetingDetailedStopApp(int seq) {
+		// HashMap 생성
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("end", "대기");
+		map.put("seq", seq);
+		
+		// 모집글 대기 상태로 변경
+		service.updateEnd(map);
+		
+		return "redirect:/meeting/detailed?seq=" + seq;
 	}
 	
 	@RequestMapping("/meeting/my")

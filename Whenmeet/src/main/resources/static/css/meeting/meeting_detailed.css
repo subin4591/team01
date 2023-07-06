@@ -261,17 +261,6 @@
 #select_all + label {
 	margin-left: 10px;
 }
-#man_select {
-	width: 80px;
-	height: 35px;
-	border: 2px solid #DB9F9F;
-	border-radius: 10px;
-	outline: none;
-	color: #DB9F9F;
-	background-color: #F9F3F3;
-	font-size: 18px;
-	text-align: center;
-}
 .man_chk_list {
 	display: flex;
 	flex-direction: row;
@@ -307,6 +296,24 @@
 	flex-direction: row;
 	justify-content: center;
 	width: 100%;
+}
+#management_bottom {
+	display: flex;
+	width: 100%;
+	justify-content: center;
+	margin-top: 20px;
+}
+#stop_btn,
+#make_group_btn {
+	width: 200px;
+	height: 50px;
+	border: 2px solid;
+	border-radius: 20px;
+	font-size: 23px;
+	font-weight: bold;
+	color: white;
+	background-color: #F25287;
+	border-color: #F25287;
 }
 
 /* popup */

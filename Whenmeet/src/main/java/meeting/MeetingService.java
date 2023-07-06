@@ -122,6 +122,11 @@ public class MeetingService {
 		dao.updateApproval(dto);
 	}
 	
+	// 모집글 상태 변경
+	public void updateEnd(HashMap<String, Object> map) {
+		dao.updateEnd(map);
+	}
+	
 	
 	/// Meeting delete
 	// 게시글 삭제

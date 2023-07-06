@@ -107,7 +107,7 @@ public class MeetingEtcService {
 		else if(sort.equals("hits")) {	// 조회순
 			sortResult = "hits";
 		}
-		else if(sort.equals("yes")) {
+		else if(sort.equals("yes") || sort.equals("ready")) {
 			sortResult = "승인";
 		}
 		else if(sort.equals("no")) {
@@ -245,7 +245,13 @@ public class MeetingEtcService {
 		int div_num = 10;	// 한 페이지당 글 개수
 		page_dto.calcNum(page, div_num);
 		
-		return service.userAppMeetingList(page_dto);
+		// DB 0개 대비
+		List<MeetingDTO> meeting_list = null;
+		if (seq_list.size() != 0) {
+			meeting_list = service.userAppMeetingList(page_dto);
+		}
+		
+		return meeting_list;
 	}
 	
 	// 유저 모임모집 신청 댓글 개수 메소드
@@ -254,7 +260,13 @@ public class MeetingEtcService {
 		page_dto.setCategory(convertCategory(category));
 		page_dto.setSeq_list(seq_list);
 		
-		return service.userAppMeetingCount(page_dto);
+		// DB 0개 대비
+		int cnt = 0;
+		if (seq_list.size() != 0) {
+			cnt = service.userAppMeetingCount(page_dto);
+		}
+		
+		return cnt;
 	}
 	
 	// 신청 댓글 목록 메소드
@@ -278,17 +290,12 @@ public class MeetingEtcService {
 		page_dto.setSeq(seq);
 		page_dto.calcNum(page, div_num);
 		
-		ArrayList<String> sort_list = new ArrayList<>();
-		
 		if (sort.equals("yet")) {
-			sort_list.add("대기");
+			page_dto.setSort_type("대기");
 		}
 		else {
-			sort_list.add("승인");
-			sort_list.add("거절");
+			page_dto.setSort_type("승인");
 		}
-			
-		page_dto.setSort_list(sort_list);
 		
 		return service.writerModeList(page_dto);
 	}
@@ -298,17 +305,12 @@ public class MeetingEtcService {
 		MeetingPagingDTO page_dto = new MeetingPagingDTO();
 		page_dto.setSeq(seq);
 		
-		ArrayList<String> sort_list = new ArrayList<>();
-		
 		if (sort.equals("yet")) {
-			sort_list.add("대기");
+			page_dto.setSort_type("대기");
 		}
 		else {
-			sort_list.add("승인");
-			sort_list.add("거절");
+			page_dto.setSort_type("승인");
 		}
-			
-		page_dto.setSort_list(sort_list);
 		
 		return service.writerModeCount(page_dto);
 	}
