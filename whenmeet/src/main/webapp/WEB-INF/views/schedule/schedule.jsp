@@ -8,13 +8,14 @@
   <title>일정|언제만나</title>
   <link rel="icon" href="/img/icon.svg">
   <link rel = "stylesheet" href = "css/schedule_css.css">
+  <link rel = "stylesheet" href = "css/schedule_location.css">
   <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script src = "js/schedule_js.js"></script>
-  <script
+<!--   <script
       type="text/javascript"
       src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2b4c5e3499f85cf245295753dba018dc"
-  ></script>
+  ></script> -->
 </head>
 <%@page import = "java.util.*"%>
 <%
@@ -118,12 +119,10 @@ String userImgErr = "img/user_logo.png";
     <p class="main_header">감자 프로젝트 그룹</p>
         
     <div id="section_two_right">
-			<div id="review_area" >
-				<div id = "chart_div3" style = "margin : auto"></div>
-			</div>
+			<div id="review_area"></div>
       <div id="review_btn">
         <div id = "white_btn_area">
-          <button type="button" id = "temp" onclick="location.href='#'" style = "margin : 5px"class="btns">
+          <button type="button" onclick="location.href='#'" style = "margin : 5px"class="btns">
             비공개
           </button>
           <button type="button" onclick="location.href='#'" style = "margin : 5px" class="btns">
@@ -414,11 +413,12 @@ String userImgErr = "img/user_logo.png";
         </div>
       </div>      
     </div>
-	
+  
 	  <div id = "meeting_location" style = "display : none;">
-		  <div class="group_info">위치</div>
+		    <div class="group_info">
+		      <%@ include file="schedule_location.jsp" %>
+		    </div>
 	  </div>
-	
 	  <div id = "gantt_chart" style = "display : none;">
 		  <div class="group_info">		
 			  <div id = "ganttCreate">
@@ -441,9 +441,6 @@ String userImgErr = "img/user_logo.png";
 			  					DoIt.add("주제 정하기");
 			  					DoIt.add("토의하기");
 			  					DoIt.add("과자먹기");
-			  					DoIt.add("토의하기");
-			  					DoIt.add("과자먹기");
-			  					
 	  					
 			  					List<String>[] DoItDetail = new ArrayList[DoIt.size()];
 			  					for (int i =0; i < DoIt.size(); i++){
@@ -457,9 +454,10 @@ String userImgErr = "img/user_logo.png";
 			  					DoItDetail[1].add("하위메뉴 7");
 			  					DoItDetail[2].add("하위메뉴 8");
 
+
+
 			  					for (int i = 0; i < DoIt.size(); i++){
 			  					%>
-			  					
 			  						<li>
 			  							<div class = "DoItList" >
 			  								<input type = "checkbox" class = "DoItCheck" id = "DoItCheck<%=i%>" alt = "0" onclick = "openDoItList('<%=i%>')">
@@ -490,7 +488,6 @@ String userImgErr = "img/user_logo.png";
 			  	</div>
 			  	<div id = "rightGanttFirstEdit">
 			  		<div id = "chart_div1_container">
-			  		<br>
 			  		<h2 style = "text-align : center">차트 미리보기</h2>
 			  			<div id="chart_div1" ></div>
 			  		</div>
@@ -510,141 +507,14 @@ String userImgErr = "img/user_logo.png";
 				    <div class = "loaderIcon"></div>
 			    </div>
 			    -->
-			    <div style = "display : flex; height : 100%;">
-			    	<div id = "GRleft">
-			    	</div>
-			    	<div id = "ganttResultContainer">
-				  		<div id = "chart_div2_container" style = "border : NOne">
-					  		<div id="chart_div2"></div>
-				  		</div>
-				  		<div id = "GRubmitBtn">
-				  			<button id = "ganttInitBtn">초기화</button>
-				  			<button id = "ganttResultEditBtn">수정</button>
-				  		</div>
-				  	</div>
+				  <div id = "ganttChart">
+					  <div id="chart_div2"></div>
 				  </div>
+				  <button id = "ganttInitBtn"><h1>초기화</h1></button>
+				  <button id = "ganttResultEditBtn"><h1>수정</h1></button>
 			  </div>			
 		  </div>			
-	  </div>
-	  	
-	 <script>
-	/*구글 차트 api*/
-	google.charts.load('current', {'packages':['gantt']});
-	google.charts.setOnLoadCallback(drawChart);
-			  				    
-	function daysToMilliseconds(days) {
-		return days * 24 * 60 * 60 * 1000;
-	}
-			  				  
-	var valueName = [];
-	var valueSDate = [];
-	var valueEDate = [];
-	var valueDur = [];
-	var valuePC = [];
-	<%
-  	for (int t = 0; t < DoIt.size(); t++){
-  	%>
-  		valueName.push('<%=DoIt.get(t)%>');
-	    valueSDate.push(null);
-	    valueEDate.push(new Date(2023, 8));
-	    valueDur.push(null);
-	    valuePC.push(0);
-	<%}%>
-	function drawChart() {
-
-	      var data = new google.visualization.DataTable();
-	      data.addColumn('string', 'Task ID');
-	      data.addColumn('string', 'Task Name');
-	      data.addColumn('date', 'Start Date');
-	      data.addColumn('date', 'End Date');
-	      data.addColumn('number', 'Duration');
-	      data.addColumn('number', 'Percent Complete');
-	      data.addColumn('string', 'Dependencies'); 
-	      
-	      for (var i = 0; i < valueName.length; i ++){
-			  var index = i+"";
-	      	data.addRow([
-	        	index, valueName.at(i), valueSDate.at(i), valueEDate.at(i),
-	      		valueDur.at(i), valuePC.at(i), null
-				]);
-			}
-
-		let today = new Date();
-	  	var rowHeight = 50;
-
-	      var options = {
-			width : 700,
-			height: data.getNumberOfRows() * rowHeight+rowHeight,      
-			gantt: {
-				barHeight: 40,
-				trackHeight: 50,
-				defaultStartDate: today,
-				
-				innerGridHorizLine:{
-					stroke : "#F9F3F3"
-				},
-				innerGridDarkTrack: {
-					fill: "#F9F3F3"
-				},
-				
-				labelStyle: {
-					fontSize : 22
-				},
-				
-				palette: [{
-					"color" : "#FF86AE",
-					"dark" : "#F25287",
-					"light" : "#FFB4CD"
-				}]		
-	        },
-	        
-	        hAxis:{
-	        	format: 'yy-MM-dd'
-	        	}
-
-	      };
-
-	      var chart1 = new google.visualization.Gantt(document.getElementById('chart_div1'));
-	      var chart2 = new google.visualization.Gantt(document.getElementById('chart_div2'));
-	      var chart3 = new google.visualization.Gantt(document.getElementById('chart_div3'));
-
-		
-	      chart1.draw(data, options);
-	      chart2.draw(data, options);
-	      chart3.draw(data, options);
-	    }
-	</script>
-	<script>
-	$(document).ready(function () {
-	 	/* 간트 차트 */
-	  	$("#ganttCreateBtn").click(function(){
-	  		drawChart();
-			$("#ganttFirstEdit").show();
-			$("#ganttFirstEdit").css({
-				"display" : "flex"
-			});
-			$("#ganttCreate").hide();
-		})
-	  	$("#ganttFirstEditCancelBtn").click(function(){
-	  		drawChart();
-			$("#ganttCreate").show();
-			$("#ganttFirstEdit").hide();
-		})	
-	  	$("#ganttFirstEditSaveBtn").click(function(){
-	  		drawChart();
-			$("#ganttResult").show();
-			$("#ganttFirstEdit").hide();
-		})	
-		$("#ganttResultEditBtn").click(function(){
-			drawChart();
-			$("#ganttFirstEdit").show();
-			$("#ganttFirstEdit").css({
-				"display" : "flex"
-			});
-			$("#ganttResult").hide();
-		})
-	 });
-	</script>
+	  </div>	
 	  <div id = "group_detail" style = "display : none;">
 		  <div class="group_info">
 			<div class = "group_information" style = "display : flex; margin : auto; background : white; width : 95%; height : 90%">
