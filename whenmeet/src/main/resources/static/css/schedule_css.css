@@ -698,24 +698,6 @@ li {
 	margin : auto;
 	background-color : white;
 }
-#ganttChart{
-	width : 70%;
-	height : 70%;
-	margin : 5%;
-	margin-bottom : 20%;
-	float : right;
-	overflow-x : scroll;
-	overflow-y : scroll;
-}
-#ganttChart::-webkit-scrollbar{
-	width : 12px;
-}
-#ganttChart::-webkit-scrollbar-thumb {
-    background-color: #F25287;
-}
-#ganttChart::-webkit-scrollbar-track {
-    background-color: #D9D9D9;
-}
 #ganttCreateBtn{
 	position : relative;
 	width : 300px;
@@ -780,7 +762,7 @@ li {
 }
  */
  
- #leftGanttFirstEdit{
+ #leftGanttFirstEdit, #GRleft{
  	display : flex; 
  	align-items : center;
  	justify-content: center;
@@ -788,12 +770,15 @@ li {
  	width : 40%;
  	height : 100%;
  }
- #rightGanttFirstEdit{
+ #GRleft{
+ 	width : 30%;
+ }
+ #rightGanttFirstEdit, #ganttResultContainer{	
  	display : flex; 
  	align-items : center;
  	justify-content: center;
  	flex-direction : column; 
- 	width : 60%;
+ 	width : 70%;
  	height : 100%;
  	
  }
@@ -970,32 +955,33 @@ li {
 #DoItChildList::-webkit-scrollbar-track {
     background-color: #D9D9D9;
 }
-
-#rightGanttFirstEdit #chart_div1_container{
+#chart_div1_container, #chart_div2_container{
 	margin-top : 20px;
 	height : 80%;
 	width : 95%;
-	overflow : scroll;
+	overflow-y : scroll;
+	overflow-x : scroll;
 	border : 3px solid #f25287;
 }
+#chart_div2_container::-webkit-scrollbar,
 #chart_div1_container::-webkit-scrollbar{
 	width : 15px;
 }
+#chart_div2_container::-webkit-scrollbar-thumb,
 #chart_div1_container::-webkit-scrollbar-thumb {
     background-color: #F25287;
 }
+#chart_div2_container::-webkit-scrollbar-track,
 #chart_div1_container::-webkit-scrollbar-track {
     background-color: #D9D9D9;
 }
-#rightGanttFirstEdit #chart_div1{
+#chart_div1, #chart_div2, #chart_div3{
 	position : relative;
 	top : 10%;
 	left : 5%;
-	height : 100%;
-	width :100%;
 	margin : auto;
 }
-#GFESubmitBtn{
+#GFESubmitBtn, #GRubmitBtn{
 	display : flex; 
 	margin : auto; 
 	width : 80%; 
@@ -1003,7 +989,7 @@ li {
 	justify-content : flex-end;
 }
 
-#GFESubmitBtn button{
+#GFESubmitBtn button, #GRubmitBtn button{
 	margin : 10px;
   	width: 130px;
  	height: 50px;
