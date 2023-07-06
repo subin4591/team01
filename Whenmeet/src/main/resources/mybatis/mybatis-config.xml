@@ -10,6 +10,8 @@
 		<typeAlias type="dto.WriterModeDTO" alias="writermodedto"/>
 		<typeAlias type="dto.SearchPagingDTO" alias="searchpagingdto"/>
 		<typeAlias type="dto.GroupCreateDTO" alias="groupcreatedto"/>
+		<typeAlias type="dto.GroupDTO" alias="groupdto"/>
+		<typeAlias type="dto.GroupUserDTO" alias="groupuserdto"/>
 		<typeAlias type="dto.MainDTO" alias="maindto"/>
 	</typeAliases>
 </configuration>

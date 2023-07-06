@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import dto.GroupCreateDTO;
+import dto.GroupDTO;
+import dto.GroupUserDTO;
 import dto.UserDTO;
 
 @Service("groupservice")
@@ -13,7 +15,7 @@ public class GroupService {
 	@Autowired
 	GroupDAO dao;
 	
-	// Group select
+	/// Group select
 	// 승인된 유저 아이디
 	public List<String> groupOkUsers(int seq) {
 		return dao.groupOkUsers(seq);
@@ -27,5 +29,27 @@ public class GroupService {
 	// 그룹 유저 정보
 	public List<UserDTO> groupUserInfo(GroupCreateDTO dto) {
 		return dao.groupUserInfo(dto);
+	}
+	
+	// 그룹 아이디 중복체크
+	public int findGroupID(String group_id) {
+		return dao.findGroupID(group_id);
+	}
+	
+	
+	/// Group insert
+	// 그룹 생성
+	public void insertGroup(GroupDTO dto) {
+		dao.insertGroup(dto);
+	}
+	public void insertGroupUser(GroupUserDTO dto) {
+		dao.insertGroupUser(dto);
+	}
+	
+	
+	/// Group update
+	// 모집글 완료 처리
+	public void updateMeetingEnd(int seq) {
+		dao.updateMeetingEnd(seq);
 	}
 }

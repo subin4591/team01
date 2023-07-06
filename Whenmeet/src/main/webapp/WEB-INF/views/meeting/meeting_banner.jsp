@@ -8,11 +8,11 @@
 	$(document).ready(function() {
 		/// banner event
 		// banner text
-		let banner_text_list = ["${ all_banner.contents }", 
-			"${ exercise_banner.contents }", 
-			"${ hobby_banner.contents }", 
-			"${ study_banner.contents }",
-			"${ etc_banner.contents }"];
+		let banner_text_list = [`${ all_banner.contents }`, 
+			`${ exercise_banner.contents }`, 
+			`${ hobby_banner.contents }`, 
+			`${ study_banner.contents }`,
+			`${ etc_banner.contents }`];
 		
 		for (let i = 0; i < banner_text_list.length; i++) {
 			let b = banner_text_list[i];

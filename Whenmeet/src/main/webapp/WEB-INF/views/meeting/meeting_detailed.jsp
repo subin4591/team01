@@ -610,10 +610,11 @@
 				let really = confirm("그룹을 생성하면 신청이 완료됩니다.\n계속하시겠습니까?");
 				if (really) {
 					let seq = ${ dto.seq };
+					let writer ="${ session_id }";
 					
 					// form 태그 생성 및 submit
 					let makeForm = $("<form></form>");
-					makeForm.attr("action", "");
+					makeForm.attr("action", "/group/create");
 					makeForm.attr("method", "post");
 					makeForm.append($("<input>", {type: "hidden", name: "seq", value: seq}));
 					
@@ -640,7 +641,9 @@
 			
 			<div id="contents_info">
 				<div id="contents_writer_info">
-					<img id="writer_profile" alt="writer_profile" src="${ dto.profile_url }">
+					<div id="writer_profile">
+						<img alt="writer_profile" src="${ dto.profile_url }">
+					</div>
 					<p id="writer_name">${ dto.writer }</p>
 				</div>
 				<div id="contents_info_text">
@@ -715,7 +718,9 @@
 						<c:when test="${ session_id == a.user_id }">
 							<li id="my_app">
 								<div class="app_list_caption">
-									<img class="app_list_profile" alt="app_list_profile" src="${ a.profile_url }">
+									<div class="app_list_profile">
+										<img alt="app_list_profile" src="${ a.profile_url }">
+									</div>
 									<div class="app_list_info">
 										<label class="app_list_name">${ a.name }</label>
 										<label class="app_list_time">${ a.applicant_time }</label>
@@ -736,7 +741,9 @@
 						<c:otherwise>
 							<li>
 								<div class="app_list_caption">
-									<img class="app_list_profile" alt="app_list_profile" src="${ a.profile_url }">
+									<div class="app_list_profile">
+										<img alt="app_list_profile" src="${ a.profile_url }">
+									</div>
 									<div class="app_list_info">
 										<label class="app_list_name">${ a.name }</label>
 										<label class="app_list_time">${ a.applicant_time }</label>

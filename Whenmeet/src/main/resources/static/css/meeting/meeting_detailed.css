@@ -62,6 +62,13 @@
 	height: 30px;
 	border: 1px solid #F25287;
 	border-radius: 50%;
+	overflow: hidden;
+}
+#writer_profile img {
+	object-fit: cover;
+	object-position: center center;
+	width: 100%;
+	height: 100%;
 }
 #writer_name {
 	font-size: 20px;
@@ -192,12 +199,19 @@
 	justify-content: space-between;
 	width: 100%;
 }
-.app_list_caption img, .man_list_caption img {
+.app_list_profile, .man_list_profile {
 	width: 45px;
 	height: 45px;
 	border: 1px solid #F25287;
 	border-radius: 50%;
+	overflow: hidden;
 }
+.app_list_profile img, .man_list_profile img {
+	object-fit: cover;
+	object-position: center center;
+	width: 100%;
+	height: 100%;
+} 
 .app_list_info, .man_list_info {
 	display: flex;
 	flex-direction: column;
@@ -350,4 +364,18 @@
 }
 #popup_btn * {
 	margin: 0 10px;
+}
+
+/* CKEditer5 */
+.text-tiny {
+	font-size: 0.7em;
+}
+.text-small {
+	font-size: 0.85em;
+}
+.text-big {
+	font-size: 1.4em;
+}
+.text-huge {
+	font-size: 1.8em;
 }

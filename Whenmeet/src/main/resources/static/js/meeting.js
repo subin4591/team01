@@ -104,7 +104,9 @@ function MeetingApp(profile_url, name, applicant_time, approval, contents, user_
 	this.printLi = function() {
 		return `<li>
 					<div class="app_list_caption">
-						<img class="app_list_profile" alt="app_list_profile" src="${ this.profile_url }">
+						<div class="app_list_profile">
+							<img alt="app_list_profile" src="${ this.profile_url }">
+						</div>
 						<div class="app_list_info">
 							<label class="app_list_name">${ this.name }</label>
 							<label class="app_list_time">${ this.applicant_time }</label>
@@ -119,7 +121,9 @@ function MeetingApp(profile_url, name, applicant_time, approval, contents, user_
 	this.printLiMy = function() {
 		return `<li id="my_app">
 					<div class="app_list_caption">
-						<img class="app_list_profile" alt="app_list_profile" src="${ this.profile_url }">
+						<div class="app_list_profile">
+							<img alt="app_list_profile" src="${ this.profile_url }">
+						</div>
 						<div class="app_list_info">
 							<label class="app_list_name">${ this.name }</label>
 							<label class="app_list_time">${ this.applicant_time }</label>
@@ -142,7 +146,9 @@ function MeetingApp(profile_url, name, applicant_time, approval, contents, user_
 						<label for="ch_${ this.user_id }"></label>
 					</div>
 					<div class="man_list_caption">
-						<img class="man_list_profile" alt="man_list_profile" src="${ this.profile_url }">
+						<div class="man_list_profile">
+							<img alt="man_list_profile" src="${ this.profile_url }">
+						</div>
 						<div class="man_list_info">
 							<label class="man_list_name">${ this.name }</label>
 							<label class="man_list_time">${ this.applicant_time }</label>

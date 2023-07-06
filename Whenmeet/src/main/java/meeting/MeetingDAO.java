@@ -86,4 +86,10 @@ public interface MeetingDAO {
 	
 	// 본인 댓글 삭제
 	public void deleteAppOne(MeetingPagingDTO dto);
+	
+	
+	/// Meeting test
+	public List<Integer> testSelect1();
+	public List<String> testSelect2();
+	public void testUpdate(HashMap<String, Object> map);
 }
