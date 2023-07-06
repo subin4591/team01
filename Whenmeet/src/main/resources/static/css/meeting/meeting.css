@@ -36,7 +36,8 @@ a:hover {
 #app_submit,
 #my_app_submit,
 #my_app_cancel,
-#man_ok_btn {
+#man_ok_btn,
+#man_re_btn {
 	width: 85px;
 	height: 35px;
 	font-size: 16px;
@@ -63,7 +64,8 @@ a:hover {
 #contents_delete_btn, 
 #popup_confirm,
 #my_app_submit,
-#man_ok_btn {
+#man_ok_btn,
+#man_re_btn {
 	font-weight: bold;
 	color: white;
 	background-color: #F25287;

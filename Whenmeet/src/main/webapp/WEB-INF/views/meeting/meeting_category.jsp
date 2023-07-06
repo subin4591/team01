@@ -27,7 +27,6 @@
 	
 	<link href="/css/meeting/meeting.css" rel=stylesheet>
 	<link href="/css/meeting/meeting_category.css" rel=stylesheet>
-	<link href="/css/meeting/meeting_banner.css" rel=stylesheet>
 	<script src="/js/jquery-3.6.4.min.js"></script>
 	<script src="/js/meeting.js"></script>
 	<script>
