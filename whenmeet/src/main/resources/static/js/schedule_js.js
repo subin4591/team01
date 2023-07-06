@@ -1,6 +1,48 @@
 /**
  * 
  */
+//d-day 업데이트하기
+function DdayUpdate(){
+	var Dday = $("#Dday").children('span').eq(1);
+	var finalDate = $("#Dday").children('span').eq(2);
+	var finalTime = $("#Dday").children('span').eq(3);
+	
+	var date = $("#finalDate").val();
+	var startTime = $("#finalStartTime").val();
+	var endTime = $("#finalEndTime").val();
+	
+	var temp = date.split("-");
+	var Day = getDayOfWeek(temp);
+	var today = new Date();
+	Ddate = new Date(date);
+	
+	if (today > Ddate || date == ""){
+		alert("정확한 날짜를 입력해주세요.");
+		return false;
+	}
+	else if (today.getFullYear() == Ddate.getFullYear() && today.getMonth() == Ddate.getMonth() && today.getDate() == Ddate.getDate()){
+		Dday.text("Today");
+	}else{
+		Dday.text(
+		Math.ceil(Math.abs((Ddate.getTime() - today.getTime())/(1000*60*60*24)))-1
+		);
+	}
+	$(this).attr("alt", 1);
+	
+	finalDate.text(temp[0]+"년 "+ temp[1]+"월 "+temp[2]+"일 ("+Day+")");
+	
+	if(startTime == ""){
+		startTime = "미정";
+	}
+	if(endTime == ""){
+		endTime = "미정";
+	}
+	
+	finalTime.text(startTime + " - " + endTime);
+	
+	$("#Dday_edit").hide();
+	$("#Dday").show();
+}
 //리스트 삭제하기
 function deleteBtn(element){
 	var temp = $("#DoItContainer");
@@ -53,9 +95,10 @@ function changeTime2(){
 }
 //일정표 기간 표시하기
 function getDayOfWeek(string){
-	var day = new Date(string[0], string[1], string[2]);
+	var day = new Date(string[0], string[1]-1, string[2]);
     const week = ['일', '월', '화', '수', '목', '금', '토'];
-
+    console.log(day);
+	console.log(day.getDay());
     const dayOfWeek = week[day.getDay()];
 
     return dayOfWeek;
@@ -260,18 +303,19 @@ $("#ScheduleEditBtn").click(function(){
 	$("#timeTable").show();
 })
 $(".editDate").click(function(){
+	var today = new Date();
 	$("#Dday_edit").show();
 	$("#DdayInit").hide();
 	$("#Dday").hide();
 })
 $("#endEditDate").click(function(){
 	$("#Dday_edit").hide();
-	$("#DdayInit").hide();
-	$("#Dday").show();
-})
-$("#Dday_frm .submitBtn").click(function(){
-	$("#Dday_edit").hide();
-	$("#Dday").show();
+	if ($("#Dday_frm .submitBtn").attr("alt") == 1){
+		$("#DdayInit").hide();
+		$("#Dday").show();
+	}else{
+		$("#DdayInit").show();
+	}
 })
 
 });

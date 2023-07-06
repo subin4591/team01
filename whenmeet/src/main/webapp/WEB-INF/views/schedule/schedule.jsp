@@ -360,7 +360,7 @@ String userImgErr = "/img/user_logo.png";
             	<span><a id = "DdayEditTime2">종료 시각 : 00:00</a>
           			<input type = "time" class = "spanImg" id = "finalEndTime" placeholder = "" onchange = "changeTime2()"/>
             	<br>
-            	<input type = "submit" value = "저장" class = "submitBtn"/>            
+            	<input type = "submit" value = "저장" alt = 0; class = "submitBtn" onclick="DdayUpdate()"/>            
           	</form>
           </div>
           <%
@@ -564,8 +564,10 @@ String userImgErr = "/img/user_logo.png";
 			  			</div>
 			  		</div>
 			    	<div id = "ganttResultContainer">
-			    	<br>
-				  		<div id = "chart_div2_container" style = "border : None; width : 100%; height : 70%">
+			    		<br>
+			    		<h2 style = "margin : 0px; margin-top : 2px; text-align : center">그룹 차트</h2>
+			  			<hr style = "border : 3px solid #f25287; width : 90%">
+				  		<div id = "chart_div2_container" style = "border : None; width : 100%; height : 68%">
 					  		<br>
 					  		<div id="chart_div2"></div>
 				  		</div>
