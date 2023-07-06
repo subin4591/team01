@@ -780,7 +780,7 @@ li {
 }
  */
  
- #leftGanttFirstEdit{
+ #leftGanttFirstEdit, #GRleft{
  	display : flex; 
  	align-items : center;
  	justify-content: center;
@@ -788,7 +788,10 @@ li {
  	width : 40%;
  	height : 100%;
  }
- #rightGanttFirstEdit{
+ #GRleft{
+ width : 35%;
+ }
+ #rightGanttFirstEdit, #ganttResultContainer{
  	display : flex; 
  	align-items : center;
  	justify-content: center;
@@ -796,6 +799,9 @@ li {
  	width : 60%;
  	height : 100%;
  	
+ }
+ #ganttResultContainer{
+ 	width : 65%;
  }
  #DoItChildDate input[type = "date"],
  #leftGanttFirstEdit input[type = "date"]{
@@ -830,10 +836,7 @@ li {
 #leftGanttFirstEdit #GFEDate{
 	height : 17%;
 }
-#leftGanttFirstEdit #GFEDoIt{
-	height : 83%;
-}
-#DoItContainer{
+#DoItContainer, #GRDoItContainer{
 	-webkit-user-select:none;
   	-moz-user-select:none;
   	-ms-user-select:none;
@@ -844,15 +847,20 @@ li {
 	height : 70%;
 	
 }
+#GRDoItContainer::-webkit-scrollbar,
 #DoItContainer::-webkit-scrollbar{
 	width : 10px;
 }
+#GRDoItContainer::-webkit-scrollbar-thumb,
 #DoItContainer::-webkit-scrollbar-thumb {
     background-color: #F25287;
+    border : 2px solid #D9D9D9;
 }
+#GRDoItContainer::-webkit-scrollbar-track,
 #DoItContainer::-webkit-scrollbar-track {
     background-color: #D9D9D9;
 }
+#GRDoItContainer ul,
 #DoItContainer ul{
 	display :flex;
 	flex-direction : column;
@@ -866,7 +874,7 @@ li {
 	font-weight : bold;
 	line-height : 70px;
 	background : white;
-	border : 5px solid #f9f3f3;
+	border : 3px solid #f9f3f3;
 	
 }
 .DoItListItem{
@@ -900,6 +908,46 @@ li {
 .DoItCheck:checked:hover + label{
 	background: url('/img/아래화살표핑.svg') 15px 15px no-repeat;
 }	
+#GRDoItContainer .DoItCheck:checked + label{
+	background: url('/img/아래화살표흰.svg') 15px 15px no-repeat;
+}
+#GRDoItContainer .DoItCheck:hover + label{
+	background: url('/img/오른화살표흰.svg') 15px 10px no-repeat;
+}
+#GRDoItContainer .DoItCheck:checked:hover + label{
+	background: url('/img/아래화살표흰.svg') 15px 15px no-repeat;
+}	
+.DoItCheck3{
+	display : None;
+}
+.DoItCheck3 + label{
+	display : inline-block;
+	cursor : pointer;
+	width : 25px;
+	height : 25px;
+	margin : auto;
+	border : 1px solid #A3A3A3;
+	position : relative;
+	background : #A3A3A3;
+	left :17px;
+	top : 22px;
+}
+.DoItCheck3:checked + label{
+	background : #f25287;
+	border : 1px solid #f25287;
+	color : white;
+}
+.DoItCheck3:checked + label::after{
+	content:'✔';
+    font-size: 22px;
+    position : absolute;
+    width : 25px;
+	height : 25px;
+    line-height : 25px;
+    text-align : center;
+    bottom : 2px;
+	color : white;
+}
 .DoItList .DoItListEditBtn, .deleteBtn{
 	position : absolute;
 	cursor : pointer;
@@ -918,6 +966,14 @@ li {
 }
 .DoItList button:hover{
 	color : #f25287;
+}
+#GFEDoIt, #GRDoIt{
+	background : white; 
+	width : 80%; 
+	height : 70%;
+}
+#GRDoIt{
+	height : 92%;
 }
 #DoItChildDate input[type = "text"],
 #GFEDoIt input[type = "text"]{
@@ -971,23 +1027,28 @@ li {
     background-color: #D9D9D9;
 }
 
-#rightGanttFirstEdit #chart_div1_container{
+#chart_div1_container, #chart_div2_container{
 	margin-top : 20px;
 	height : 80%;
 	width : 95%;
 	overflow : scroll;
 	border : 3px solid #f25287;
+	margin-right : 10px;
 }
+#chart_div2_container::-webkit-scrollbar,
 #chart_div1_container::-webkit-scrollbar{
 	width : 15px;
 }
+#chart_div2_container::-webkit-scrollbar-thumb,
 #chart_div1_container::-webkit-scrollbar-thumb {
     background-color: #F25287;
+    border-radius : 15px;
 }
+#chart_div2_container::-webkit-scrollbar-track,
 #chart_div1_container::-webkit-scrollbar-track {
-    background-color: #D9D9D9;
+    background-color: None;
 }
-#rightGanttFirstEdit #chart_div1{
+#chart_div1, #chart_div2, #chart_div3{
 	position : relative;
 	top : 10%;
 	left : 5%;
@@ -995,7 +1056,7 @@ li {
 	width :100%;
 	margin : auto;
 }
-#GFESubmitBtn{
+#GFESubmitBtn, #GRubmitBtn{
 	display : flex; 
 	margin : auto; 
 	width : 80%; 
@@ -1003,7 +1064,7 @@ li {
 	justify-content : flex-end;
 }
 
-#GFESubmitBtn button{
+#GRubmitBtn button, #GFESubmitBtn button{
 	margin : 10px;
   	width: 130px;
  	height: 50px;
@@ -1019,7 +1080,7 @@ li {
   	font-size: 20px;
   	font-weight: 700;
 }
-#GFESubmitBtn button:hover{
+#GRubmitBtn button:hover, #GFESubmitBtn button:hover{
 	background : white;
 	color : black;
 	transition: 0.5s;
