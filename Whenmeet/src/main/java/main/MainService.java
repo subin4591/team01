@@ -25,4 +25,5 @@ public class MainService {
 	public List<MainDTO> rankList(){
 		return dao.rankList();
 	}
+	
 }

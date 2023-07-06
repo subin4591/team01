@@ -8,7 +8,9 @@
 			select * from user_table
 		]]>
 	</select>
-
+	<select id="location" resultType="String">
+	select final_location from group_table where group_id = 3;
+</select>
 </mapper>
 
 

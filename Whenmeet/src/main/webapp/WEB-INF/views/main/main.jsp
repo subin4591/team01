@@ -169,7 +169,7 @@ $(document).ready(function(){
 		    <div id="schedule">
 		    	<h1 class="text">나의 일정</h1>
 		    	<c:choose>
-				    <c:when test="${id == null}">
+				    <c:when test="${session_id == null}">
 				        <a href="login"><button id="null"><h2>로그인이 필요합니다.</h2></button></a>
 				    </c:when>
 				    <c:otherwise>
@@ -192,7 +192,7 @@ $(document).ready(function(){
 	    <div>
 		</div>
     </div>
-    <div>
+    <div id="footer">
     <%@ include file="../footer.jsp" %>
     </div>
 </body>
