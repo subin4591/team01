@@ -4,22 +4,15 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<div class="map_wrap" style="width:50%;">
-    <div id="map" style="width:100%;height:600px;position:relative;overflow:hidden;"></div>
+<div class="map_wrap" style="width:60%;">
+    <div id="map" style="width:100%;height:700px;position:relative;overflow:hidden;"></div>
 
     <div id="menu_wrap" class="bg_white">
         <div class="option">
             <div>
                 <form id="submit_form">
-                	<c:choose>
-					    <c:when test="${session_id == null}">
-					        키워드 : <input type="text" value="" id="keyword" size="15"> 
-					    </c:when>
-					    <c:otherwise>
-					        키워드 : <input type="text" value="${location }" id="keyword" size="15"> 
-					    </c:otherwise>
-					</c:choose>
-                    <button type="submit">검색하기</button> 
+					   키워드 : <input type="text" value="${location }" id="keyword" size="15"> 
+                    <button type="submit" id="searchBtn">검색</button> 
                 </form>
             </div>
         </div>
@@ -33,9 +26,54 @@
 <div id ="result_wrap">
 <div id="result"></div>
 <div id="distance"></div>
+<button id="confirm_btn">확정하기</button>
+<button id="change_btn" style="display:none;">수정하기</button>
 </div>
 <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a860b9470c235ea7b99c9c4e99ca3f14&libraries=services"></script>
 <script>
+
+if('${location}' != "" && '${location}' != null){
+	setTimeout(() => {
+		console.log($('.info h5'));
+		console.log($('.info h5').text());
+		$(".info:first").click();
+		$('#menu_wrap').hide();
+		$('#confirm_btn').hide();
+		$('#change_btn').show();
+	}, 500);
+	
+}
+
+$('#confirm_btn').on('click',function(e){
+	
+	var address = $('#result h1').html();
+	if(address == undefined){
+		alert("장소를 선택해주세요.");
+		return;
+	}
+	$.ajax({
+	      url: '/address', 
+	      method: 'POST', 
+	      data: {
+	        address: address,
+	        group_id: "${groupId}"
+	      },
+	      success: function(response) {
+	        console.log(response);
+	      },
+	      error: function(xhr, status, error) {
+	        console.log(error);
+	      }
+	});
+	$('#menu_wrap').hide();
+	$('#confirm_btn').hide();
+	$('#change_btn').show();
+});
+$('#change_btn').on('click',function(){
+	$('#menu_wrap').show();
+	$('#confirm_btn').show();
+	$('#change_btn').hide();
+});
 
 $('#submit_form').on('submit',function(e){
 	searchPlaces();
