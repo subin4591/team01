@@ -21,5 +21,8 @@
 	<input type="button" value="LOGOUT" id="logout" onclick="location.href='/meeting/test/logout'">
 	<h1>로그인 여부</h1>
 	<h3>${ session_id }</h3>
+	<hr>
+	
+	<!-- <a href="/meeting/test/random">랜덤 부여</a> -->
 </body>
 </html>

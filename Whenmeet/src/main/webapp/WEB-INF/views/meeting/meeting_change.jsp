@@ -19,7 +19,7 @@
 			    .create( document.querySelector( '#editor' ) )
 			    .then( newEditor => {
 			        editor = newEditor;
-			        editor.setData("${ dto.contents }");
+			        editor.setData(`${ dto.contents }`);
 			    } )
 			    .catch( error => {
 			        console.error( error );

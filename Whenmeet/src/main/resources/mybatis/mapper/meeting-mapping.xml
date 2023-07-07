@@ -5,7 +5,9 @@
 	<!-- Meeting select -->
 	<!-- 기본 게시글 목록 -->
 	<select id="meetingList" parameterType="meetingpagingdto" resultType="meetingdto">
-		select * from meeting_table
+		select m.*, u.name writer
+		from meeting_table m inner join user_table u
+		on m.user_id = u.user_id
 		where end = "진행" and hidden = "공개"
 		<if test="category != null and category != '전체'">
 			and category = #{category}
@@ -24,8 +26,10 @@
 	
 	<!-- 유저 게시글 목록 -->
 	<select id="meetingListUser" parameterType="meetingpagingdto" resultType="meetingdto">
-		select * from meeting_table
-		where user_id = #{user_id}
+		select m.*, u.name writer
+		from meeting_table m inner join user_table u
+		on m.user_id = u.user_id
+		where m.user_id = #{user_id}
 		<choose>
 			<when test="category == 'result'">
 				and end = #{sort_list[0]} and hidden = #{sort_list[1]}
@@ -58,7 +62,9 @@
 	</select>
 	
 	<select id="userAppMeetingList" parameterType="meetingpagingdto" resultType="meetingdto">
-		select * from meeting_table where
+		select m.*, u.name writer
+		from meeting_table m inner join user_table u
+		on m.user_id = u.user_id where
 		(<foreach collection="seq_list" item="seq" separator=" or ">seq = #{seq}</foreach>)
 		<if test="category != null and category != '전체'">
 			and category = #{category}
@@ -83,7 +89,9 @@
 	
 	<!-- 게시글 상세 -->
 	<select id="meetingDetailed" parameterType="int" resultType="meetingdto">
-		select * from meeting_table
+		select m.*, u.name writer, u.profile_url profile_url
+		from meeting_table m inner join user_table u
+		on m.user_id = u.user_id
 		where seq = #{seq}
 	</select>
 	
@@ -95,7 +103,9 @@
 	
 	<!-- 신청 댓글 정보 -->
 	<select id="applicantList" parameterType="meetingpagingdto" resultType="applicantdto">
-		select * from applicant_table
+		select a.*, u.name name, u.profile_url profile_url
+		from applicant_table a inner join user_table u
+		on a.user_id = u.user_id
 		where seq = #{seq}
 		order by applicant_time desc
 		limit #{start}, #{end}
@@ -107,8 +117,10 @@
 	</select>
 	
 	<select id="applicantOneUser" parameterType="meetingpagingdto" resultType="applicantdto">
-		select * from applicant_table
-		where seq = #{seq} and user_id = #{user_id}
+		select a.*, u.name name, u.profile_url profile_url
+		from applicant_table a inner join user_table u
+		on a.user_id = u.user_id
+		where seq = #{seq} and a.user_id = #{user_id}
 	</select>
 	
 	<!-- 신청 댓글 중복 확인 -->
@@ -119,7 +131,9 @@
 	
 	<!-- writer mode 신청 댓글 정보 -->
 	<select id="writerModeList" parameterType="meetingpagingdto" resultType="applicantdto">
-		select * from applicant_table
+		select a.*, u.name name, u.profile_url profile_url
+		from applicant_table a inner join user_table u
+		on a.user_id = u.user_id
 		where seq = #{seq} and approval = #{sort_type}
 		order by applicant_time asc
 		limit #{start}, #{end}
@@ -134,14 +148,14 @@
 	<!-- Meeting insert -->
 	<!-- 게시글 작성 -->
 	<insert id="insertMeetingTable" parameterType="meetingdto">
-		insert into meeting_table(user_id, writer, title, contents, category, hidden, writing_time, hits, end, applicant_cnt, profile_url, contents_password)
-		values(#{user_id}, #{writer}, #{title}, #{contents}, #{category}, #{hidden}, now(), 0, "진행", 0, #{profile_url}, #{contents_password})
+		insert into meeting_table(user_id, title, contents, category, hidden, writing_time, hits, end, applicant_cnt, contents_password)
+		values(#{user_id}, #{title}, #{contents}, #{category}, #{hidden}, now(), 0, "진행", 0, #{contents_password})
 	</insert>
 	
 	<!-- 신청 댓글 작성 -->
 	<insert id="insertApplicantTable" parameterType="applicantdto">
-		insert into applicant_table(seq, user_id, contents, approval, applicant_time, name, profile_url)
-		values(#{seq}, #{user_id}, #{contents}, #{approval}, now(), #{name}, #{profile_url})
+		insert into applicant_table(seq, user_id, contents, approval, applicant_time)
+		values(#{seq}, #{user_id}, #{contents}, #{approval}, now())
 	</insert>
 	
 	<!-- Meeting update -->
@@ -205,4 +219,21 @@
 		delete from applicant_table
 		where seq = #{seq} and user_id = #{user_id}
 	</delete>
+	
+	<!-- Meeting test -->
+	<select id="testSelect1" resultType="int">
+		select seq from meeting_table
+		order by seq
+	</select>
+	
+	<select id="testSelect2" resultType="String">
+		select writing_time from meeting_table
+		order by writing_time
+	</select>
+	
+	<update id="testUpdate" parameterType="hashmap">
+		update meeting_table
+		set user_id = #{user_id}, writing_time = #{writing_time}
+		where seq = #{seq}
+	</update>
 </mapper>
