@@ -8,13 +8,10 @@
   <title>일정|언제만나</title>
   <link rel="icon" href="/img/icon.svg">
   <link rel = "stylesheet" href = "css/schedule_css.css">
+  <link rel = "stylesheet" href = "css/schedule_location.css">
   <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script src = "js/schedule_js.js"></script>
-  <script
-      type="text/javascript"
-      src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2b4c5e3499f85cf245295753dba018dc"
-  ></script>
 </head>
 <%@page import = "java.util.*"%>
 <%

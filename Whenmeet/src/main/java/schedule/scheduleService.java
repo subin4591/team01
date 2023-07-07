@@ -16,4 +16,7 @@ public class scheduleService {
 	public List<UserDTO> selectUser() throws Exception {
 		return scheduleMapper.selectUser();
 	}
+	public String location() {
+		return scheduleMapper.location();
+	}
 }
