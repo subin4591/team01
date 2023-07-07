@@ -1,5 +1,6 @@
 package schedule;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ public class scheduleService {
 	}
 	public String getLocation(String group_id) throws Exception{
 		return scheduleMapper.getLocation(group_id);
+	}
 	public GroupUserDTO selectGroupUserOne(HashMap<String, String> map) throws Exception{
 		return scheduleMapper.selectGroupUserOne(map);
 	}
