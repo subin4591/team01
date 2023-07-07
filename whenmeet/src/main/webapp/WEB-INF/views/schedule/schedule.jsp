@@ -8,13 +8,15 @@
   <title>일정|언제만나</title>
   <link rel="icon" href="/img/icon.svg">
   <link rel = "stylesheet" href = "/css/schedule_css.css">
-  <link rel = "stylesheet" href = "/css/schedule_location.css">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script src = "/js/schedule_js.js"></script> 
-</head>
-
+  <script src = "/js/schedule_js.js"></script>
+  <script
+      type="text/javascript"
+      src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2b4c5e3499f85cf245295753dba018dc"
+  ></script>
+  </head>
 <%@page import = "java.util.*"%>
 <%
 // 사용자 프로필 에러났을 때
@@ -22,38 +24,96 @@ String userImgErr = "/img/user_logo.png";
 %>
 
 <body>
+<c:choose>
+<c:when test = "${userId == null }">
+	<script>
+	alert("로그인이 필요한 페이지입니다.");
+	location.href = "/login";
+	</script>
+</c:when>
+<c:otherwise>
 <div class = "schedule_page">
 	<!--헤더 -->
 	<%@ include file="../header.jsp" %>
 	
 	<!-- 맴버 리스트 -->
 	<div class = "member_list">
+		<%
+			String[] allMemberId = (String[])request.getAttribute("groupAllUsersId");
+			int MemberCnt = allMemberId.length;
+		%>
 		<!-- 맴버 리스트 제목  -->
 		<div class = "member_list_title">
-			<h2>맴버 목록</h2>
+			<h2>맴버 목록 (<%=MemberCnt %>)</h2>
 		</div>
 		<!-- 맴버 리스트 -->
 		<div class = "member_list_content">
 			<ul class = memberList>
 			<%
-			//맴버 목록 데이터
-			ArrayList<String> memberName = new ArrayList<String>();
-			memberName.add("방장쓰");
-			memberName.add("부방장쓰");
-			memberName.add("맴버1");
-			memberName.add("맴버2");
-			memberName.add("맴버3");
-			memberName.add("맴버4");
+			//방장 맴버
+			String[] HostId = (String[])request.getAttribute("groupHostUserId");
+			String[] HostName = (String[])request.getAttribute("groupHostUserName");
+			String[] HostAddress = (String[])request.getAttribute("groupHostUserAddress");
+			String[] HostPhone = (String[])request.getAttribute("groupHostUserPhone");
+			String[] HostEmail = (String[])request.getAttribute("groupHostUserEmail");
+			String[] HostProfileUrl = (String[])request.getAttribute("groupHostUserProfileUrl");
+			//부방장 맴버
+			String[] SubHostId = (String[])request.getAttribute("groupSubHostUsersId");
+			String[] SubHostName = (String[])request.getAttribute("groupSubHostUsersName");
+			String[] SubHostAddress = (String[])request.getAttribute("groupSubHostUsersAddress");
+			String[] SubHostPhone = (String[])request.getAttribute("groupSubHostUsersPhone");
+			String[] SubHostEmail = (String[])request.getAttribute("groupSubHostUsersEmail");
+			String[] SubHostProfileUrl = (String[])request.getAttribute("groupSubHostUsersProfileUrl");
+			//일반 맴버
+			String[] memberId = (String[])request.getAttribute("groupMemberUsersId");
+			String[] memberName = (String[])request.getAttribute("groupMemberUsersName");
+			String[] memberAddress = (String[])request.getAttribute("groupMemberUsersAddress");
+			String[] memberPhone = (String[])request.getAttribute("groupMemberUsersPhone");
+			String[] memberEmail = (String[])request.getAttribute("groupMemberUsersEmail");
+			String[] memberProfileUrl = (String[])request.getAttribute("groupMemberUsersProfileUrl");
 			
-			//누가 방장인가
-			for(int i = 0; i < memberName.size(); i++){
+			//방장>부방장>맴버 순으로 정렬
+			List<String> membersId = new ArrayList<String>();
+			List<String> membersName = new ArrayList<String>();
+			List<String> membersAddress = new ArrayList<String>();
+			List<String> membersPhone = new ArrayList<String>();
+			List<String> membersEmail = new ArrayList<String>();
+			List<String> membersProfileUrl = new ArrayList<String>();
+			
+			for (int i = 0; i < HostName.length; i++){
+				membersId.add(HostId[i]);
+				membersName.add(HostName[i]);
+				membersAddress.add(HostAddress[i]);
+				membersPhone.add(HostPhone[i]);
+				membersEmail.add(HostEmail[i]);
+				membersProfileUrl.add(HostProfileUrl[i]);
+			}
+			for (int i = 0; i < SubHostName.length; i++){
+				membersId.add(SubHostId[i]);
+				membersName.add(SubHostName[i]);
+				membersAddress.add(SubHostAddress[i]);
+				membersPhone.add(SubHostPhone[i]);
+				membersEmail.add(SubHostEmail[i]);
+				membersProfileUrl.add(SubHostProfileUrl[i]);
+			}
+			for (int i = 0; i < memberName.length; i++){
+				membersId.add(memberId[i]);
+				membersName.add(memberName[i]);
+				membersAddress.add(memberAddress[i]);
+				membersPhone.add(memberPhone[i]);
+				membersEmail.add(memberEmail[i]);
+				membersProfileUrl.add(memberProfileUrl[i]);
+			}
+			
+			//출력
+			for(int i = 0; i < membersName.size(); i++){
 				String Img = "/img/방장표시.svg";
 				boolean host = false;
 				boolean subhost = false;
 				if (i == 0){ 	//첫 번째 자리면 방장
 					host = true;
 				}
-				if (i == 1){ 
+				if (0 < i && i <= SubHostName.length){ 
 					subhost = true;
 					Img = "/img/부방장표시.svg";
 				}
@@ -61,19 +121,19 @@ String userImgErr = "/img/user_logo.png";
 				<li>
 				  <!-- 모달 팝업 열기-->
 
-				  <a href="#" class = "user_open" onclick="javascript:popOpen('<%= memberName.get(i) %>'); " >
+				  <a href="#" class = "user_open" onclick="javascript:popOpen('<%= membersName.get(i)%>'); " >
 				
 				    <div class = "member">				
 					    <!-- 유저 프로필 이미지 설정 -->
 					    <div class = "Uimage">
-						    <img src = "<%= userImgErr %>" 
+						    <img src = "<%= membersProfileUrl.get(i) %>" 
 							    onError = "<%= userImgErr %>" 
 							    alt = "유저 프로필 이미지" class = "userProfile">
 					    </div>
 					    
 					    <div class = "text">
                				 <!-- 유저 이름 설정-->
-						    <h2><%= memberName.get(i) %></h2>
+						    <h2><%= membersName.get(i) %></h2>
 						
 					      <!-- 방장 및 부방장 설정-->	
 						    <%if(host || subhost){ %>
@@ -102,9 +162,10 @@ String userImgErr = "/img/user_logo.png";
 					src = "<%= userImgErr %>" 
 					onError = "<%= userImgErr %>" 
 					alt = "유저 프로필 이미지" class = "userProfile">
+					<button type = "button" class = "SubHostBtn" >부방장 등록</button>
 		  <div class = "profileText" style = "overflow : hidden; white-space:nowrap; text-overflow : ellipsis;">
 		    <br><br><br><h1 class = "modalUserName"> 정보를 불러올 수 없습니다.</h1>
-		    <br><span>@doremiAccount</span> <br><br>
+		    <br><span>@doremiAccount</span><br><br>
 		    <div style = "font-size : 20px">
 			    <span><b>주소 |</b> 도레시 미파구 솔라동 시도레 마을</span> <br>
 			    <span><b>전화번호 |</b> 010-1234-5678</span> <br>
@@ -120,7 +181,7 @@ String userImgErr = "/img/user_logo.png";
         
     <div id="section_two_right">
 			<div id="review_area" >
-				<div id = "chart_div3" style = "margin : auto"></div>
+				
 			</div>
       <div id="review_btn">
         <div id = "white_btn_area">
@@ -155,19 +216,25 @@ String userImgErr = "/img/user_logo.png";
           		<%@page import = "java.util.Calendar" %>
          		<%@page import = "java.util.Date" %>
           		<%
-          			String date = "20230101";		//일요일이어야함 -> 값이 변함에 따라 테이블도 변해야 함
+          		
+          			String date = "20230101";
+       
           			String[] dates = new String[7];		// 1주일 간 날짜를 저장
           			String[] datesY = new String[7];	// 1주일 간 년을 저장
           			String[] datesM = new String[7];	// 1주일 간 월을 저장
           			String[] datesD = new String[7];	// 1주일 간 일을 저장
-          			dates[0] = date;	//String을 배열 첫날에 넣기
           			
-          			SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-         			
-          			Date date1 = format.parse(date);	//첫날 형식 맞추기
-          			
+          			Date Dtoday = new Date();
           			Calendar cal = Calendar.getInstance(); 
-         	  		cal.setTime(date1);		//첫날 넣기
+          			SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+          			
+          			cal.setTime(Dtoday);
+					int a = cal.get(Calendar.DAY_OF_WEEK) - 1;
+          			cal.add(Calendar.DATE, -a);
+          			Dtoday = cal.getTime();
+          			 			
+          			String date1 = format.format(Dtoday);	//첫날 형식 맞추기       
+          			dates[0] = date1;	//String을 배열 첫날에 넣기  
          			
          				for (int i = 1; i < 7; i ++){	//1주일 동안
          					cal.add(Calendar.DATE, 1);	//하루 더하기
@@ -734,12 +801,9 @@ String userImgErr = "/img/user_logo.png";
 
 	      var chart1 = new google.visualization.Gantt(document.getElementById('chart_div1'));
 	      var chart2 = new google.visualization.Gantt(document.getElementById('chart_div2'));
-	      var chart3 = new google.visualization.Gantt(document.getElementById('chart_div3'));
-
-		
+	
 	      chart1.draw(data, options2);
 	      chart2.draw(data, options);
-	      chart3.draw(data, options);
 	    }
 	</script>
 	<script>
@@ -778,7 +842,7 @@ String userImgErr = "/img/user_logo.png";
 			<div class = "group_information" style = "display : flex; margin : auto; background : white; width : 95%; height : 90%">
 				<div style= " display : flex;  margin : auto; width : 90%; height : 80%">
 					<div id = "group_detail_left" >
-						<h1>감자 프로젝트 그룹</h1>
+						<h1>${groupName}</h1>
 						<h3>개설자 : 방장쓰</h3>
 						<h3></h3>
 						
@@ -840,5 +904,7 @@ String userImgErr = "/img/user_logo.png";
 		<%@ include file="../footer.jsp" %>
 	</div>
 </div>
+</c:otherwise>
+</c:choose>
 </body>
 </html>

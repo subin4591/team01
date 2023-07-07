@@ -8,14 +8,19 @@
 			select * from user_table
 		]]>
 	</select>
+	<select id="selectUserOne" resultType = "dto.UserDTO" parameterType = "String">
+		<![CDATA[
+			select * from user_table
+			where user_id = #{user_id}
+		]]>
+	</select>
 	
 	<select id = "selectGroup" resultType = "dto.GroupDTO">
 		<![CDATA[
 			select * from group_table
 		]]>
-	</select>
-	
-	<select id = "selectGroupOne" resultType = "dto.GroupDTO" parameterType = "java.lang.String">
+	</select>	
+	<select id = "selectGroupOne" resultType = "dto.GroupDTO" parameterType = "String">
 		<![CDATA[
 			select * from group_table
 			where group_id = #{group_id}
@@ -30,10 +35,18 @@
 	<select id="getLocation" resultType="String" parameterType="String">
 	select final_location from group_table where group_id = #{group_id};
 	</select>
+
+	<select id = "selectGroupUserOne" resultType = "dto.GroupUserDTO" parameterType = "hashmap">
+		<![CDATA[
+			select * from group_user_table
+			where group_id = #{group_id} and user_id = #{user_id}
+		]]>
+	</select>
+	<select id = "selectGroupUsers" resultType = "dto.GroupUserDTO" parameterType = "String">
+		<![CDATA[
+			select * from group_user_table
+			where group_id = #{group_id}
+		]]>
+	</select>
+
 </mapper>
-
-
-
-
-
-
