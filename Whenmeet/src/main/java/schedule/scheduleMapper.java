@@ -13,4 +13,5 @@ public interface scheduleMapper {
 	List<GroupDTO> selectGroup() throws Exception;
 	GroupDTO selectGroupOne(String group_id) throws Exception;
 	List<GroupUserDTO> selectGroupUser() throws Exception;
+	String getLocation(String group_id) throws Exception;
 }

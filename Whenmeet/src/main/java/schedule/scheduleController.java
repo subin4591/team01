@@ -34,7 +34,7 @@ public class scheduleController {
 		groupList = scheduleService.selectGroup();
 		groupOne = scheduleService.selectGroupOne(groupId);
 		groupUserList = scheduleService.selectGroupUser();
-
+		String location = scheduleService.getLocation(groupId);
 		String groupName, groupCreateTime, ProjectEndTime, groupDescription;
 		
 		if (groupOne == null) {
@@ -53,11 +53,12 @@ public class scheduleController {
 			groupDescription = groupOne.getGroup_description();
 		}
 		
-		
 		model.addAttribute("groupName", groupName);
 		model.addAttribute("groupCreateTime", groupCreateTime);
 		model.addAttribute("ProjectEndTime", ProjectEndTime);
 		model.addAttribute("groupDescription", groupDescription);
+		model.addAttribute("location", location);
+		model.addAttribute("groupId", groupId);
 		
 		return "schedule/schedule";
 	}
