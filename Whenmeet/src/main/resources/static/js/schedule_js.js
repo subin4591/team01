@@ -1,6 +1,48 @@
 /**
  * 
  */
+//d-day 업데이트하기
+function DdayUpdate(){
+	var Dday = $("#Dday").children('span').eq(1);
+	var finalDate = $("#Dday").children('span').eq(2);
+	var finalTime = $("#Dday").children('span').eq(3);
+	
+	var date = $("#finalDate").val();
+	var startTime = $("#finalStartTime").val();
+	var endTime = $("#finalEndTime").val();
+	
+	var temp = date.split("-");
+	var Day = getDayOfWeek(temp);
+	var today = new Date();
+	Ddate = new Date(date);
+	
+	if (today > Ddate || date == ""){
+		alert("정확한 날짜를 입력해주세요.");
+		return false;
+	}
+	else if (today.getFullYear() == Ddate.getFullYear() && today.getMonth() == Ddate.getMonth() && today.getDate() == Ddate.getDate()){
+		Dday.text("Today");
+	}else{
+		Dday.text(
+		Math.ceil(Math.abs((Ddate.getTime() - today.getTime())/(1000*60*60*24)))-1
+		);
+	}
+	$(this).attr("alt", 1);
+	
+	finalDate.text(temp[0]+"년 "+ temp[1]+"월 "+temp[2]+"일 ("+Day+")");
+	
+	if(startTime == ""){
+		startTime = "미정";
+	}
+	if(endTime == ""){
+		endTime = "미정";
+	}
+	
+	finalTime.text(startTime + " - " + endTime);
+	
+	$("#Dday_edit").hide();
+	$("#Dday").show();
+}
 //리스트 삭제하기
 function deleteBtn(element){
 	var temp = $("#DoItContainer");
@@ -53,9 +95,10 @@ function changeTime2(){
 }
 //일정표 기간 표시하기
 function getDayOfWeek(string){
-	var day = new Date(string[0], string[1], string[2]);
+	var day = new Date(string[0], string[1]-1, string[2]);
     const week = ['일', '월', '화', '수', '목', '금', '토'];
-
+    console.log(day);
+	console.log(day.getDay());
     const dayOfWeek = week[day.getDay()];
 
     return dayOfWeek;
@@ -260,129 +303,19 @@ $("#ScheduleEditBtn").click(function(){
 	$("#timeTable").show();
 })
 $(".editDate").click(function(){
+	var today = new Date();
 	$("#Dday_edit").show();
 	$("#DdayInit").hide();
 	$("#Dday").hide();
 })
 $("#endEditDate").click(function(){
 	$("#Dday_edit").hide();
-	$("#DdayInit").hide();
-	$("#Dday").show();
+	if ($("#Dday_frm .submitBtn").attr("alt") == 1){
+		$("#DdayInit").hide();
+		$("#Dday").show();
+	}else{
+		$("#DdayInit").show();
+	}
 })
-$(".submitBtn").click(function(){
-	$("#Dday_edit").hide();
-	$("#Dday").show();
-})
 
-/* 간트 차트 */
-  	$("#ganttCreateBtn").click(function(){
-		$("#ganttFirstEdit").show();
-		$("#ganttFirstEdit").css({
-			"display" : "flex"
-		});
-		$("#ganttCreate").hide();
-	})
-  	$("#ganttFirstEditCancelBtn").click(function(){
-		$("#ganttCreate").show();
-		$("#ganttFirstEdit").hide();
-	})	
-  	$("#ganttFirstEditSaveBtn").click(function(){
-		$("#ganttResult").show();
-		$("#ganttFirstEdit").hide();
-	})	
-	$("#ganttResultEditBtn").click(function(){
-		$("#ganttFirstEdit").show();
-		$("#ganttFirstEdit").css({
-			"display" : "flex"
-		});
-		$("#ganttResult").hide();
-	})
-
-	/*구글 차트 api*/
-    google.charts.load('current', {'packages':['gantt']});
-    google.charts.setOnLoadCallback(drawChart);
-    
-	function daysToMilliseconds(days) {
-      return days * 24 * 60 * 60 * 1000;
-    }
-    
-    var valueName = [];
-    var valueSDate = [];
-    var valueEDate = [];
-    var valueDur = [];
-    var valuePC = [];
-    
-    valueName.push('테스트');
-    valueSDate.push(null);
-    valueEDate.push(new Date(2023, 8));
-    valueDur.push(null);
-    valuePC.push(0);
-
-    function drawChart() {
-
-      var data = new google.visualization.DataTable();
-      data.addColumn('string', 'Task ID');
-      data.addColumn('string', 'Task Name');
-      data.addColumn('date', 'Start Date');
-      data.addColumn('date', 'End Date');
-      data.addColumn('number', 'Duration');
-      data.addColumn('number', 'Percent Complete');
-      data.addColumn('string', 'Dependencies'); 
-      
-      for (var i = 0; i < valueName.length; i ++){
-		  var index = i+"";
-      	data.addRow([
-        	index, valueName.at(i), valueSDate.at(i), valueEDate.at(i),
-      		valueDur.at(i), valuePC.at(i), null
-			]);
-		}
-
-	let today = new Date();
-  	var rowHeight = 50;
-
-      var options = {
-		width : 650,
-		height: data.getNumberOfRows() * rowHeight+rowHeight*3,      
-		gantt: {
-			barHeight: 40,
-			trackHeight: 50,
-			defaultStartDate: today,
-			
-			innerGridHorizLine:{
-				stroke : "#F9F3F3"
-			},
-			innerGridDarkTrack: {
-				fill: "#F9F3F3"
-			},
-			
-			labelStyle: {
-				fontSize : 22
-			},
-			
-			palette: [{
-				"color" : "#FF86AE",
-				"dark" : "#F25287",
-				"light" : "#FFB4CD"
-			}]		
-        },
-        
-        hAxis:{
-        	format: 'yy-MM-dd'
-        	}
-
-      };
-
-      var chart1 = new google.visualization.Gantt(document.getElementById('chart_div1'));
-      var chart2 = new google.visualization.Gantt(document.getElementById('chart_div2'));
-
-	
-      chart1.draw(data, options);
-      chart2.draw(data, options);
-    }
-	
-	
-
-
-  
-  		
 });

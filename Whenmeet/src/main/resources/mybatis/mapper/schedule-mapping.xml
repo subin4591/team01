@@ -8,6 +8,25 @@
 			select * from user_table
 		]]>
 	</select>
+	
+	<select id = "selectGroup" resultType = "dto.GroupDTO">
+		<![CDATA[
+			select * from group_table
+		]]>
+	</select>
+	
+	<select id = "selectGroupOne" resultType = "dto.GroupDTO" parameterType = "java.lang.String">
+		<![CDATA[
+			select * from group_table
+			where group_id = #{group_id}
+		]]>
+	</select>
+	
+	<select id = "selectGroupUser" resultType = "dto.GroupUserDTO">
+		<![CDATA[
+			select * from group_user_table
+		]]>
+	</select>
 
 </mapper>
 

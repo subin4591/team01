@@ -57,7 +57,7 @@ function makePage(totalCnt, divNum) {
 }
 
 // 게시글 생성자
-function MeetingCon(seq, category, title, writer, writing_time, applicant_cnt, hits) {
+function MeetingCon(seq, category, title, writer, writing_time, applicant_cnt, hits, contents) {
 	this.seq = seq;
 	this.category = category;
 	this.title = title;
@@ -65,6 +65,7 @@ function MeetingCon(seq, category, title, writer, writing_time, applicant_cnt, h
 	this.writing_time = writing_time;
 	this.applicant_cnt = applicant_cnt;
 	this.hits = hits;
+	this.contents = contents;
 	this.printTd = function() {
 		return `<tr>
 					<td>${ this.seq }</td>
@@ -74,6 +75,20 @@ function MeetingCon(seq, category, title, writer, writing_time, applicant_cnt, h
 					<td>${ this.writing_time }</td>
 					<td>${ this.applicant_cnt }</td>
 					<td>${ this.hits }</td>
+				</tr>`;
+	};
+	this.printSearch = function() {
+		return `<tr>
+					<td rowspan="2" class="td_seq">${ this.seq }</td>
+					<td rowspan="2" class="td_category">${ this.category }</td>
+					<td class="td_title"><a href="/meeting/detailed?seq=${ this.seq }">${ this.title }</a></td>
+					<td class="td_writer">${ this.writer }</td>
+					<td class="td_writing_time">${ this.writing_time }</td>
+					<td class="td_applicant_cnt">${ this.applicant_cnt }</td>
+					<td class="td_hits">${ this.hits }</td>
+				</tr>
+				<tr>
+					<td colspan="4" class="td_contents">${ this.contents }</td>
 				</tr>`;
 	};
 };
@@ -89,7 +104,9 @@ function MeetingApp(profile_url, name, applicant_time, approval, contents, user_
 	this.printLi = function() {
 		return `<li>
 					<div class="app_list_caption">
-						<img class="app_list_profile" alt="app_list_profile" src="${ this.profile_url }">
+						<div class="app_list_profile">
+							<img alt="app_list_profile" src="${ this.profile_url }">
+						</div>
 						<div class="app_list_info">
 							<label class="app_list_name">${ this.name }</label>
 							<label class="app_list_time">${ this.applicant_time }</label>
@@ -104,7 +121,9 @@ function MeetingApp(profile_url, name, applicant_time, approval, contents, user_
 	this.printLiMy = function() {
 		return `<li id="my_app">
 					<div class="app_list_caption">
-						<img class="app_list_profile" alt="app_list_profile" src="${ this.profile_url }">
+						<div class="app_list_profile">
+							<img alt="app_list_profile" src="${ this.profile_url }">
+						</div>
 						<div class="app_list_info">
 							<label class="app_list_name">${ this.name }</label>
 							<label class="app_list_time">${ this.applicant_time }</label>
@@ -127,7 +146,9 @@ function MeetingApp(profile_url, name, applicant_time, approval, contents, user_
 						<label for="ch_${ this.user_id }"></label>
 					</div>
 					<div class="man_list_caption">
-						<img class="man_list_profile" alt="man_list_profile" src="${ this.profile_url }">
+						<div class="man_list_profile">
+							<img alt="man_list_profile" src="${ this.profile_url }">
+						</div>
 						<div class="man_list_info">
 							<label class="man_list_name">${ this.name }</label>
 							<label class="man_list_time">${ this.applicant_time }</label>

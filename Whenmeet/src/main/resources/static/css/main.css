@@ -24,6 +24,20 @@ body{
     left:50%;
     transform: translate(-50%, -50%);
 }
+#null{
+	position: absolute;
+    width: 250px;
+    height: 70px;
+    background-color: #F25287;
+    border: 0;
+    color: white;
+    cursor:pointer;
+    left:50%;
+    top:50%;
+    margin-left:15px;
+    transform: translate(-50%, -50%);
+}
+
 #content{
 	display: flex;
   	justify-content: space-between;
@@ -80,8 +94,10 @@ body{
 	height:199px;
 	margin-bottom:25px;
 }
-footer{
-	margin-top:50px;
+#footer{
+	margin-top:100px;
+	font-size:16px;
+	font-family:none;
 }
 #apply{
 	background:white;
@@ -118,6 +134,4 @@ a{
 .rank_contents * {
 	margin:0;
 	padding: 10px 10px 0 10px;
-	
-	
 }

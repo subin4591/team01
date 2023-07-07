@@ -16,4 +16,5 @@ public interface MainDAO {
 	public List<String> myGroup(String user_id);
 	public List<MainDTO> rankList();
 	
+	
 }
