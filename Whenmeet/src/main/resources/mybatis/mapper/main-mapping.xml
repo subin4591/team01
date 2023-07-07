@@ -9,14 +9,20 @@
 <select id="myWrite" resultType="maindto" parameterType = "String" >
 	select title,seq from meeting_table where user_id = #{user_id};
 </select>
-<select id="myGroup" resultType="String" parameterType = "String" >
-	select group_name from group_table where group_id in	
+<select id="myGroup" resultType="groupdto" parameterType = "String" >
+	select group_id,group_name from group_table where group_id in	
 	(select group_id from group_user_table where user_id = #{user_id});
 </select>
 <select id="rankList" resultType="maindto">
-	select title,seq,contents from meeting_table where end = "진행" and hidden = "공개" order by hits desc limit 0,5;
+	select title,seq,contents from meeting_table where end = "진행" and hidden = "공개" order by hits desc limit 0,4;
 </select>
-
+<update id="address">
+UPDATE group_table
+SET final_location = #{address} WHERE group_id = #{group_id};
+</update>
+<select id="getLocation" resultType="String">
+	select final_location from group_table group_id = #{group_id};
+</select>
 </mapper>
 
 
