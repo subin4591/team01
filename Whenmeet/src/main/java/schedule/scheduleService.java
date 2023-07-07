@@ -30,4 +30,7 @@ public class scheduleService {
 	public List<GroupUserDTO> selectGroupUser() throws Exception{
 		return scheduleMapper.selectGroupUser();
 	}
+	public String getLocation(String group_id) throws Exception{
+		return scheduleMapper.getLocation(group_id);
+	}
 }
