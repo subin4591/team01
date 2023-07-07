@@ -1,7 +1,9 @@
+<%@page import="main.MainService"%>
+<%@page import="main.MainDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-	
+
 <div class="map_wrap" style="width:50%;">
     <div id="map" style="width:100%;height:600px;position:relative;overflow:hidden;"></div>
 
@@ -9,7 +11,14 @@
         <div class="option">
             <div>
                 <form id="submit_form">
-                    키워드 : <input type="text" value="" id="keyword" size="15"> 
+                	<c:choose>
+					    <c:when test="${session_id == null}">
+					        키워드 : <input type="text" value="" id="keyword" size="15"> 
+					    </c:when>
+					    <c:otherwise>
+					        키워드 : <input type="text" value="${location }" id="keyword" size="15"> 
+					    </c:otherwise>
+					</c:choose>
                     <button type="submit">검색하기</button> 
                 </form>
             </div>
@@ -21,7 +30,10 @@
 		
     </div>
 </div>
+<div id ="result_wrap">
 <div id="result"></div>
+<div id="distance"></div>
+</div>
 <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a860b9470c235ea7b99c9c4e99ca3f14&libraries=services"></script>
 <script>
 
@@ -114,7 +126,7 @@ function displayPlaces(places) {
         var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
             marker = addMarker(placePosition, i), 
             itemEl = getListItem(i, places[i]); // 검색 결과 항목 Element를 생성합니다
-
+			
         // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
         // LatLngBounds 객체에 좌표를 추가합니다
         bounds.extend(placePosition);
@@ -131,6 +143,7 @@ function displayPlaces(places) {
                 infowindow.close();
             });
             kakao.maps.event.addListener(marker, 'click', function() {
+            	dist(places[i].y,places[i].x);
             	$('#result').html("<h1>" + title + "</h1>" +"<h2>" + places[i].address_name + "</h2>");
             	map.setLevel(3);
             	map.setCenter(marker.getPosition());
@@ -139,6 +152,7 @@ function displayPlaces(places) {
             });
             
             itemEl.onclick =  function () {
+ 				dist(places[i].y,places[i].x);
             	var spanElement = this.querySelector('div > span');
             	var address = spanElement.innerHTML;
             	$('#result').html("<h1>" + title + "</h1>" +"<h2>" + address + "</h2>");	
@@ -270,7 +284,59 @@ $('#meeting_location_btn').on('click',function(){
     setTimeout(function() {
     	searchPlaces();	
 	    map.relayout();
-    }, 0); // Delay of 2000 milliseconds (2 seconds)
+    }, 0); 
     
-})
+});
+function calculateDistance(lat1, lon1, lat2, lon2) {
+	  const earthRadius = 6371; // Earth's radius in kilometers
+
+	  // Convert latitude and longitude to radians
+	  const lat1Rad = toRadians(lat1);
+	  const lon1Rad = toRadians(lon1);
+	  const lat2Rad = toRadians(lat2);
+	  const lon2Rad = toRadians(lon2);
+
+	  // Haversine formula
+	  const dLat = lat2Rad - lat1Rad;
+	  const dLon = lon2Rad - lon1Rad;
+	  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+	            Math.cos(lat1Rad) * Math.cos(lat2Rad) *
+	            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+	  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+	  const distance = earthRadius * c;
+
+	  return distance;
+	}
+
+	function toRadians(degrees) {
+	  return degrees * (Math.PI / 180);
+	}
+	function dist(lat,lon){
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(
+			     function(position) {
+			      const latitude = position.coords.latitude;
+			      const longitude = position.coords.longitude;
+			      // Use latitude and longitude coordinates
+			      let distance = calculateDistance(lat,lon,latitude,longitude);
+			      if(distance > 10){
+			    	  distance = distance.toFixed(0) + "km";
+			      }else if(distance > 1){
+			    	  distance = distance.toFixed(1) + "km";
+			      }else{
+			    	  distance = (distance*1000).toFixed(0) + "m";
+			      }
+			      $('#distance').html("<h2> 현재 위치에서 거리 : " + distance + "</h2>");
+			    },
+			    function(error) {
+			      console.log(error.code);
+			    }
+			  );
+			  return distance;
+			} else {
+			  console.log("위치 정보를 확인할 수 없습니다.");
+			}
+	}
+	
+	
 </script>

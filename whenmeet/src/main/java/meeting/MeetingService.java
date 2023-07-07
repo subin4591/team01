@@ -141,4 +141,16 @@ public class MeetingService {
 	public void deleteAppOne(MeetingPagingDTO dto) {
 		dao.deleteAppOne(dto);
 	}
+	
+	
+	/// Meeting test
+	public List<Integer> testSelect1() {
+		return dao.testSelect1();
+	}
+	public List<String> testSelect2() {
+		return dao.testSelect2();
+	}
+	public void testUpdate(HashMap<String, Object> map) {
+		dao.testUpdate(map);
+	}
 }

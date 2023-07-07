@@ -18,6 +18,7 @@ public class scheduleService {
 	public List<UserDTO> selectUser() throws Exception {
 		return scheduleMapper.selectUser();
 	}
+<<<<<<< HEAD:whenmeet/src/main/java/schedule/scheduleService.java
 	
 	public List<GroupDTO> selectGroup() throws Exception{
 		return scheduleMapper.selectGroup();
@@ -29,5 +30,9 @@ public class scheduleService {
 	
 	public List<GroupUserDTO> selectGroupUser() throws Exception{
 		return scheduleMapper.selectGroupUser();
+=======
+	public String location() {
+		return scheduleMapper.location();
+>>>>>>> 6a0bb92fe01507c8d4d18bd5572c1ce8e5950b33:Whenmeet/src/main/java/schedule/scheduleService.java
 	}
 }

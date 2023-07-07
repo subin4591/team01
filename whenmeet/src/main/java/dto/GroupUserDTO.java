@@ -1,8 +1,7 @@
 package dto;
 
 public class GroupUserDTO {
-	String group_id;
-	String user_id;
+	String group_id, user_id;
 	int host, sub_host, set_schedule;
 	
 	public String getGroup_id() {

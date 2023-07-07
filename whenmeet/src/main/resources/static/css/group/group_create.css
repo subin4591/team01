@@ -37,6 +37,13 @@ a:hover {
 	border: 2px solid #F25287;
 	border-radius: 50%;
 	margin-right: 20px;
+	overflow: hidden;
+}
+.profile_img img {
+	object-fit: cover;
+	object-position: center center;
+	width: 100%;
+	height: 100%;
 }
 #host_info span:first-child {
 	color: #F25287;
@@ -109,6 +116,10 @@ a:hover {
     box-shadow: 0 0 0 max(2px, 0.2em) #DB9F9F;
     cursor: pointer;
 }
+.host_img {
+	width: 25px;
+	height: 25px;
+}
 
 /* group_info_form */
 #group_info_form {
@@ -160,6 +171,7 @@ a:hover {
 #info_imgs img:last-child {
 	width: 100px;
 	height: 100px;
+	border-radius: 50%;
 }
 #info_form_right {
 	display: flex;
@@ -180,7 +192,8 @@ a:hover {
 	color: #F25287;
 	margin-left: 5px;
 }
-#info_form_right textarea {
+#info_form_right textarea,
+#info_form_right p {
 	font-size: 18px;
 	height: 65%;
 	border: none;
@@ -205,4 +218,26 @@ a:hover {
 }
 #group_submit:active {
 	transform: scale(0.9);
+}
+#gcs_btns * {
+	width: 150px;
+	height: 40px;
+	font-size: 18px;
+	border: 2px solid;
+	border-radius: 10px;
+	margin-top: 30px;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+#go_main {
+	font-weight: bold;
+	color: #F25287;
+	background-color: #F9F3F3;
+	border-color: #F25287;
+}
+#go_schedule {
+	font-weight: bold;
+	color: white;
+	background-color: #F25287;
+	border-color: #F25287;
 }

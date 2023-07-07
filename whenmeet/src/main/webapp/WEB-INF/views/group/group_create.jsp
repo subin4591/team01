@@ -11,6 +11,25 @@
 	<script src="/js/jquery-3.6.4.min.js"></script>
 	<script>
 		$(document).ready(function() {
+			// 글자수 제한
+			$("#group_name").on("keyup", function() {
+				let text_len = $(this).val().length;
+	            let text_max = 100;
+	            if (text_max - text_len <= 0) {
+	            	alert(text_max + "자 까지 입력할 수 있습니다.");
+	                $(this).val($(this).val().slice(0, text_max-10));
+	            }
+			});
+			$("#group_description").on("keyup", function() {
+				let text_len = $(this).val().length;
+	            let text_max = 500;
+	            if (text_max - text_len <= 0) {
+	            	alert(text_max + "자 까지 입력할 수 있습니다.");
+	                $(this).val($(this).val().slice(0, text_max-10));
+	            }
+			});
+			
+			// submit event
 			$("#group_submit").on("click", function() {
 				let ra_txt = "";
 				let in_txt = "";
@@ -41,8 +60,8 @@
 				else {
 					$("#create_forms").submit();
 				}
-			});
-		});
+			});	// submit event end
+		});	// document end
 	</script>
 </head>
 <body>
@@ -52,7 +71,9 @@
 	<!-- group create form -->
 	<div id="group_create">
 		<div id="host_info">
-			<img class="profile_img" alt="profile_img" src="${ host_info.profile_url }">
+			<div class="profile_img">
+				<img alt="profile_img" src="${ host_info.profile_url }">
+			</div>
 			<h1><span>${ host_info.name }</span><span>님의 그룹생성</span></h1>
 		</div>
 		<form id="create_forms" action="/group/create/result" method="post">
@@ -64,7 +85,9 @@
 				<ul>
 					<c:forEach items="${ user_info }" var="user">
 						<li>
-							<img class="profile_img" alt="profile_img" src="${ user.profile_url }">
+							<div class="profile_img">
+								<img alt="profile_img" src="${ user.profile_url }">
+							</div>
 							<label for="ra_${ user.user_id }"><h2>${ user.name }</h2></label>
 							<input id="ra_${ user.user_id }" class="sub_host_radio" type="radio" name="sub_host_id" value="${ user.user_id }">
 							<input type="hidden" name="user_list[]" value="${ user.user_id }">

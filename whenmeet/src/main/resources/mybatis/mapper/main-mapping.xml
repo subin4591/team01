@@ -16,6 +16,7 @@
 <select id="rankList" resultType="maindto">
 	select title,seq,contents from meeting_table where end = "진행" and hidden = "공개" order by hits desc limit 0,5;
 </select>
+
 </mapper>
 
 

@@ -17,7 +17,7 @@
 			$("#contents_password").on("keyup", function() {
 				let text_len = $(this).val().length;
 	            let text_max = 20;
-	            if (20 - text_len <= 0) {
+	            if (text_max - text_len <= 0) {
 	            	alert(text_max + "자 까지 입력할 수 있습니다.");
 	                $(this).val("");
 	            }
@@ -34,9 +34,9 @@
 			$("#title").on("keyup", function() {
 				let text_len = $(this).val().length;
 	            let text_max = 100;
-	            if (100 - text_len <= 0) {
+	            if (text_max - text_len <= 0) {
 	            	alert(text_max + "자 까지 입력할 수 있습니다.");
-	                $(this).val($(this).val().slice(0, 90));
+	                $(this).val($(this).val().slice(0, text_max-10));
 	            }
 			});
 			
@@ -80,8 +80,6 @@
 	<!-- write_form -->
 	<form id="write_form" action="/meeting/write/result" method="post">
 		<input type="hidden" value="${ user_dto.user_id }" name="user_id">
-		<input type="hidden" value="${ user_dto.name }" name="writer">
-		<input type="hidden" value="${ user_dto.profile_url }" name="profile_url">
 		
 		<div id="write_form_caption">
 			<div id="category_select">
