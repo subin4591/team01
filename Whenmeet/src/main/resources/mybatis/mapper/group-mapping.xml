@@ -20,4 +20,29 @@
 		select user_id, name, profile_url from user_table where
 		<foreach collection="user_list" item="user" separator=" or ">user_id = #{user}</foreach>
 	</select>
+	
+	<!-- 그룹 아이디 중복체크 -->
+	<select id="findGroupID" parameterType="String" resultType="int">
+		select count(*) from `group_table`
+		where group_id = #{group_id}
+	</select>
+	
+	<!-- Group insert -->
+	<!-- 그룹 생성 -->
+	<insert id="insertGroup" parameterType="groupdto">
+		insert into `group_table` (group_id, group_name, group_create_time, group_description)
+		values (#{group_id}, #{group_name}, now(), #{group_description})
+	</insert>
+	<insert id="insertGroupUser" parameterType="groupuserdto">
+		insert into `group_user_table` (group_id, user_id, host, sub_host, set_schedule)
+		values (#{group_id}, #{user_id}, #{host}, #{sub_host}, 0)
+	</insert>
+	
+	<!-- Group update -->
+	<!-- 모집글 완료 처리 -->
+	<update id="updateMeetingEnd" parameterType="int">
+		update meeting_table
+		set end = "완료"
+		where seq = #{seq}
+	</update>
 </mapper>
