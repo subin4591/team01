@@ -128,7 +128,7 @@ public class MeetingController {
 		mv.addObject("app_list_wt", app_list_wt);
 		mv.addObject("user_app_cnt", user_app_cnt);
 		if (dto == null) {
-			mv.setViewName("meeting/meeting_not_found");
+			mv.setViewName("schedule/scheduleError");
 		}
 		else {
 			mv.setViewName("meeting/meeting_detailed");
