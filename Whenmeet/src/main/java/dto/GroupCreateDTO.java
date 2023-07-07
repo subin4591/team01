@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class GroupCreateDTO {
 	String host_id, sub_host_id;
 	ArrayList<String> user_list;
-	String group_name, group_description;
+	String group_name, group_description, project_end_time;
 	
 	public String getHost_id() {
 		return host_id;
@@ -36,6 +36,12 @@ public class GroupCreateDTO {
 	}
 	public void setGroup_description(String group_description) {
 		this.group_description = group_description;
+	}
+	public String getProject_end_time() {
+		return project_end_time;
+	}
+	public void setProject_end_time(String project_end_time) {
+		this.project_end_time = project_end_time;
 	}
 	
 	
