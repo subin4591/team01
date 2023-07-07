@@ -58,7 +58,7 @@
 					alert(ra_txt + in_txt);
 				}
 				else {
-					$("#create_forms").submit();
+					// $("#create_forms").submit();
 				}
 			});	// submit event end
 			

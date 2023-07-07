@@ -50,7 +50,11 @@
 			// 테이블 안의 검색어가 있을 경우 색상 변경
 			function setColor(type) {
 				let target = ".td_tc";
-				if (type == "title") {
+				if (type == "title_contents") {
+					setColor("title");
+					setColor("contents");
+				}
+				else if (type == "title") {
 					target = ".td_title";
 				}
 				else if (type == "contents") {
@@ -61,7 +65,7 @@
 				}
 				$(target).each(function() {
 					let si = "${ dto.search_input }";
-					let text = $(this).text();
+					let text = $(this).html();
 					
 					if (text.includes(si)) {
 						$(this).html(text.replace(si, "<span class='set_color'>" + si + "</span>"));
