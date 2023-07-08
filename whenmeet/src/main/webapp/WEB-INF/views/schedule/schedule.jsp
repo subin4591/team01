@@ -222,6 +222,7 @@ String userImgErr = "/img/user_logo.png";
 	<!-- 일정 탭 -->
     <div id = "meeting_date" >
 	    <div class="group_info">
+	    
 	    	<!-- 왼쪽 표 / 우클릭 금지, 드래그 금지 -->				
 			  <div id="chart_area" oncontextmenu="return false" ondragstart="return false" onselectstart="return false">
 				<%@page import = "java.text.SimpleDateFormat" %>
@@ -230,6 +231,7 @@ String userImgErr = "/img/user_logo.png";
           		<%
           		
           			String date = "20230101";
+          			int slideMax = 20;	//슬라이드 개수
        
           			String[] dates = new String[7];		// 1주일 간 날짜를 저장
           			String[] datesY = new String[7];	// 1주일 간 년을 저장
@@ -267,16 +269,22 @@ String userImgErr = "/img/user_logo.png";
           <div id="timeTable" style = "display : None;">
           	<!-- 수정 화면 상단 날짜 이동 영역 -->
           	<div id = "time_table_top" style = "margin : 10px; text-align : center;">						
-          		<button type = "button" class = "total_table_left">◀</button>
+          		<button type = "button" class = "total_table_left"  onclick = "slideTable(<%=slideMax %>, 0)" >◀</button>
           		<h2 style = "display : inline;">
           		  <%=datesY[0] %>/<%=datesM[0] %>/<%=datesD[0] %> - <%=datesY[6] %>/<%=datesM[6] %>/<%=datesD[6] %>
           		</h2>	
-          		<button type = "button" class = "total_table_right">▶</button>
+          		<button type = "button" class = "total_table_right" onclick = "slideTable(<%=slideMax %>, 1)">▶</button>
      			<hr style = "width : 50%; height : 5px; background-color : #F25287; border: 0;">	
           	</div>
           			
           	<br>
-          				
+          	
+          	<div id = "tableSlide2" style = "width :100%">
+                
+          	<ul>
+          	<% for (int k = 0; k < slideMax; k++){ 
+          	%>
+          	<li>				
           	<table class = "timeTable" border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">
           		
               <thead>
@@ -322,9 +330,12 @@ String userImgErr = "/img/user_logo.png";
 							      	<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol6<%=i%>" onclick = "javascript:tbColorChange('#tbCol6<%=i%>');" alt = "0"></div></td>
           					</tr>
           				<%} %>
-          			</tbody>
-          			
-          	</table>
+          			</tbody>          			
+          		</table>
+          		</li>	
+          	<%} %>
+          	</ul>
+          	</div>
           	
             <br>
                				
@@ -334,21 +345,27 @@ String userImgErr = "/img/user_logo.png";
           		<br>
           	</form>
           </div>
-          		
+          
+          <!-- 전체 회원 테이블  -->	
           <div id = "total_table">
           	<div id = "total_table_top" style = "margin : 10px; text-align : center;">
-              <button type = "button" class = "total_table_left">◀</button>
+              <button type = "button" class = "total_table_left" onclick = "slideTable(<%= slideMax %>, 0)">◀</button>
           		<h2 style = "display : inline;">
           		  <%=datesY[0] %>/<%=datesM[0] %>/<%=datesD[0] %> - <%=datesY[6] %>/<%=datesM[6] %>/<%=datesD[6] %>
           		</h2>	
-          		<button type = "button" class = "total_table_right">▶</button>
+          		<button type = "button" class = "total_table_right" onclick = "slideTable(<%= slideMax %>, 1)">▶</button>
      					<hr style = "width : 50%; height : 5px; background-color : #F25287; border: 0;">	
           	</div>
           			
-          	<br>
-          			
-          	<table class = "totalTable" border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">
-          		
+          	<br><br><br>
+          	
+          	<div id = "tableSlide" style = "width :100%">
+                
+          	<ul>
+          	<% for (int k = 0; k < slideMax; k++){ 
+          	%>
+          	<li>	
+          	<table class = "totalTable" border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">          		
               <thead>
           			<tr align = "center"  style="height: 54px; font-weight: bold;">
           				<td style="width: 12.5%;">&nbsp;</td>
@@ -392,12 +409,14 @@ String userImgErr = "/img/user_logo.png";
 								  <td style="width: 12.5%;">&nbsp;</td>
           		  </tr>
           		  <%} %>
-          	  </tbody>
-          			
+          	  </tbody>   			
           	</table>
+          	</li>	
+          	<%} %>
+          	</ul>
+          	</div>
           	
             <br>
-          	
             <button type = "button" class = "btns" id = "ScheduleEditBtn">수정</button>
             
             <br>
@@ -405,6 +424,7 @@ String userImgErr = "/img/user_logo.png";
           </div>
         </div>
         
+        <!-- 디데이 입력  -->
         <div id="Dday_area" >
         	<div id="Dday" style = "display : None" >
           	<a><img class = "editDate" src = "/img/방장용_수정_버튼.svg" /></a>

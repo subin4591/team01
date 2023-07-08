@@ -9,6 +9,37 @@ function IamHost(){
 function IamSubHost(){
 	
 }
+//슬라이드 테이블
+var slidecount = 1;
+function slideTable(max, LR){
+	var ul = $("#tableSlide ul");
+	var ul2 = $("#tableSlide2 ul");
+	
+	if (LR == 0 && slidecount > 1){
+		slidecount--;
+	}		
+	else if (LR == 1 && slidecount < max){
+		slidecount++;
+	}
+	
+	ul.css({
+			"transform": "translateX("+(-680*(slidecount-1))+"px)"
+	});
+	ul2.css({
+			"transform": "translateX("+(-660.8*(slidecount-1))+"px)"
+	});
+	
+	if (slidecount == 1){
+		$(".total_table_left").css("color", "#C9C9C9")
+	}else{
+		$(".total_table_left").css("color", "#F25287")
+	}
+	if (slidecount == max){
+		$(".total_table_right").css("color", "#C9C9C9")
+	}else{
+		$(".total_table_right").css("color", "#F25287")
+	}
+}
 
 //d-day 업데이트하기
 function DdayUpdate(){
@@ -251,7 +282,7 @@ function loadingClose(){
 
 
 $(document).ready(function () {
-
+	
 	//버튼 조작
 	let dateP = $("#meeting_date");
 	let locateP = $("#meeting_location");

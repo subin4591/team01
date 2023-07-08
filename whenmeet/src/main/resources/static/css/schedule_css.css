@@ -385,7 +385,7 @@ body{
 	float : left;
 	background : white;
 	border : 0;
-	color : #F25287;
+	color : #C9C9C9;
 	font-size : 60px;
 	cursor : pointer;
 }
@@ -1184,4 +1184,23 @@ li {
 }
 #SubHostForm{
 	display : None;
+	overflow : hidden;
+}
+
+#tableSlide, #tableSlide2{
+	overflow : hidden;
+}
+#tableSlide ul, #tableSlide2 ul{
+	list-style:none;
+	padding : 0px;
+	margin : 0px;
+	white-space: nowrap;
+	transition : 0.3s
+}
+#tableSlide li, #tableSlide2 li{
+	padding : 0px;
+	display : inline-block;
+	margin : 2%;
+    width : 96%;
+    transition : all 0.5s;
 }
