@@ -33,10 +33,14 @@ public class scheduleService {
 	public List<GroupUserDTO> selectGroupUser() throws Exception{
 		return scheduleMapper.selectGroupUser();
 	}
-	public GroupUserDTO selectGroupUserOne(HashMap<String, String> map) throws Exception{
+	public GroupUserDTO selectGroupUserOne(HashMap<String, Object> map) throws Exception{
 		return scheduleMapper.selectGroupUserOne(map);
 	}
 	public List<GroupUserDTO> selectGroupUsers(String group_id) throws Exception{
 		return scheduleMapper.selectGroupUsers(group_id);
+	}
+	
+	public void updateGroupUserSubHost(HashMap<String, Object> map) throws Exception{		
+		scheduleMapper.updateGroupUserSubHost(map);
 	}
 }

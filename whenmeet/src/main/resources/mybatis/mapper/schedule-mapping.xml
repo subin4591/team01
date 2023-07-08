@@ -44,5 +44,13 @@
 			where group_id = #{group_id}
 		]]>
 	</select>
+	
+	<update id = "updateGroupUserSubHost" parameterType = "hashMap">
+		<![CDATA[
+			update group_user_table
+			set sub_host = #{sub_host}
+			where group_id = #{group_id} and user_id = #{user_id}
+		]]>
+	</update>
 
 </mapper>

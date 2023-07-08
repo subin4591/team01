@@ -24,13 +24,16 @@ public class scheduleController {
 		return "schedule/scheduleError";
 	}
 	
-	@RequestMapping("/schedule/{groupId}")
+	@RequestMapping(value = {"/schedule/{groupId}", "/schedule/{groupId}/"})
 	public String start(@PathVariable("groupId") String groupId, Model model, HttpSession session, HttpServletRequest request) throws Exception {
 		
 		String userId = (String) session.getAttribute("session_id");
-		userId = "admin";	//나중에 꼭 지우기!
-		HashMap<String, String> map = new HashMap<String, String>();
-		map.put(groupId, userId);
+		
+		userId = "admin";	//나중에 꼭 지우기! 방장 아이디임
+		
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("userId", userId);
+		map.put("groupId", groupId);
 		
 		List<UserDTO> userList = new ArrayList<UserDTO>();
 		UserDTO userOne = new UserDTO();
@@ -237,6 +240,8 @@ public class scheduleController {
 		request.setAttribute("groupDontSetScheduleUsersEmail", groupDontSetScheduleUsersEmail);
 		request.setAttribute("groupDontSetScheduleUsersProfileUrl", groupDontSetScheduleUsersProfileUrl);		
 		
+		request.setAttribute("userId", userId);
+		
 		model.addAttribute("userId", userId);		
 		model.addAttribute("groupName", groupName);
 		model.addAttribute("groupCreateTime", groupCreateTime);
@@ -244,5 +249,22 @@ public class scheduleController {
 		model.addAttribute("groupDescription", groupDescription);
 		
 		return "schedule/schedule";
+	}
+	
+	@RequestMapping("/schedule/{groupId}/update")
+	public String updateSubHost(@PathVariable("groupId") String groupId, 
+			String userId, 
+			String subHost,
+			Model model) throws Exception {
+		
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		int subHostInt = Integer.parseInt(subHost);
+		map.put("sub_host", subHostInt);
+		map.put("group_id", groupId);
+		map.put("user_id", userId);
+		scheduleService.updateGroupUserSubHost(map);
+		
+		return "redirect:";
 	}
 }
