@@ -201,7 +201,6 @@
 				<c:choose>
 					<c:when test="${ category == 'result' }">
 						<a href="" class="sort_a" data-target="yes">승인</a>
-						<a href="" class="sort_a" data-target="no">거절</a>
 						<a href="" class="sort_a" data-target="yet">대기</a>	
 					</c:when>
 					<c:otherwise>

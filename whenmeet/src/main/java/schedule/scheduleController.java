@@ -7,10 +7,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import dto.UserDTO;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import dto.GroupDTO;
 import dto.GroupUserDTO;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class scheduleController {
@@ -24,16 +24,13 @@ public class scheduleController {
 		return "schedule/scheduleError";
 	}
 	
-	@RequestMapping(value = {"/schedule/{groupId}", "/schedule/{groupId}/"})
+	@RequestMapping("/schedule/{groupId}")
 	public String start(@PathVariable("groupId") String groupId, Model model, HttpSession session, HttpServletRequest request) throws Exception {
 		
 		String userId = (String) session.getAttribute("session_id");
-		
-		userId = "admin";	//나중에 꼭 지우기! 방장 아이디임
-		
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("userId", userId);
-		map.put("groupId", groupId);
+		userId = "admin";	//나중에 꼭 지우기!
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put(groupId, userId);
 		
 		List<UserDTO> userList = new ArrayList<UserDTO>();
 		UserDTO userOne = new UserDTO();
@@ -50,6 +47,7 @@ public class scheduleController {
 		groupUserList = scheduleService.selectGroupUser();
 		groupUserOne = scheduleService.selectGroupUserOne(map);
 		groupUsers = scheduleService.selectGroupUsers(groupId);
+		String location = scheduleService.getLocation(groupId);
 		
 		//그룹 정보 관련
 		String groupName, groupCreateTime, ProjectEndTime, groupDescription;
@@ -240,31 +238,14 @@ public class scheduleController {
 		request.setAttribute("groupDontSetScheduleUsersEmail", groupDontSetScheduleUsersEmail);
 		request.setAttribute("groupDontSetScheduleUsersProfileUrl", groupDontSetScheduleUsersProfileUrl);		
 		
-		request.setAttribute("userId", userId);
-		
 		model.addAttribute("userId", userId);		
 		model.addAttribute("groupName", groupName);
 		model.addAttribute("groupCreateTime", groupCreateTime);
 		model.addAttribute("ProjectEndTime", ProjectEndTime);
 		model.addAttribute("groupDescription", groupDescription);
+		model.addAttribute("location", location);
+		model.addAttribute("groupId", groupId);
 		
 		return "schedule/schedule";
-	}
-	
-	@RequestMapping("/schedule/{groupId}/update")
-	public String updateSubHost(@PathVariable("groupId") String groupId, 
-			String userId, 
-			String subHost,
-			Model model) throws Exception {
-		
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		
-		int subHostInt = Integer.parseInt(subHost);
-		map.put("sub_host", subHostInt);
-		map.put("group_id", groupId);
-		map.put("user_id", userId);
-		scheduleService.updateGroupUserSubHost(map);
-		
-		return "redirect:";
 	}
 }

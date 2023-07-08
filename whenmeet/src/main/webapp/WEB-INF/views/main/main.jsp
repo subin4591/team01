@@ -122,6 +122,9 @@ $(document).ready(function(){
 	      alert('로그인이 필요합니다.');
 	    }
 	});
+
+	
+
 });
 </script>
 </head>
@@ -143,7 +146,7 @@ $(document).ready(function(){
 			    	</h1>
 			    	
 			    	<c:forEach items="${mygroup}" var="group" begin="0" end="2">
-			    		<h3 class="group_list"><a href="schedule">${group}</a></h3>
+			    		<h3 class="group_list"><a href="schedule/${group.group_id }">${group.group_name}</a></h3>
 			    	</c:forEach>
 			    </div>
 		    	<div id="writing">
@@ -185,7 +188,11 @@ $(document).ready(function(){
 		    	</h1>
 			    <c:forEach items="${ranklist}" var="rank" begin="0" end="4">
 		    			<h2 class="rank_list"><a href="meeting/detailed?seq=${rank.seq}">${rank.title}</a></h2>
-		    			<span class="rank_contents">${rank.contents}</span>
+		    			<span class="rank_contents" id="rank_contents${rank.seq}">${rank.contents}</span>
+		    			<script>
+		    				var content = $('#rank_contents${rank.seq}');
+		    				content.html(content.text());
+		    			</script>
 		    	</c:forEach>
 			</div>
 	    </div>

@@ -32,11 +32,10 @@ String userImgErr = "/img/user_logo.png";
 	</script>
 </c:when>
 <c:otherwise>
-
 <div class = "schedule_page">
-
 	<!--헤더 -->
 	<%@ include file="../header.jsp" %>
+	
 	<!-- 맴버 리스트 -->
 	<div class = "member_list">
 		<%
@@ -51,8 +50,6 @@ String userImgErr = "/img/user_logo.png";
 		<div class = "member_list_content">
 			<ul class = memberList>
 			<%
-			//유저 아이디
-			String userId = (String)request.getAttribute("userId");
 			//방장 맴버
 			String[] HostId = (String[])request.getAttribute("groupHostUserId");
 			String[] HostName = (String[])request.getAttribute("groupHostUserName");
@@ -111,21 +108,20 @@ String userImgErr = "/img/user_logo.png";
 			//출력
 			for(int i = 0; i < membersName.size(); i++){
 				String Img = "/img/방장표시.svg";
-				int host = 0;
-				int subhost = 0;
+				boolean host = false;
+				boolean subhost = false;
 				if (i == 0){ 	//첫 번째 자리면 방장
-					host = 1;
+					host = true;
 				}
 				if (0 < i && i <= SubHostName.length){ 
-					subhost = 1;
+					subhost = true;
 					Img = "/img/부방장표시.svg";
 				}
 			%>
 				<li>
 				  <!-- 모달 팝업 열기-->
 
-				  <a href="#" class = "user_open" 
-				  onclick="javascript:popOpen('<%= membersId.get(i)%>', '<%= membersName.get(i)%>', '<%= membersAddress.get(i)%>', '<%= membersPhone.get(i)%>', '<%= membersEmail.get(i)%>', '<%= membersProfileUrl.get(i)%>', '<%=host %>', '<%=subhost %>' ); " >
+				  <a href="#" class = "user_open" onclick="javascript:popOpen('<%= membersName.get(i)%>'); " >
 				
 				    <div class = "member">				
 					    <!-- 유저 프로필 이미지 설정 -->
@@ -140,7 +136,7 @@ String userImgErr = "/img/user_logo.png";
 						    <h2><%= membersName.get(i) %></h2>
 						
 					      <!-- 방장 및 부방장 설정-->	
-						    <%if(host == 1 || subhost == 1){ %>
+						    <%if(host || subhost){ %>
 						      <img src = "<%= Img %>" alt = "방장 표시" 
 							          class = "hostMark">
 						    <%}; %>						
@@ -166,22 +162,14 @@ String userImgErr = "/img/user_logo.png";
 					src = "<%= userImgErr %>" 
 					onError = "<%= userImgErr %>" 
 					alt = "유저 프로필 이미지" class = "userProfile">
-					
-					
-					<form id = "SubHostForm" action= "/schedule/${groupId}/update" method = "POST">
-						<input type = "text" name = "userId" value = "${userId}" style = "display : None"/>
-						<input type = "text" name = "subHost" value = "0"  style = "display : None">
-						<button type = "submit" class = "SubHostBtn1" >부방장 등록</button>
-						<button type = "submit" class = "SubHostBtn2" >부방장 해제</button>
-					</form>
-					
+					<button type = "button" class = "SubHostBtn" >부방장 등록</button>
 		  <div class = "profileText" style = "overflow : hidden; white-space:nowrap; text-overflow : ellipsis;">
 		    <br><br><br><h1 class = "modalUserName"> 정보를 불러올 수 없습니다.</h1>
 		    <br><span>@doremiAccount</span><br><br>
-		    <div style = "font-size : 20px; overflow : hidden; white-space:nowrap; text-overflow : ellipsis;">
-			    <span><b>주소 |</b><a> 도레시 미파구 솔라동 시도레 마을</a></span> <br>
-			    <span><b>전화번호 |</b><a> 010-1234-5678</a></span> <br>
-			    <span><b>이메일 |</b><a> doremi@gmail.com</a></span> <br>
+		    <div style = "font-size : 20px">
+			    <span><b>주소 |</b> 도레시 미파구 솔라동 시도레 마을</span> <br>
+			    <span><b>전화번호 |</b> 010-1234-5678</span> <br>
+			    <span><b>이메일 |</b> doremi@gmail.com</span> <br>
 		    </div>
 		  </div>
 		</div>		
@@ -820,22 +808,6 @@ String userImgErr = "/img/user_logo.png";
 	</script>
 	<script>
 	$(document).ready(function () {
-		
-		//방장인가 부방장인가?				
-		<% if ( HostId[0].equals(userId)) { %>
-			IamHost();
-		<% }		
-		//부방장
-		else{			
-			for (int i = 0; i < SubHostId.length; i++){
-				if (SubHostId[i].equals(userId)){
-			%> 
-			IamSubHost();
-			<% break;
-				}
-			}		
-		} %>
-		
 	 	/* 간트 차트 */
 	  	$("#ganttCreateBtn").click(function(){
 	  		drawChart();

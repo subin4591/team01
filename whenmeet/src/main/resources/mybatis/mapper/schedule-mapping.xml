@@ -32,6 +32,10 @@
 			select * from group_user_table
 		]]>
 	</select>
+	<select id="getLocation" resultType="String" parameterType="String">
+	select final_location from group_table where group_id = #{group_id};
+	</select>
+
 	<select id = "selectGroupUserOne" resultType = "dto.GroupUserDTO" parameterType = "hashmap">
 		<![CDATA[
 			select * from group_user_table
@@ -44,13 +48,5 @@
 			where group_id = #{group_id}
 		]]>
 	</select>
-	
-	<update id = "updateGroupUserSubHost" parameterType = "hashMap">
-		<![CDATA[
-			update group_user_table
-			set sub_host = #{sub_host}
-			where group_id = #{group_id} and user_id = #{user_id}
-		]]>
-	</update>
 
 </mapper>
