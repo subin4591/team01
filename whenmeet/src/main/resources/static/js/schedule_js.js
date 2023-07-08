@@ -1,6 +1,15 @@
 /**
  * 
  */
+//방장의 관리
+function IamHost(){
+	$("#SubHostForm").show();
+}
+//부방장의 관리
+function IamSubHost(){
+	
+}
+
 //d-day 업데이트하기
 function DdayUpdate(){
 	var Dday = $("#Dday").children('span').eq(1);
@@ -147,10 +156,35 @@ function tbColorChange(element){
 }
 
 //유저 팝업을 열기
-function popOpen(element){
+function popOpen(id, name, address, phone, email, profile, host, subhost){
 	var modalPop = $('.user_modal');
 	var modalBg = $('.user_modal_bg');
-	$(".modalUserName").text(element);
+	//이름
+	$(".modalUserName").text(name);address
+	//프사
+	$(".user_modal_content .userProfile").attr("src", profile);
+	//부방장등록버튼
+	$("#SubHostForm").children('input').eq(0).attr("value", id);
+
+	if (host == "1"){
+		$(".SubHostBtn1").hide();	
+		$(".SubHostBtn2").hide();	
+	}
+	if (subhost == "1"){
+		$("#SubHostForm").children('input').eq(1).attr("value", "0");
+		$(".SubHostBtn1").hide();
+		$(".SubHostBtn2").show();
+	}else{
+		$("#SubHostForm").children('input').eq(1).attr("value", "1");
+	}
+	//아이디
+	$(".profileText").children('span').eq(0).text("@"+id);
+	//주소
+	$(".profileText").children().children('span').eq(0).children('a').text(" "+address);
+	//전화번호
+	$(".profileText").children().children('span').eq(1).children('a').text(" "+phone);
+	//이메일
+	$(".profileText").children().children('span').eq(2).children('a').text(" "+email);
 	$(modalPop).show();
 	$(modalBg).show();
 }
@@ -160,6 +194,9 @@ function popClose(){
 	var modalBg = $('.user_modal_bg');
 	$(modalPop).hide();
 	$(modalBg).hide();
+	$(".SubHostBtn1").show();	
+	$(".SubHostBtn2").hide();	
+	$("#SubHostForm").children('input').eq(1).attr("value", "0");
 }
 //주 팝업을 열기
 function WpopOpen(){
@@ -214,6 +251,7 @@ function loadingClose(){
 
 
 $(document).ready(function () {
+
 	//버튼 조작
 	let dateP = $("#meeting_date");
 	let locateP = $("#meeting_location");
