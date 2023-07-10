@@ -7,6 +7,7 @@ import dto.GroupDTO;
 import dto.GroupUserDTO;
 import dto.UserDTO;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 @Mapper
 public interface scheduleMapper {
@@ -17,7 +18,9 @@ public interface scheduleMapper {
 	GroupDTO selectGroupOne(String group_id) throws Exception;
 	
 	List<GroupUserDTO> selectGroupUser() throws Exception;
-	String getLocation(String group_id) throws Exception;
-	GroupUserDTO selectGroupUserOne(HashMap<String, String> map) throws Exception;
+	GroupUserDTO selectGroupUserOne(HashMap<String, Object> map) throws Exception;
 	List<GroupUserDTO> selectGroupUsers(String group_id) throws Exception;
+	
+	void updateGroupUserSubHost(HashMap<String, Object> map) throws Exception;
+	
 }
