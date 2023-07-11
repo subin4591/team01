@@ -5,6 +5,8 @@ import java.util.List;
 
 import dto.GroupDTO;
 import dto.GroupUserDTO;
+import dto.MeetingScheduleDTO;
+import dto.MeetingScheduleDateDTO;
 import dto.UserDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -23,4 +25,17 @@ public interface scheduleMapper {
 	
 	void updateGroupUserSubHost(HashMap<String, Object> map) throws Exception;
 	
+	List<MeetingScheduleDTO> selectMeetingScheduleAll(String group_id) throws Exception;
+	List<MeetingScheduleDTO> selectMeetingScheduleAllShow(HashMap<String, Object> map) throws Exception;
+	int selectMeetingScheduleAllShowCnt(HashMap<String, Object> map) throws Exception;
+	MeetingScheduleDTO selectMeetingScheduleOne(HashMap<String, Object> map) throws Exception;
+	int selectMeetingScheduleCnt(HashMap<String, Object> map) throws Exception;
+	void insertMeetingSchedule(MeetingScheduleDTO dto) throws Exception;
+	void updateMeetingScheduleShowViewAllZero(String group_id) throws Exception;
+	void updateMeetingScheduleShowViewOne(HashMap<String, Object> map) throws Exception;
+	
+	MeetingScheduleDateDTO selectMeetingScheduleDate(String group_id) throws Exception;
+	int selectMeetingScheduleDateCnt(String group_id) throws Exception;
+	void insertMeetingScheduleDate(HashMap<String, Object> map) throws Exception;
+	void updateMeetingScheduleDate(HashMap<String, Object> map) throws Exception;
 }

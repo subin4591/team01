@@ -230,48 +230,35 @@ String userImgErr = "/img/user_logo.png";
          		<%@page import = "java.util.Date" %>
           		<%
           		
-          			String date = "20230101";
-          			int slideMax = 20;	//슬라이드 개수
-       
-          			String[] dates = new String[7];		// 1주일 간 날짜를 저장
-          			String[] datesY = new String[7];	// 1주일 간 년을 저장
-          			String[] datesM = new String[7];	// 1주일 간 월을 저장
-          			String[] datesD = new String[7];	// 1주일 간 일을 저장
           			
-          			Date Dtoday = new Date();
-          			Calendar cal = Calendar.getInstance(); 
-          			SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+          			int slideMax = 1;	//슬라이드 개수
+         			if (request.getAttribute("tableListCnt") != null){
+              			slideMax = (int)request.getAttribute("tableListCnt");
+              		}
           			
-          			cal.setTime(Dtoday);
-					int a = cal.get(Calendar.DAY_OF_WEEK) - 1;
-          			cal.add(Calendar.DATE, -a);
-          			Dtoday = cal.getTime();
-          			 			
-          			String date1 = format.format(Dtoday);	//첫날 형식 맞추기       
-          			dates[0] = date1;	//String을 배열 첫날에 넣기  
+          			Date tempDate = new Date();
+          			SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+          			Calendar tempCal = Calendar.getInstance();
+          			tempCal.setTime(tempDate);
+          			tempCal.add(Calendar.DATE, 6);
+         			String[] tableListStart = {format.format(tempDate)};
+         			String[] tableListLast = {format.format(tempCal.getTime())};
          			
-         				for (int i = 1; i < 7; i ++){	//1주일 동안
-         					cal.add(Calendar.DATE, 1);	//하루 더하기
-         					Date date2 = cal.getTime();	//저장하기
-         					String temp = format.format(date2);	//다음 날 형식 맞추기
-         					dates[i] = temp;	//날짜배열에 넣기
-         				}
-         			
-         	  			//날짜배열에 있는 값들을 년/월/일로 나누기
-         				for (int i = 0; i < 7; i++){
-         					datesY[i] = dates[i].substring(0, 4);
-         					datesM[i] = dates[i].substring(4, 6);
-         					datesD[i] = dates[i].substring(6, 8);
-         				}
+         			if (request.getAttribute("tableListSeq") != null){
+         				tableListStart = (String[])request.getAttribute("tableListStart");
+             			tableListLast = (String[])request.getAttribute("tableListLast");
+             			int[] tableListSeq = (int[])request.getAttribute("tableListSeq");
+         			}
          			
           		%>
+
 			<!-- 수정 화면 (처음엔 숨겨짐) -->
           <div id="timeTable" style = "display : None;">
           	<!-- 수정 화면 상단 날짜 이동 영역 -->
           	<div id = "time_table_top" style = "margin : 10px; text-align : center;">						
           		<button type = "button" class = "total_table_left"  onclick = "slideTable(<%=slideMax %>, 0)" >◀</button>
           		<h2 style = "display : inline;">
-          		  <%=datesY[0] %>/<%=datesM[0] %>/<%=datesD[0] %> - <%=datesY[6] %>/<%=datesM[6] %>/<%=datesD[6] %>
+          		  <span class = "tableStartDate"><%=tableListStart[0] %></span> -  <span class = "tableEndDate"><%= tableListLast[0] %></span>
           		</h2>	
           		<button type = "button" class = "total_table_right" onclick = "slideTable(<%=slideMax %>, 1)">▶</button>
      			<hr style = "width : 50%; height : 5px; background-color : #F25287; border: 0;">	
@@ -282,27 +269,27 @@ String userImgErr = "/img/user_logo.png";
           	<div id = "tableSlide2" style = "width :100%">
                 
           	<ul>
-          	<% for (int k = 0; k < slideMax; k++){ 
-          	%>
+          	
+          	<c:forEach var = "k" begin = "0" end = "<%=slideMax %>">
           	<li>				
           	<table class = "timeTable" border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">
           		
               <thead>
           			<tr align = "center"  style="height: 54px; font-weight: bold;">
           			  <td style="width: 12.5%;">&nbsp;</td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[0] %>/<%=datesD[0] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;">00/00</span><br>
 								    <span style = "font-size : 20px">일</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[1] %>/<%=datesD[1] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;">00/00</span><br>
 								    <span style = "font-size : 20px">월</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[2] %>/<%=datesD[2] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;">00/00</span><br>
 								    <span style = "font-size : 20px">화</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[3] %>/<%=datesD[3] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;">00/00</span><br>
 								    <span style = "font-size : 20px">수</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[4] %>/<%=datesD[4] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;">00/00</span><br>
 								    <span style = "font-size : 20px">목</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[5] %>/<%=datesD[5] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;">00/00</span><br>
 								    <span style = "font-size : 20px">금</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[6] %>/<%=datesD[6] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;">00/00</span><br>
 								    <span style = "font-size : 20px">토</span></td>						
           				</tr>
    	       			</thead>
@@ -333,7 +320,7 @@ String userImgErr = "/img/user_logo.png";
           			</tbody>          			
           		</table>
           		</li>	
-          	<%} %>
+          	</c:forEach>
           	</ul>
           	</div>
           	
@@ -351,7 +338,7 @@ String userImgErr = "/img/user_logo.png";
           	<div id = "total_table_top" style = "margin : 10px; text-align : center;">
               <button type = "button" class = "total_table_left" onclick = "slideTable(<%= slideMax %>, 0)">◀</button>
           		<h2 style = "display : inline;">
-          		  <%=datesY[0] %>/<%=datesM[0] %>/<%=datesD[0] %> - <%=datesY[6] %>/<%=datesM[6] %>/<%=datesD[6] %>
+          		<span class = "tableStartDate"><%=tableListStart[0] %></span> -  <span class = "tableEndDate"><%= tableListLast[0] %></span>
           		</h2>	
           		<button type = "button" class = "total_table_right" onclick = "slideTable(<%= slideMax %>, 1)">▶</button>
      					<hr style = "width : 50%; height : 5px; background-color : #F25287; border: 0;">	
@@ -362,26 +349,25 @@ String userImgErr = "/img/user_logo.png";
           	<div id = "tableSlide" style = "width :100%">
                 
           	<ul>
-          	<% for (int k = 0; k < slideMax; k++){ 
-          	%>
+          	<c:forEach var = "k" begin = "0" end = "<%=slideMax %>">
           	<li>	
           	<table class = "totalTable" border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">          		
               <thead>
           			<tr align = "center"  style="height: 54px; font-weight: bold;">
           				<td style="width: 12.5%;">&nbsp;</td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[0] %>/<%=datesD[0] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;">00/00</span><br>
 								    <span style = "font-size : 20px">일</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[1] %>/<%=datesD[1] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;">00/00</span><br>
 								    <span style = "font-size : 20px">월</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[2] %>/<%=datesD[2] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;">00/00</span><br>
 								    <span style = "font-size : 20px">화</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[3] %>/<%=datesD[3] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;">00/00</span><br>
 								    <span style = "font-size : 20px">수</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[4] %>/<%=datesD[4] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;">00/00</span><br>
 								    <span style = "font-size : 20px">목</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[5] %>/<%=datesD[5] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;">00/00</span><br>
 								    <span style = "font-size : 20px">금</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[6] %>/<%=datesD[6] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;">00/00</span><br>
 								    <span style = "font-size : 20px">토</span></td>										
           			</tr>
    	       		</thead>
@@ -412,7 +398,7 @@ String userImgErr = "/img/user_logo.png";
           	  </tbody>   			
           	</table>
           	</li>	
-          	<%} %>
+          	</c:forEach>
           	</ul>
           	</div>
           	
@@ -461,6 +447,8 @@ String userImgErr = "/img/user_logo.png";
           	</form>
           </div>
           <%
+          
+           Calendar cal = Calendar.getInstance();
           	SimpleDateFormat formatToday = new SimpleDateFormat("yyyy/MM/dd (E)");
 			
         	Date dateToday = new Date();
@@ -471,6 +459,16 @@ String userImgErr = "/img/user_logo.png";
         	cal.add(Calendar.DATE, 6);
         	datePlusWeek = cal.getTime();
         	String todayPlusWeek = formatToday.format(datePlusWeek);
+        	
+        	if (request.getAttribute("startDate") != null){
+              	String startDatestr = (String)request.getAttribute("startDate");
+              	String endDatestr = (String)request.getAttribute("endDate");
+
+              	SimpleDateFormat formatStr = new SimpleDateFormat("yyyy-MM-dd");
+              	
+              	today = formatToday.format(formatStr.parse(startDatestr));	
+              	todayPlusWeek = formatToday.format(formatStr.parse(endDatestr));
+              }
         	
           %>		
           <div id="timeTableDateEdit">
@@ -490,11 +488,14 @@ String userImgErr = "/img/user_logo.png";
 					<h1 style = "position : relative; font-size : 28px; margin : 3px; top : 3px; text-align : center; color : white;">일정표 날짜 변경</h1>
 				</div>
 				<div class = "week_modal_content">
-					<form action = "#second_section" method = "get" id = "updateWeekForm">
-						<span>기간 시작일 : <input type = "date" id = "firstDate" ></span>
-						<span>기간 종료일 : <input type = "date"  id = "EndDate" /></span>
-						<input type = "submit" value = "저장" onclick = "javasript:changeWeek();" class = "submitBtn"/>
+				
+					<form action = "/schedule/${groupId}/tableUpdate" method = "post" id = "updateWeekForm" onsubmit = "return changeWeek('<%= today %>');" >
+						<span>기간 시작일 : <input type = "date" name = "start" id = "firstDate" ></span>
+						<span>기간 종료일 : <input type = "date"  name = "end" id = "EndDate" /></span>
+						<input type = "text" style = "display : None" name = "data" id = "updateTableData" value = ""/>
+						<input type = "submit" value = "저장"  class = "submitBtn"/>
 					</form>
+					
 				</div>		
   			</div>
             		
@@ -743,7 +744,7 @@ String userImgErr = "/img/user_logo.png";
 	    valueSDate.push(null);
 	    valueEDate.push(new Date(2023, 8));
 	    valueDur.push(null);
-	    valuePC.push(0);
+	    valuePC.push(100);
 	<%}%>
 	function drawChart() {
 
@@ -760,7 +761,7 @@ String userImgErr = "/img/user_logo.png";
 			  var index = i+"";
 	      	data.addRow([
 	        	index, valueName.at(i), valueSDate.at(i), valueEDate.at(i),
-	      		valueDur.at(i), valuePC.at(i), null
+	      		valueDur.at(i), valuePC.at(i)-10*i, null
 				]);
 			}
 
@@ -855,6 +856,14 @@ String userImgErr = "/img/user_logo.png";
 				}
 			}		
 		} %>
+		
+		//일정 버튼 초기 색
+		if(<%=slideMax%> == 1){
+				$(".total_table_left").css("color", "#C9C9C9");
+				$(".total_table_right").css("color", "#C9C9C9");
+			}else{
+				$(".total_table_right").css("color", "#F25287");
+			}
 		
 	 	/* 간트 차트 */
 	  	$("#ganttCreateBtn").click(function(){

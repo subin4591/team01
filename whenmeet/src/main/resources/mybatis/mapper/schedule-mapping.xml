@@ -3,6 +3,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="schedule.scheduleMapper">
 	
+	<!-- 유저 테이블 관련 -->
 	<select id="selectUser" resultType = "dto.UserDTO">
 		<![CDATA[
 			select * from user_table
@@ -15,6 +16,7 @@
 		]]>
 	</select>
 	
+	<!-- 그룹 테이블 관련 -->
 	<select id = "selectGroup" resultType = "dto.GroupDTO">
 		<![CDATA[
 			select * from group_table
@@ -27,6 +29,7 @@
 		]]>
 	</select>
 	
+	<!-- 그룹-유저 테이블 관련 -->
 	<select id = "selectGroupUser" resultType = "dto.GroupUserDTO">
 		<![CDATA[
 			select * from group_user_table
@@ -43,8 +46,7 @@
 			select * from group_user_table
 			where group_id = #{group_id}
 		]]>
-	</select>
-	
+	</select>	
 	<update id = "updateGroupUserSubHost" parameterType = "hashMap">
 		<![CDATA[
 			update group_user_table
@@ -52,5 +54,97 @@
 			where group_id = #{group_id} and user_id = #{user_id}
 		]]>
 	</update>
-
+	
+	<!-- 그룹 별 일정표 테이블 관련 -->
+	<select id = "selectMeetingScheduleAll" resultType = "dto.MeetingScheduleDTO" parameterType = "String">
+		<![CDATA[
+			select * from meeting_schedule_table
+			where group_id = #{group_id}
+		]]>
+	</select>
+	<select id = "selectMeetingScheduleAllShow" resultType = "dto.MeetingScheduleDTO" parameterType = "HashMap">
+		<![CDATA[
+			select * from meeting_schedule_table
+			where group_id = #{group_id} and #{showView}
+		]]>
+	</select>
+	<select id = "selectMeetingScheduleAllShowCnt" resultType = "int" parameterType = "HashMap">
+		<![CDATA[
+			select count(*) from meeting_schedule_table
+			where group_id = #{group_id} and #{showView}
+		]]>
+	</select>
+	<select id = "selectMeetingScheduleOne" resultType = "dto.MeetingScheduleDTO" parameterType = "HashMap">
+		<![CDATA[
+			select * from meeting_schedule_table
+			where group_id = #{group_id} and seq = #{seq}
+		]]>
+	</select>
+	<select id = "selectMeetingScheduleCnt" resultType = "int" parameterType = "HashMap">
+		<![CDATA[
+			select count(*) from meeting_schedule_table
+			where group_id = #{group_id} and seq = #{seq}
+		]]>
+	</select>
+	<insert id = "insertMeetingSchedule" parameterType = "dto.MeetingScheduleDTO">
+		<![CDATA[
+			insert into meeting_schedule_table(group_id, seq, first_date, last_date, showView)
+			values(
+				#{group_id},
+				#{seq},
+				#{first_date},
+				#{last_date},
+				#{showView}
+			)
+		]]>
+	</insert>
+	<update id ="updateMeetingScheduleShowViewAllZero" parameterType = "String">
+		<![CDATA[
+			update meeting_schedule_table
+			set showView = 0
+			where group_id = #{group_id}
+		]]>
+	</update>
+	<update id ="updateMeetingScheduleShowViewOne" parameterType = "HashMap">
+		<![CDATA[
+			update meeting_schedule_table
+			set showView = 1
+			where group_id = #{group_id} and seq = #{seq};
+		]]>
+	</update>
+	
+	<!-- 그룹 당 유저 별 일정표 테이블 관련 -->
+	
+	<!-- 그룹 당 일정 세팅 관련 -->
+	<select id = "selectMeetingScheduleDate" resultType = "dto.MeetingScheduleDateDTO" parameterType = "String">
+		<![CDATA[
+			select *
+			from meeting_schedule_date_table
+			where group_id = #{group_id}
+		]]>
+	</select>
+	<select id = "selectMeetingScheduleDateCnt" resultType = "int" parameterType = "String">
+		<![CDATA[
+			select count(*) 
+			from meeting_schedule_date_table
+			where group_id = #{group_id}
+		]]>
+	</select>
+	<insert id = "insertMeetingScheduleDate" parameterType = "HashMap">
+		<![CDATA[
+			insert into meeting_schedule_date_table(group_id, set_date1, set_date2)
+			values(
+				#{group_id},
+				#{set_date1},
+				#{set_date2}
+			)
+		]]>
+	</insert>
+	<update id ="updateMeetingScheduleDate" parameterType = "HashMap">
+		<![CDATA[
+			update meeting_schedule_date_table
+			set set_date1 = #{set_date1}, set_date2 = #{set_date2}
+			where group_id = #{group_id};
+		]]>
+	</update>
 </mapper>
