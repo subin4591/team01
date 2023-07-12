@@ -14,6 +14,7 @@
 	box-sizing: border-box;
     border-top: 3px solid #F25287;
     border-bottom: 3px solid #F25287;
+    margin-bottom: 0;
 }
 #category_ul li {
 	display: flex;
@@ -46,6 +47,7 @@
 	flex-direction: row;
 	align-items: baseline;
 	justify-content: space-between;
+	margin-top: 16px;
 }
 #contents_table {
 	border-collapse: collapse;

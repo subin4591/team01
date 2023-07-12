@@ -18,6 +18,8 @@ public class MeetingEtcService {
 	@Qualifier("meetingservice")
 	MeetingService service;
 	
+	int div_num = 10;
+	
 	// banner 메소드
 	public HashMap<String, MeetingDTO> makeBanner() {
 		// banner MeetingPagingDTO 생성
@@ -116,6 +118,12 @@ public class MeetingEtcService {
 		else if(sort.equals("yet")) {
 			sortResult = "대기";
 		}
+		else if(sort.equals("open")) {
+			sortResult = "공개";
+		}
+		else if(sort.equals("hidden")) {
+			sortResult = "비공개";
+		}
 		
 		return sortResult;
 	}
@@ -136,8 +144,17 @@ public class MeetingEtcService {
 		else if (category.equals("study")) {
 			categoryResult = "공부";
 		}
-		else {
+		else if (category.equals("etc")) {
 			categoryResult = "기타";
+		}
+		else if (category.equals("notfinish")) {
+			categoryResult = "진행";
+		}
+		else if (category.equals("yetfinish")) {
+			categoryResult = "대기";
+		}
+		else if (category.equals("finish")) {
+			categoryResult = "완료";
 		}
 		
 		return categoryResult;
@@ -153,7 +170,6 @@ public class MeetingEtcService {
 		page_dto.setCategory(convertCategory(category));
 		
 		// 페이징 작업
-		int div_num = 10;	// 한 페이지당 글 개수
 		page_dto.calcNum(page, div_num);
 		
 		return service.meetingList(page_dto);
@@ -166,26 +182,15 @@ public class MeetingEtcService {
 		page_dto.setUser_id(user_id);
 		
 		// 페이징 작업
-		int div_num = 10;	// 한 페이지당 글 개수
 		page_dto.calcNum(page, div_num);
 		
 		// 글목록 정렬
-		if (category.equals("result")) {
-			page_dto.setCategory(category);
+		if (category.equals("notfinish") || category.equals("yetfinish") || category.equals("finish")) {
+			page_dto.setCategory("result");
 			
 			ArrayList<String> sort_list = new ArrayList<>();
-			if (sort.startsWith("notfinish")) {
-				sort_list.add("진행");
-			}
-			else {
-				sort_list.add("완료");
-			}
-			if (sort.endsWith("open")) {
-				sort_list.add("공개");
-			}
-			else {
-				sort_list.add("비공개");
-			}
+			sort_list.add(convertCategory(category));
+			sort_list.add(convertSort(sort));
 
 			page_dto.setSort_list(sort_list);
 			page_dto.setSort_type(convertSort("time"));
@@ -205,22 +210,12 @@ public class MeetingEtcService {
 		page_dto.setUser_id(user_id);
 		
 		// 글목록 정렬
-		if (category.equals("result")) {
-			page_dto.setCategory(category);
+		if (category.equals("notfinish") || category.equals("yetfinish") || category.equals("finish")) {
+			page_dto.setCategory("result");
 			
 			ArrayList<String> sort_list = new ArrayList<>();
-			if (sort.startsWith("notfinish")) {
-				sort_list.add("진행");
-			}
-			else {
-				sort_list.add("완료");
-			}
-			if (sort.endsWith("open")) {
-				sort_list.add("공개");
-			}
-			else {
-				sort_list.add("비공개");
-			}
+			sort_list.add(convertCategory(category));
+			sort_list.add(convertSort(sort));
 
 			page_dto.setSort_list(sort_list);
 		}
@@ -242,7 +237,6 @@ public class MeetingEtcService {
 		page_dto.setCategory(convertCategory(category));
 		
 		// 페이징 작업
-		int div_num = 10;	// 한 페이지당 글 개수
 		page_dto.calcNum(page, div_num);
 		
 		// DB 0개 대비
@@ -272,8 +266,6 @@ public class MeetingEtcService {
 	// 신청 댓글 목록 메소드
 	public List<ApplicantDTO> getApplicantList(int seq, int page) {
 		// 신청 댓글 목록 페이징 작업
-		int div_num = 10;	// 한 페이지당 댓글 개수
-		
 		MeetingPagingDTO page_dto = new MeetingPagingDTO();
 		page_dto.setSeq(seq);
 		page_dto.calcNum(page, div_num);
@@ -284,8 +276,6 @@ public class MeetingEtcService {
 	// wirter mode 신청 댓글 목록 메소드
 	public List<ApplicantDTO> getApplicantList(int seq, int page, String sort) {
 		// 신청 댓글 목록 페이징 작업
-		int div_num = 10;	// 한 페이지당 댓글 개수
-		
 		MeetingPagingDTO page_dto = new MeetingPagingDTO();
 		page_dto.setSeq(seq);
 		page_dto.calcNum(page, div_num);
