@@ -1,7 +1,7 @@
 package dto;
 
 public class GroupDTO {
-	String group_id, group_name, group_create_time, group_description, final_schedule, final_location, project_end_time;
+	private String group_id, group_name, group_create_time, group_description, final_schedule, final_location, project_end_time;
 	
 	public String getGroup_id() {
 		return group_id;
