@@ -9,20 +9,23 @@
 	
 	<c:choose>
 		<c:when test="${ category == 'all' }">
-			<title>전체모임 | 언제만나</title>	
+			<title>전체모집 | 언제만나</title>	
 		</c:when>
 		<c:when test="${ category == 'exercise' }">
-			<title>운동모임 | 언제만나</title>	
+			<title>운동모집 | 언제만나</title>	
 		</c:when>
 		<c:when test="${ category == 'hobby' }">
-			<title>취미모임 | 언제만나</title>	
+			<title>취미모집 | 언제만나</title>	
 		</c:when>
 		<c:when test="${ category == 'study' }">
-			<title>공부모임 | 언제만나</title>	
+			<title>공부모집 | 언제만나</title>	
 		</c:when>
 		<c:when test="${ category == 'etc' }">
-			<title>기타모임 | 언제만나</title>	
+			<title>기타모집 | 언제만나</title>	
 		</c:when>
+		<c:otherwise>
+			<title>모집결과 | 언제만나</title>
+		</c:otherwise>
 	</c:choose>
 	
 	<link href="/css/meeting/meeting.css" rel=stylesheet>
@@ -32,17 +35,26 @@
 	<script src="/js/meeting.js"></script>
 	<script>
 		$(document).ready(function() {
-			/// category active event
-			categoryActive("${ category }");
+			/// category, page active event
+			let ca = "${ category }";
+			categoryActive(ca);
 			
-			/// 기본 page active event
 			$("#page_nums").html(makePage(${ total_cnt }, ${ div_num }));
-			if ("${ category }" == "result") {
-				pageActive("notfinish_open", 1);
+			
+			if (ca == "notfinish" || ca == "yetfinish" || ca == "finish") {
+				categoryReActive(ca);
+				pageActive("open", 1);
+				$("#category_re_ul").show();
 			}
 			else {
 				pageActive("time", 1);
 			}
+			
+			/// 결과 카테고리 event
+ 			$(".ca_li_re").on("click", function(event) {
+ 				event.preventDefault();
+ 				$("#category_re_ul").slideToggle(400);
+ 			});
 			
 			/// sort ajax
 			$(".sort_a").on("click", function(event) {
@@ -138,7 +150,7 @@
 	<%@ include file="../header.jsp" %>
 	
 	<div id="my_title">
-		<h1>${ user_dto.name }님의 모임모집</h1>	
+		<h1>${ user_dto.name }님의 그룹모집</h1>	
 	</div>
 	
 	<!-- category -->
@@ -149,9 +161,15 @@
 			<li class="category_li" data-target="hobby"><a class="category_a" href="/meeting/my?category=hobby">취미</a></li>
 			<li class="category_li" data-target="study"><a class="category_a" href="/meeting/my?category=study">공부</a></li>
 			<li class="category_li" data-target="etc"><a class="category_a" href="/meeting/my?category=etc">기타</a></li>
-			<li class="category_li" data-target="result"><a class="category_a" href="/meeting/my?category=result">결과</a></li>
+			<li class="category_li ca_li_re" data-target="${ category }"><a class="category_a" href="">결과</a></li>
+		</ul>
+		<ul id="category_re_ul" style="display: none;">
+			<li><a class="category_re" data-target="notfinish" href="/meeting/my?category=notfinish">진행</a></li>
+			<li><a class="category_re" data-target="yetfinish" href="/meeting/my?category=yetfinish">대기</a></li>
+			<li><a class="category_re" data-target="finish" href="/meeting/my?category=finish">완료</a></li>
 		</ul>
 	</div>
+	
 	
 	<!-- contents -->
 	<div id="contents_list">
@@ -159,11 +177,9 @@
 			<p>총 ${ total_cnt }개</p>
 			<div id="contents_sort">
 				<c:choose>
-					<c:when test="${ category == 'result' }">
-						<a href="" class="sort_a" data-target="notfinish_open">진행:공개</a>
-						<a href="" class="sort_a" data-target="notfinish_hidden">진행:비공개</a>
-						<a href="" class="sort_a" data-target="finish_open">완료:공개</a>
-						<a href="" class="sort_a" data-target="finish_hidden">완료:비공개</a>	
+					<c:when test="${ category == 'notfinish' || category == 'yetfinish' || category == 'finish'}">
+						<a href="" class="sort_a" data-target="open">공개</a>
+						<a href="" class="sort_a" data-target="hidden">비공개</a>
 					</c:when>
 					<c:otherwise>
 						<a href="" class="sort_a" data-target="time">최신순</a>

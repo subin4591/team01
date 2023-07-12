@@ -7,6 +7,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -22,8 +24,13 @@ public class GroupController {
 	@Qualifier("groupservice")
 	GroupService service;
 	
-	@RequestMapping("/group/create")
-	public ModelAndView groupCreate(int seq, HttpSession session) {
+	@GetMapping(value = {"/group/create", "/group/create/result"})
+	public String groupCreateGet() {
+		return "schedule/scheduleError";
+	}
+	
+	@PostMapping("/group/create")
+	public ModelAndView groupCreatePost(int seq, HttpSession session) {
 		// session_id
 		String session_id = (String)session.getAttribute("session_id");
 		
@@ -49,11 +56,12 @@ public class GroupController {
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("host_info", host_info);
 		mv.addObject("user_info", user_info);
-		mv.setViewName("group/group_create");	
+		mv.setViewName("group/group_create");
+			
 		return mv;
 	}
 	
-	@RequestMapping("/group/create/result")
+	@PostMapping("/group/create/result")
 	public ModelAndView groupCreateResult(GroupCreateDTO dto) {
 		// 부방장 user_list에서 제거
 		ArrayList<String> user_list = dto.getUser_list();

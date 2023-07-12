@@ -13,6 +13,8 @@ public class SearchService {
 	@Autowired
 	SearchDAO dao;
 	
+	int div_num = 10;
+	
 	// Search select
 	// 검색 게시글 목록
 	public List<MeetingDTO> searchList(String category, String sort, String search_input, String type, int page) {
@@ -22,7 +24,7 @@ public class SearchService {
 		dto.setSort_type(sort);
 		dto.setSearch_input(search_input);
 		dto.setType(type);
-		dto.calcNum(page, 10);
+		dto.calcNum(page, div_num);
 		
 		return dao.searchList(dto);
 	}

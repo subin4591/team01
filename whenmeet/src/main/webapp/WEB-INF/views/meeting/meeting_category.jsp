@@ -9,19 +9,19 @@
 	
 	<c:choose>
 		<c:when test="${ category == 'all' }">
-			<title>전체모임 | 언제만나</title>	
+			<title>전체모집 | 언제만나</title>	
 		</c:when>
 		<c:when test="${ category == 'exercise' }">
-			<title>운동모임 | 언제만나</title>	
+			<title>운동모집 | 언제만나</title>	
 		</c:when>
 		<c:when test="${ category == 'hobby' }">
-			<title>취미모임 | 언제만나</title>	
+			<title>취미모집 | 언제만나</title>	
 		</c:when>
 		<c:when test="${ category == 'study' }">
-			<title>공부모임 | 언제만나</title>	
+			<title>공부모집 | 언제만나</title>	
 		</c:when>
 		<c:when test="${ category == 'etc' }">
-			<title>기타모임 | 언제만나</title>	
+			<title>기타모집 | 언제만나</title>	
 		</c:when>
 	</c:choose>
 	
@@ -84,6 +84,7 @@
 					dataType: "json",
 					success: function(data) {
 						// page active event
+						$("#page_nums").html(makePage(${ total_cnt }, ${ div_num }));
 						pageActive(sort, 1);
 						
 						// 게시글 목록
