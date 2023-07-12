@@ -129,11 +129,12 @@
 			});
 			
 			// 신청 댓글 submit
+			let user_app_cnt = ${ user_app_cnt };
 			$("#app_submit").on("click", function() {
 				// 로그인 여부 확인
 				if (${ session_id != null }) {
 					// 중복 여부 확인
-					if (${ user_app_cnt } > 0) {
+					if (user_app_cnt > 0) {
 						alert("신청은 한 번만 할 수 있습니다.");
 					}
 					else {
@@ -149,12 +150,15 @@
 								type: "post",
 								dataType: "json",
 								success: function(data) {
+									user_app_cnt++;
+									
 									// page active event
 									$("#applicant_page_nums").show();
 									$("#applicant_page_nums").html(makePage(data.total_cnt, data.div_num));
 									pageActive("time", 1);
 									
 									// 그룹신청 총 개수
+									$("#app_cnt_p").text("신청자 " + data.total_cnt);
 									$("#applicant_ul_caption h2").text("그룹신청 총 " + data.total_cnt + "개");
 									
 									// 신청 댓글 목록
@@ -201,6 +205,7 @@
 					dataType: "json",
 					success: function(data) {
 						// page active event
+						$("#applicant_page_nums").html(makePage(${ total_cnt }, ${ div_num }));
 						pageActive("time", 1);
 						$("#applicant_page_nums").show();
 						
@@ -391,12 +396,15 @@
 						type: "post",
 						dataType: "json",
 						success: function(data) {
+							user_app_cnt--;
+							
 							// page active event
 							$("#applicant_page_nums").show();
 							$("#applicant_page_nums").html(makePage(data.total_cnt, data.div_num));
 							pageActive("time", 1);
 							
 							// 그룹신청 총 개수
+							$("#app_cnt_p").text("신청자 " + data.total_cnt);
 							$("#applicant_ul_caption h2").text("그룹신청 총 " + data.total_cnt + "개");
 							
 							// 신청 댓글 목록
@@ -647,7 +655,7 @@
 					<p id="writer_name">${ dto.writer }</p>
 				</div>
 				<div id="contents_info_text">
-					<p>신청자 ${ dto.applicant_cnt }</p>
+					<p id="app_cnt_p">신청자 ${ dto.applicant_cnt }</p>
 					<p>조회 ${ dto.hits }</p>
 					<p>${ dto.writing_time }</p>
 				</div>
@@ -795,7 +803,9 @@
 								<label for="ch_${ a.user_id }"></label>
 							</div>
 							<div class="man_list_caption">
-								<img class="man_list_profile" alt="man_list_profile" src="${ a.profile_url }">
+								<div class="man_list_profile">
+									<img alt="man_list_profile" src="${ a.profile_url }">
+								</div>
 								<div class="man_list_info">
 									<label class="man_list_name">${ a.name }</label>
 									<label class="man_list_time">${ a.applicant_time }</label>

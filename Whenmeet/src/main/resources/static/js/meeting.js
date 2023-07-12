@@ -17,11 +17,12 @@ function setConTableTh() {
 
 // category active 함수
 function categoryActive(category) {
-	let category_li = document.querySelectorAll(`.category_li[data-target='${ category }']`);
-	category_li.forEach(function(c) {
-		c.classList.add("category_active");
-		c.querySelector("a").classList.add("category_active");
-	});
+	let category_li = document.querySelector(`.category_li[data-target='${ category }']`);
+	category_li.classList.add("category_active");
+	category_li.querySelector("a").classList.add("category_active");
+}
+function categoryReActive(category) {
+	document.querySelector(`.category_re[data-target=${ category }]`).classList.add("category_re_active");
 }
 
 // page active 함수
@@ -43,17 +44,114 @@ function pageActive(sort, page) {
 // page 생성 함수
 function makePage(totalCnt, divNum) {
 	let result = "";
-	let totalPage = totalCnt / divNum;
+	let totalPage = Math.floor(totalCnt / divNum);
 	
 	if (totalCnt % divNum != 0) {
 		totalPage++;
 	}
 	
-	for(let p = 1; p <= totalPage; p++) {
-		let temp = `&nbsp;<a class="page_a" href="" data-target="${ p }">${ p }</a>&nbsp;`;
-		result = result + temp;
+	let lastPage = totalPage;
+	let temp = "";
+	
+	if (totalPage > 5) {
+		lastPage = 5;
+		
+		for(let p = 1; p <= lastPage; p++) {
+			temp = `&nbsp;<a class="page_a" href="" data-target="${ p }">${ p }</a>&nbsp;`;
+			result += temp;
+		}
+		
+		temp = `&nbsp;<a class="page_change" href="" data-target="5" data-total="${ totalCnt }" data-div="${ divNum }" onclick="changePage(event)">&gt;</a>&nbsp;`;
+		result += temp;	
 	}
+	else {
+		for(let p = 1; p <= lastPage; p++) {
+			temp = `&nbsp;<a class="page_a" href="" data-target="${ p }">${ p }</a>&nbsp;`;
+			result += temp;
+		}
+	}
+		
 	return result;
+}
+
+function changePage(event) {
+	// 기본 이벤트 제거
+	event.preventDefault();
+	
+	// 데이터
+	const target = parseInt(event.target.getAttribute("data-target"));
+    const totalCnt = parseInt(event.target.getAttribute("data-total"));
+    const divNum = parseInt(event.target.getAttribute("data-div"));
+    
+    // 페이지 계산
+	let result = "";
+	let totalPage = Math.floor(totalCnt / divNum);
+	
+	if (totalCnt % divNum != 0) {
+		totalPage++;
+	}
+	
+	let lastPage = totalPage;
+	let nextPage = target + 5;
+	let prevPage = target - 5;
+	let temp = "";
+	
+	// nextPage 클릭 시
+	if (target % 5 == 0) {
+		if (totalPage > nextPage) {
+			lastPage = nextPage;
+			
+			temp = `&nbsp;<a class="page_change" href="" data-target="${ target + 1 }" data-total="${ totalCnt }" data-div="${ divNum }" onclick="changePage(event)">&lt;</a>&nbsp;`;
+			result += temp;
+			
+			for(let p = target + 1; p <= lastPage; p++) {
+				temp = `&nbsp;<a class="page_a" href="" data-target="${ p }">${ p }</a>&nbsp;`;
+				result += temp;
+			}	// for end
+			
+			temp = `&nbsp;<a class="page_change" href="" data-target="${ nextPage }" data-total="${ totalCnt }" data-div="${ divNum }" onclick="changePage(event)">&gt;</a>&nbsp;`;
+			result += temp;	
+		}	// if end
+		else {
+			temp = `&nbsp;<a class="page_change" href="" data-target="${ target + 1 }" data-total="${ totalCnt }" data-div="${ divNum }" onclick="changePage(event)">&lt;</a>&nbsp;`;
+			result += temp;
+			
+			for(let p = target + 1; p <= lastPage; p++) {
+				temp = `&nbsp;<a class="page_a" href="" data-target="${ p }">${ p }</a>&nbsp;`;
+				result += temp;
+			}	// for end
+		}	// else end
+	}	// nextPage 클릭 시 if end
+	// prevPage 클릭 시
+	else {
+		if (target == 6) {
+			lastPage = 5;
+			
+			for(let p = 1; p <= lastPage; p++) {
+				temp = `&nbsp;<a class="page_a" href="" data-target="${ p }">${ p }</a>&nbsp;`;
+				result += temp;
+			}	// for end
+			
+			temp = `&nbsp;<a class="page_change" href="" data-target="${ lastPage }" data-total="${ totalCnt }" data-div="${ divNum }" onclick="changePage(event)">&gt;</a>&nbsp;`;
+			result += temp;
+		}	// if end
+		else {
+			lastPage = target - 1;
+			
+			temp = `&nbsp;<a class="page_change" href="" data-target="${ prevPage }" data-total="${ totalCnt }" data-div="${ divNum }" onclick="changePage(event)">&lt;</a>&nbsp;`;
+			result += temp;
+			
+			for(let p = prevPage; p <= lastPage; p++) {
+				temp = `&nbsp;<a class="page_a" href="" data-target="${ p }">${ p }</a>&nbsp;`;
+				result += temp;
+			}	// for end
+			
+			temp = `&nbsp;<a class="page_change" href="" data-target="${ lastPage }" data-total="${ totalCnt }" data-div="${ divNum }" onclick="changePage(event)">&gt;</a>&nbsp;`;
+			result += temp;
+		}	// else end
+	}	// prevPage 클릭 시 else end
+	
+	event.target.closest("div").innerHTML = result;
 }
 
 // 게시글 생성자

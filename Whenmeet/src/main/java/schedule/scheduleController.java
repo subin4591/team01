@@ -3,7 +3,7 @@ package schedule;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
+import java.text.SimpleDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import dto.ChatDTO;
 import dto.GroupDTO;
 import dto.GroupUserDTO;
+import dto.MeetingScheduleDTO;
 
 @Controller
 public class scheduleController {
@@ -249,6 +250,46 @@ public class scheduleController {
 		request.setAttribute("groupDontSetScheduleUsersEmail", groupDontSetScheduleUsersEmail);
 		request.setAttribute("groupDontSetScheduleUsersProfileUrl", groupDontSetScheduleUsersProfileUrl);		
 		
+		//그룹 별 일정표 데이터	
+		List<MeetingScheduleDTO> tableList = new ArrayList<MeetingScheduleDTO>();
+		map.put("group_id", groupId);
+		map.put("showView", 1);
+		int tableListCnt = 1;	
+		tableList= scheduleService.selectMeetingScheduleAllShow(map);
+		if (scheduleService.selectMeetingScheduleAllShowCnt(map) >0) {
+			tableListCnt = tableList.size();
+			String[] tableListStart = new String[tableListCnt];
+			String[] tableListLast = new String[tableListCnt];
+			int[] tableListSeq = new int[tableListCnt];
+			for (int i = 0; i < tableList.size(); i++) {
+				tableListStart[i] = tableList.get(i).getFirst_date();
+				tableListLast[i] = tableList.get(i).getLast_date();
+				tableListSeq[i] = tableList.get(i).getSeq();
+			}
+			request.setAttribute("tableListLast", tableListLast);
+			request.setAttribute("tableListStart", tableListStart);
+			request.setAttribute("tableListSeq", tableListSeq);
+		}
+		request.setAttribute("tableListCnt", tableListCnt);
+		
+		//그룹 당 설정된 날짜
+		Date today = new Date();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(today);
+		cal.add(Calendar.DATE, 6);
+		String startDate = format.format(today);
+		String endDate = format.format(cal.getTime());
+		
+		if(scheduleService.selectMeetingScheduleDateCnt(groupId) > 0) {
+			startDate 
+			= scheduleService.selectMeetingScheduleDate(groupId).getSet_date1();
+			endDate 
+			= scheduleService.selectMeetingScheduleDate(groupId).getSet_date2();
+		}
+		request.setAttribute("startDate", startDate);
+		request.setAttribute("endDate", endDate);
+		
 		request.setAttribute("userId", userId);
 		
 		model.addAttribute("userId", userId);		
@@ -302,5 +343,105 @@ public class scheduleController {
 		map.put("profile_url", userOne.getProfile_url());
 		map.put("now", now_time);
 		scheduleService.addCaht(map);
+	
+	@RequestMapping("/schedule/{groupId}/tableUpdate")
+	public String updateTable(@PathVariable("groupId") String groupId, 
+			@RequestParam("start") String start,
+			@RequestParam("end") String end,
+			@RequestParam("data") String data,
+			HttpServletRequest request) throws Exception {
+		
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("set_date1", start);
+		map.put("set_date2", end);
+		map.put("group_id", groupId);
+		if(scheduleService.selectMeetingScheduleDateCnt(groupId) > 0) {
+			scheduleService.updateMeetingScheduleDate(map);
+		}else {
+			scheduleService.insertMeetingScheduleDate(map);
+		}
+		String[] datas = data.split("\\*");
+		
+		String startWeekFirst = datas[0];
+		String startWeekLast = datas[1];
+		String WeeksCnt = datas[2];
+		int WeeksCntInt = Integer.parseInt(WeeksCnt);
+		
+		Calendar cal1 = Calendar.getInstance();
+		Calendar cal2 = Calendar.getInstance();
+		
+		cal1.set(Integer.parseInt(startWeekFirst.substring(0, 4)), 
+				Integer.parseInt(startWeekFirst.substring(4, 6))-1, 
+				Integer.parseInt(startWeekFirst.substring(6)));
+		
+		cal2.set(Integer.parseInt(startWeekLast.substring(0, 4)), 
+				Integer.parseInt(startWeekLast.substring(4, 6))-1, 
+				Integer.parseInt(startWeekLast.substring(6)));
+		
+		Date date1 = new Date();
+		Date date2 = new Date();
+		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+		
+		date1 = cal1.getTime();
+		date2 = cal2.getTime();
+		
+		//그룹 생성일 (seq)
+		Calendar cal3 = Calendar.getInstance();
+				
+		String createTime  = scheduleService.selectGroupOne(groupId).getGroup_create_time();
+		createTime = createTime.split(" ")[0];
+		int createTimeY = Integer.parseInt(createTime.split("-")[0]);
+		int createTimeM = Integer.parseInt(createTime.split("-")[1]);
+		int createTimeD = Integer.parseInt(createTime.split("-")[2]);
+				
+		cal3.set(createTimeY, createTimeM-1, createTimeD);
+		cal3.add(Calendar.DATE, -cal3.get(Calendar.DAY_OF_WEEK)+1);	//일요일
+				
+		Date date3 = new Date();
+		date3 = cal3.getTime();
+		
+		int [] seqList = new int[WeeksCntInt];		
+		String [] startWeekFirstList = new String[WeeksCntInt];
+		String [] startWeekLastList = new String[WeeksCntInt];
+		
+		for (int i = 0; i < WeeksCntInt; i++) {
+			
+			long diffDays = (date1.getTime()-date3.getTime())/(24*60*60*1000);
+
+			int diffDay = Long.valueOf(diffDays).intValue();
+			diffDay /= 7;
+			seqList[i] = diffDay;
+			startWeekFirstList[i] = format.format(date1);
+			startWeekLastList[i] = format.format(date2);
+			
+			cal1.add( Calendar.DATE , 7);
+			cal2.add( Calendar.DATE , 7);
+			date1 = cal1.getTime();
+			date2 = cal2.getTime();
+		}
+		
+		MeetingScheduleDTO dto = new MeetingScheduleDTO();
+		
+		scheduleService.updateMeetingScheduleShowViewAllZero(groupId);
+		
+		for (int i = 0; i < WeeksCntInt; i++) {
+			map.put("group_id", groupId);
+			map.put("seq", seqList[i]);
+			
+			dto.setFirst_date(startWeekFirstList[i]);
+			dto.setGroup_id(groupId);
+			dto.setLast_date(startWeekLastList[i]);
+			dto.setSeq(seqList[i]);
+			dto.setShowView(1);
+			
+			if (scheduleService.selectMeetingScheduleCnt(map) != 0) {
+				scheduleService.updateMeetingScheduleShowViewOne(map);
+				
+			}else {
+				scheduleService.insertMeetingSchedule(dto);
+			}
+		}		
+		
+		return "redirect:";
 	}
 }

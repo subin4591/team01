@@ -19,6 +19,8 @@ public class SearchController {
 	@Qualifier("searchservice")
 	SearchService service;
 	
+	int div_num = 10;
+	
 	@RequestMapping("/search")
 	public ModelAndView search(String search_input,
 			@RequestParam(value="category", defaultValue="전체") String category,
@@ -39,7 +41,7 @@ public class SearchController {
 		mv.addObject("dto", dto);
 		mv.addObject("meeting_list", meeting_list);
 		mv.addObject("total_cnt", total_cnt);
-		mv.addObject("div_num", 10);
+		mv.addObject("div_num", div_num);
 		mv.setViewName("search/search");
 		return mv;
 	}

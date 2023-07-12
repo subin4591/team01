@@ -23,8 +23,6 @@
 			let t = banner_tit_list[i];
 			let c = banner_con_list[i];
 			
-			console.log(t.length);
-			
 			// 모집글 내용 html 태그 제거
 			c = $("<div>").html(c).text();
 			
