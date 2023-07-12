@@ -29,6 +29,12 @@ function slideTable(max, LR){
 			"transform": "translateX("+(-660.8*(slidecount-1))+"px)"
 	});
 	
+	if(max == 1){
+		$(".total_table_left").css("color", "#C9C9C9");
+		$(".total_table_right").css("color", "#C9C9C9");
+	}else{
+		$(".total_table_right").css("color", "#F25287");
+	}
 	if (slidecount == 1){
 		$(".total_table_left").css("color", "#C9C9C9")
 	}else{
@@ -137,39 +143,95 @@ function changeTime2(){
 function getDayOfWeek(string){
 	var day = new Date(string[0], string[1]-1, string[2]);
     const week = ['일', '월', '화', '수', '목', '금', '토'];
-    console.log(day);
-	console.log(day.getDay());
     const dayOfWeek = week[day.getDay()];
 
     return dayOfWeek;
 
 }
-function changeWeek(){
+function changeWeek(today){
 	var result1 = $("#firstDate").val();
 	var result2 = $("#EndDate").val();
 	
 	if (result1 == "" || result2 == ""){
-		alert("올바른 기간을 입력해주세요.");
+		alert("기간을 입력해주세요.");
 		return false;
 	}
 	
-	var results1 = result1.split("-")
-	var results2 = result2.split("-")
+	var results1 = result1.split("-");
+	var results2 = result2.split("-");
+	var today = today.split(" ");
+	today = today[0].split("/");
 	var temp1 = results1[0]+results1[1]+results1[2];
 	var temp2 = results2[0]+results2[1]+results2[2];
+	today = today[0]+today[1]+today[2];
 	temp1 *= 1;
 	temp2 *= 1;
+	today *= 1;
 	
 	if (temp1 > temp2){
 		alert("올바른 기간을 입력해주세요.");
 		return false;
-	}else{
+	} else if (temp1 < today){
+		alert("오늘 이전의 날짜는 입력할 수 없습니다.");
+		return false;
+	}
+	else{
 		$("#updateDateView .first").text(results1[0]+"/"+results1[1]+"/"+results1[2]+ " ("+getDayOfWeek(results1)+")");
 		$("#updateDateView .second").text(results2[0]+"/"+results2[1]+"/"+results2[2]+ " ("+getDayOfWeek(results2)+")");	
+		tbDateChange($("#updateDateView .first").text(), $("#updateDateView .second").text());
 		WpopClose();
 	}
 }
 
+function tbDateChange(start, end){	// 입력 : 2000/00/00 (월)
+	var start = start.split(" ")[0];
+	var end = end.split(" ")[0];
+	var startList = start.split("/");
+	var endList = end.split("/");
+	
+	var DateStart = new Date(startList[0], startList[1]-1, startList[2]);
+	var DateEnd = new Date(endList[0], endList[1]-1, endList[2]);
+	
+	var firstWeekStart = DateStart;
+	var firstWeekEnd = DateStart;
+	var lastWeekStart = DateEnd;
+	var lastWeekEnd = DateEnd;
+	
+	firstWeekStart = new Date(firstWeekStart.setDate(DateStart.getDate()-DateStart.getDay()));	
+	firstWeekEnd = new Date (firstWeekEnd.setDate(firstWeekStart.getDate()+6));
+	lastWeekStart = new Date(lastWeekStart.setDate(DateEnd.getDate()-DateEnd.getDay()));	
+	lastWeekEnd = new Date (lastWeekEnd.setDate(lastWeekStart.getDate()+6));
+	
+	var diffTime = Math.abs(lastWeekStart-firstWeekStart);
+	var diffWeeks = Math.ceil(diffTime/(1000*60*60*24))/7+1;
+	
+	var result = firstWeekStart.getFullYear()+ changeMM(firstWeekStart.getMonth()) + changedd(firstWeekStart.getDate()) + "*" 
+						+ firstWeekEnd.getFullYear()+ changeMM(firstWeekEnd.getMonth()) + changedd(firstWeekEnd.getDate()) + "*"
+						+ diffWeeks;
+	$("#updateTableData").attr("value", result);
+}
+function changeMM(month){	//return : 문자열
+	var month = (month+1)*1;
+	var result = "";
+	if(0<month && month<10){
+		month+="";
+		result = "0"+month;
+	}else{
+		return month+="";
+	}
+	return result;
+}
+function changedd(day){	//return : 문자열
+	var day = day*1;
+	var result = "";
+	if(0<day && day<10){
+		day+="";
+		result = "0"+day;
+	}else{
+		return day+="";
+	}
+	return result;
+}
 // table 컬러 바꾸기
 function tbColorChange(element){
 	if( $(element).attr("alt") != "1"){
