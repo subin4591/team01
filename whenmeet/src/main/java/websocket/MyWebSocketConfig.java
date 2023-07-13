@@ -8,12 +8,15 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 import lombok.RequiredArgsConstructor;
 
 @Configuration
-@RequiredArgsConstructor //final 생성자 호출
 @EnableWebSocket
 public class MyWebSocketConfig implements WebSocketConfigurer{
 	
 	final ChatWebSocketHandler handler;
-
+	
+	public MyWebSocketConfig(final ChatWebSocketHandler handler) {
+	      this.handler = handler;
+	}
+	
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 		// TODO Auto-generated method stub
