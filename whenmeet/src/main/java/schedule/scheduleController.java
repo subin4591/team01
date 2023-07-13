@@ -1,9 +1,10 @@
 package schedule;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +16,7 @@ import dto.ChatDTO;
 import dto.GroupDTO;
 import dto.GroupUserDTO;
 import dto.MeetingScheduleDTO;
+import dto.userScheduleDTO;
 
 @Controller
 public class scheduleController {
@@ -32,10 +34,8 @@ public class scheduleController {
 	public String start(@PathVariable("groupId") String groupId, Model model, HttpSession session, HttpServletRequest request) throws Exception {
 		
 		String userId = (String) session.getAttribute("session_id");
-
 		UserDTO user = scheduleService.selectUserOne(userId);
 		model.addAttribute("username", user.getName());
-		userId = "admin";	//나중에 꼭 지우기! 방장 아이디임
 		
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("userId", userId);
@@ -49,7 +49,6 @@ public class scheduleController {
 		GroupUserDTO groupUserOne = new GroupUserDTO();
 		List<GroupUserDTO> groupUsers = new ArrayList<GroupUserDTO>();
 		
-		
 		userList = scheduleService.selectUser();
 		userOne = scheduleService.selectUserOne(userId);
 		groupList = scheduleService.selectGroup();
@@ -59,7 +58,7 @@ public class scheduleController {
 		groupUsers = scheduleService.selectGroupUsers(groupId);
 		
 		String location = scheduleService.getLocation(groupId);
-		List<ChatDTO> chatlist = scheduleService.getChat(groupId);
+		List<ChatDTO> chatlist = scheduleService.getChat(groupId);	
 		
 		//그룹 정보 관련
 		String groupName, groupCreateTime, ProjectEndTime, groupDescription;
@@ -250,6 +249,16 @@ public class scheduleController {
 		request.setAttribute("groupDontSetScheduleUsersEmail", groupDontSetScheduleUsersEmail);
 		request.setAttribute("groupDontSetScheduleUsersProfileUrl", groupDontSetScheduleUsersProfileUrl);		
 		
+		//오늘 날짜와 1주일 후 날짜
+		Date today = new Date();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat format2 = new SimpleDateFormat("yyyy/MM/dd");
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(today);
+		cal.add(Calendar.DATE, 6);
+		String startDate = format.format(today);
+		String endDate = format.format(cal.getTime());
+		
 		//그룹 별 일정표 데이터	
 		List<MeetingScheduleDTO> tableList = new ArrayList<MeetingScheduleDTO>();
 		map.put("group_id", groupId);
@@ -257,30 +266,30 @@ public class scheduleController {
 		int tableListCnt = 1;	
 		tableList= scheduleService.selectMeetingScheduleAllShow(map);
 		if (scheduleService.selectMeetingScheduleAllShowCnt(map) >0) {
-			tableListCnt = tableList.size();
+			tableListCnt = scheduleService.selectMeetingScheduleAllShowCnt(map);
+			
 			String[] tableListStart = new String[tableListCnt];
 			String[] tableListLast = new String[tableListCnt];
-			int[] tableListSeq = new int[tableListCnt];
 			for (int i = 0; i < tableList.size(); i++) {
-				tableListStart[i] = tableList.get(i).getFirst_date();
-				tableListLast[i] = tableList.get(i).getLast_date();
-				tableListSeq[i] = tableList.get(i).getSeq();
+				String[] temp = new String[3];
+				temp = tableList.get(i).getFirst_date().split("-");
+				tableListStart[i] = temp[0] + "/" + temp[1] + "/" + temp[2];
+				temp = tableList.get(i).getLast_date().split("-");
+				tableListLast[i] = temp[0] + "/" + temp[1] + "/" + temp[2];
 			}
+			model.addAttribute("tableListLast", tableListLast);
+			model.addAttribute("tableListStart", tableListStart);
+		}else {
+			String[] tableListStart = new String[1];
+			String[] tableListLast = new String[1];
+			tableListStart[0] = format2.format(today);
+			tableListLast[0] = format2.format(cal.getTime());
 			request.setAttribute("tableListLast", tableListLast);
 			request.setAttribute("tableListStart", tableListStart);
-			request.setAttribute("tableListSeq", tableListSeq);
 		}
 		request.setAttribute("tableListCnt", tableListCnt);
 		
 		//그룹 당 설정된 날짜
-		Date today = new Date();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(today);
-		cal.add(Calendar.DATE, 6);
-		String startDate = format.format(today);
-		String endDate = format.format(cal.getTime());
-		
 		if(scheduleService.selectMeetingScheduleDateCnt(groupId) > 0) {
 			startDate 
 			= scheduleService.selectMeetingScheduleDate(groupId).getSet_date1();
@@ -290,6 +299,74 @@ public class scheduleController {
 		request.setAttribute("startDate", startDate);
 		request.setAttribute("endDate", endDate);
 		
+		//유저 별 일정 테이블 표시
+		List<MeetingScheduleDTO> msdto = new ArrayList<MeetingScheduleDTO>();
+		map.put("group_id", groupId);
+		map.put("showView", 1);
+		msdto = scheduleService.selectMeetingScheduleAllShow(map);
+		int [] seqs = new int [msdto.size()];
+		for (int i = 0; i < msdto.size(); i++) {
+			seqs[i] = msdto.get(i).getSeq();
+		}
+		
+		userScheduleDTO usdto = new userScheduleDTO();
+		usdto.setGroup_id(groupId);
+		HashMap<String, Object> usmap = new HashMap<String, Object>();		
+		//sunday의 배열 : 이중배열. [seq][cnt] = 입력된 갯수
+		int[][] SundayList = new int[seqs.length][42]; 
+		int[][] MondayList = new int[seqs.length][42]; 
+		int[][] TuesdayList = new int[seqs.length][42]; 
+		int[][] WednesdayList = new int[seqs.length][42]; 
+		int[][] ThusdayList = new int[seqs.length][42]; 
+		int[][] FridayList = new int[seqs.length][42]; 
+		int[][] SaturdayList = new int[seqs.length][42]; 
+
+		if (scheduleService.selectUserScheduleCntAll(usdto) > 0) {
+			/*group_id / seq / count 가 일치할 때, sun~sat에 1인 값의 총 개수 합
+			이 배열의 크기는 group_id/seq/count의 개수만큼 존재한다.*/
+			usmap.put("group_id", groupId);
+			usmap.put("sun", 0); usmap.put("mon", 0); usmap.put("tue", 0); usmap.put("wed", 0);
+			usmap.put("thu", 0); usmap.put("fri", 0); usmap.put("sat", 0);
+			for (int i = 0; i < seqs.length; i++) {
+				usmap.put("seq", seqs[i]);
+				for (int j = 0; j < 42; j++) {
+					usmap.put("cnt", j);
+					usmap.put("sun", 1);
+					SundayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+					usmap.put("sun", 0);
+					usmap.put("mon", 1);
+					MondayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+					usmap.put("mon", 0);
+					usmap.put("tue", 1);
+					TuesdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+					usmap.put("tue", 0);
+					usmap.put("wed", 1);
+					WednesdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+					usmap.put("wed", 0);
+					usmap.put("thu", 1);
+					ThusdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+					usmap.put("thu", 0);
+					usmap.put("fri", 1);
+					FridayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+					usmap.put("fri", 0);
+					usmap.put("sat", 1);
+					SaturdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+					usmap.put("sat", 0);
+				}
+			}
+
+			request.setAttribute("SundayList", SundayList);
+			request.setAttribute("MondayList", MondayList);
+			request.setAttribute("TuesdayList", TuesdayList);
+			request.setAttribute("WednesdayList", WednesdayList);
+			request.setAttribute("ThusdayList", ThusdayList);
+			request.setAttribute("FridayList", FridayList);
+			request.setAttribute("SaturdayList", SaturdayList);
+		}
+
+		//유저 별 일정표 수정 표시 (이전에 입력했던 거 보이도록)
+		// *** 시간 남으면 작성... 이거 없으면 수정할 때마다 처음부터 다시 입력해야하는 불편함이 있음
+				
 		request.setAttribute("userId", userId);
 		
 		model.addAttribute("userId", userId);		
@@ -319,31 +396,6 @@ public class scheduleController {
 		scheduleService.updateGroupUserSubHost(map);
 		
 		return "redirect:";
-	}
-	@RequestMapping("/schedule/{groupId}/addchat")
-	@ResponseBody
-	public void addchat(@PathVariable("groupId") String groupId, String userId, String text) throws Exception {
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		UserDTO userOne = scheduleService.selectUserOne(userId);
-		System.out.println(userId);
-		LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd HH:mm");
-
-        String formattedTime = now.format(formatter);
-        int hour = Integer.parseInt(formattedTime.substring(6,8));
-        String time = "오전 ";
-        if(hour > 12) {
-        	hour = hour - 12;
-        	time = "오후 ";
-        }
-        String now_time = formattedTime.substring(0,6) + time + hour + formattedTime.substring(8,11);
-
-		map.put("group_id", groupId);
-		map.put("name", userOne.getName());
-		map.put("text", text);
-		map.put("profile_url", userOne.getProfile_url());
-		map.put("now", now_time);
-		scheduleService.addCaht(map);
 	}
 	
 	@RequestMapping("/schedule/{groupId}/tableUpdate")
@@ -406,16 +458,20 @@ public class scheduleController {
 		String [] startWeekFirstList = new String[WeeksCntInt];
 		String [] startWeekLastList = new String[WeeksCntInt];
 		
+		//시트가 중복으로 저장되는 오류가 있었는데 어떤 조건에서 나는지 못찾음...
 		for (int i = 0; i < WeeksCntInt; i++) {
-			
+			System.out.println("첫 날 : " + date1);
+			System.out.println("마지막 날 : " + date3);
 			long diffDays = (date1.getTime()-date3.getTime())/(24*60*60*1000);
-
 			int diffDay = Long.valueOf(diffDays).intValue();
+			System.out.println("날짜 차이 : " + diffDay);
 			diffDay /= 7;
+			System.out.println("주 차이 : " + diffDay);
 			seqList[i] = diffDay;
 			startWeekFirstList[i] = format.format(date1);
 			startWeekLastList[i] = format.format(date2);
-			
+			System.out.println("입력일1 : " + startWeekFirstList[i]);
+			System.out.println("입력일2 : " + startWeekLastList[i]);
 			cal1.add( Calendar.DATE , 7);
 			cal2.add( Calendar.DATE , 7);
 			date1 = cal1.getTime();
@@ -446,4 +502,93 @@ public class scheduleController {
 		
 		return "redirect:";
 	}
+	
+	@RequestMapping("/schedule/{groupId}/addchat")
+	@ResponseBody
+	public void addchat(@PathVariable("groupId") String groupId, String userId, String text) throws Exception {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		UserDTO userOne = scheduleService.selectUserOne(userId);
+		System.out.println(userId);
+		LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd HH:mm");
+
+        String formattedTime = now.format(formatter);
+        int hour = Integer.parseInt(formattedTime.substring(6,8));
+        String time = "오전 ";
+        if(hour > 12) {
+        	hour = hour - 12;
+        	time = "오후 ";
+        }
+        String now_time = formattedTime.substring(0,6) + time + hour + formattedTime.substring(8,11);
+
+		map.put("group_id", groupId);
+		map.put("name", userOne.getName());
+		map.put("text", text);
+		map.put("profile_url", userOne.getProfile_url());
+		map.put("now", now_time);
+		scheduleService.addCaht(map);
+	}
+	
+	
+	@RequestMapping("/schedule/{groupId}/updateUserTable")
+	public String updateUserTable(@PathVariable("groupId") String groupId,
+			@RequestParam("code") String code,
+			HttpSession session) throws Exception {
+		
+		String userId = (String)session.getAttribute("session_id");
+		
+		userScheduleDTO dto = new userScheduleDTO();
+		dto.setGroup_id(groupId);
+		
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("group_id", groupId);
+		map.put("showView", 1);
+		
+		List<MeetingScheduleDTO> msdto = scheduleService.selectMeetingScheduleAllShow(map);
+		int [] seqs = new int[msdto.size()];
+	
+		for (int i = 0; i < msdto.size(); i++) {
+			seqs[i] = msdto.get(i).getSeq();
+		}
+		//update하면 code 마지막에 쉼표(,)가 붙는다. 이유가 뭐지
+		code = code.split(",")[0];
+		String[] sheets = code.split("a");
+		
+		String[][] datas = new String [sheets.length][42];
+		for (int i = 0; i < sheets.length; i++) {
+			for (int j = 0; j < 42; j++) {
+				datas[i][j] = sheets[i].split("b")[j];
+				
+				dto.setSeq(seqs[i]);
+				dto.setCnt(j);
+				dto.setUser_id(userId);
+				dto.setSun(datas[i][j].charAt(0)-48);
+				dto.setMon(datas[i][j].charAt(1)-48);
+				dto.setTue(datas[i][j].charAt(2)-48);
+				dto.setWed(datas[i][j].charAt(3)-48);
+				dto.setThu(datas[i][j].charAt(4)-48);
+				dto.setFri(datas[i][j].charAt(5)-48);
+				dto.setSat(datas[i][j].charAt(6)-48);
+				
+				if (scheduleService.selectUserScheduleCnt(dto) > 0) {
+					//update
+					scheduleService.updateUserSchedule(dto);
+					map.put("user_id", userId);
+					map.put("group_id", groupId);
+					map.put("set_schedule", 1);
+					scheduleService.updateGroupUserSetSchedule(map);
+				}else {
+					//insert
+					scheduleService.insertUserSchedule(dto);
+					map.put("user_id", userId);
+					map.put("group_id", groupId);
+					map.put("set_schedule", 1);
+					scheduleService.updateGroupUserSetSchedule(map);
+				}
+			}
+		}
+		
+		return "redirect:";
+	}
+	
 }

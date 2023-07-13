@@ -54,16 +54,14 @@
 			where group_id = #{group_id} and user_id = #{user_id}
 		]]>
 	</update>
+	<update id = "updateGroupUserSetSchedule" parameterType = "hashMap">
+		<![CDATA[
+			update group_user_table
+			set set_schedule = #{set_schedule}
+			where group_id = #{group_id} and user_id = #{user_id}
+		]]>
+	</update>
 	
-	<select id="getLocation" resultType="String" parameterType="String">
-		select final_location from group_table where group_id = #{group_id};
-	</select>
-	<insert id="addChat" parameterType = "hashMap">
-		insert into chat_table values(#{group_id},#{name},#{text},#{now},#{profile_url});
-	</insert>
-	<select id="getChat" resultType="chatdto" parameterType="String">
-		select * from chat_table where group_id = #{group_id};
-	</select>
 	<!-- 그룹 별 일정표 테이블 관련 -->
 	<select id = "selectMeetingScheduleAll" resultType = "dto.MeetingScheduleDTO" parameterType = "String">
 		<![CDATA[
@@ -74,13 +72,13 @@
 	<select id = "selectMeetingScheduleAllShow" resultType = "dto.MeetingScheduleDTO" parameterType = "HashMap">
 		<![CDATA[
 			select * from meeting_schedule_table
-			where group_id = #{group_id} and #{showView}
+			where group_id = #{group_id} and showView = #{showView}
 		]]>
 	</select>
 	<select id = "selectMeetingScheduleAllShowCnt" resultType = "int" parameterType = "HashMap">
 		<![CDATA[
 			select count(*) from meeting_schedule_table
-			where group_id = #{group_id} and #{showView}
+			where group_id = #{group_id} and showView = #{showView}
 		]]>
 	</select>
 	<select id = "selectMeetingScheduleOne" resultType = "dto.MeetingScheduleDTO" parameterType = "HashMap">
@@ -123,7 +121,95 @@
 	</update>
 	
 	<!-- 그룹 당 유저 별 일정표 테이블 관련 -->
-	
+	<select id = "selectUserScheduleDayCnt" parameterType = "HashMap" resultType = "int">
+	<![CDATA[
+		select count(*)
+		from user_schedule_table
+		where group_id = #{group_id} and seq = #{seq} and cnt = #{cnt} 
+		]]>
+	<if test = "sun == 1">
+		<![CDATA[ and sun = 1; ]]>
+	</if>	
+	<if test = "mon == 1">
+		<![CDATA[ and mon = 1; ]]>
+	</if>	
+	<if test = "tue == 1">
+		<![CDATA[ and tue = 1; ]]>
+	</if>	
+	<if test = "wed == 1">
+		<![CDATA[ and wed = 1; ]]>
+	</if>	
+	<if test = "thu == 1">
+		<![CDATA[ and thu = 1; ]]>
+	</if>	
+	<if test = "fri == 1">
+		<![CDATA[ and fri = 1; ]]>
+	</if>	
+	<if test = "sat == 1">
+		<![CDATA[ and sat = 1; ]]>
+	</if>	
+	</select>
+	<select id = "selectUserSchedule" parameterType = "dto.userScheduleDTO" resultType = "dto.userScheduleDTO">
+	<![CDATA[
+		select *
+		from user_schedule_table
+		where group_id = #{group_id} and user_id = #{user_id} and seq = #{seq} and cnt = #{cnt}
+	]]>
+	</select>
+	<select id = "selectUserScheduleAll" parameterType = "dto.userScheduleDTO" resultType = "dto.userScheduleDTO">
+	<![CDATA[
+		select *
+		from user_schedule_table
+		where group_id = #{group_id} and seq = #{seq} and cnt = #{cnt}
+	]]>
+	</select>
+	<select id = "selectUserScheduleCnt" parameterType = "dto.userScheduleDTO" resultType = "int">
+	<![CDATA[
+		select count(*)
+		from user_schedule_table
+		where group_id = #{group_id} and user_id = #{user_id} and seq = #{seq} and cnt = #{cnt}
+	]]>
+	</select>
+	<select id = "selectUserScheduleCntAll" parameterType = "dto.userScheduleDTO" resultType = "int">
+	<![CDATA[
+		select count(*)
+		from user_schedule_table as A, meeting_schedule_table as B
+		where A.group_id = #{group_id} and A.group_id = B.group_id and 
+		A.seq = B.seq 
+		and B.showView = 1;
+	]]>
+	</select>
+	<insert id = "insertUserSchedule" parameterType = "dto.userScheduleDTO">
+	<![CDATA[
+			insert into user_schedule_table(group_id, user_id, seq, cnt, sun, mon, tue, wed, thu, fri, sat)
+			values(
+				#{group_id},
+				#{user_id},
+				#{seq},
+				#{cnt},
+				#{sun},
+				#{mon},
+				#{tue},
+				#{wed},
+				#{thu},
+				#{fri},
+				#{sat}
+			)
+		]]>
+	</insert>
+	<update id = "updateUserSchedule" parameterType = "dto.userScheduleDTO">
+	<![CDATA[
+			update user_schedule_table
+			set sun = #{sun},
+				mon = #{mon},
+				tue = #{tue},
+				wed = #{wed},
+				thu = #{thu},
+				fri = #{fri},
+				sat = #{sat}
+			where group_id = #{group_id} and user_id = #{user_id} and seq = #{seq} and cnt = #{cnt}
+		]]>
+	</update>
 	<!-- 그룹 당 일정 세팅 관련 -->
 	<select id = "selectMeetingScheduleDate" resultType = "dto.MeetingScheduleDateDTO" parameterType = "String">
 		<![CDATA[
@@ -156,4 +242,15 @@
 			where group_id = #{group_id};
 		]]>
 	</update>
+	
+		<!-- 위치 / 채팅 -->
+	<select id="getLocation" resultType="String" parameterType="String">
+		select final_location from group_table where group_id = #{group_id};
+	</select>
+	<insert id="addChat" parameterType = "hashMap">
+		insert into chat_table values(#{group_id},#{name},#{text},#{now},#{profile_url});
+	</insert>
+	<select id="getChat" resultType="chatdto" parameterType="String">
+		select * from chat_table where group_id = #{group_id};
+	</select>
 </mapper>
