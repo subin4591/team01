@@ -54,6 +54,7 @@ public class scheduleService {
 	}
 	List<ChatDTO> getChat(String group_id) throws Exception{
 		return scheduleMapper.getChat(group_id);
+	}
 	
 	public  List<MeetingScheduleDTO> selectMeetingScheduleAll(String group_id) throws Exception{
 		return scheduleMapper.selectMeetingScheduleAll(group_id);

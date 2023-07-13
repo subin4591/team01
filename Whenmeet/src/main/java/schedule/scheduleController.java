@@ -325,6 +325,7 @@ public class scheduleController {
 	public void addchat(@PathVariable("groupId") String groupId, String userId, String text) throws Exception {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		UserDTO userOne = scheduleService.selectUserOne(userId);
+		System.out.println(userId);
 		LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd HH:mm");
 
@@ -343,6 +344,7 @@ public class scheduleController {
 		map.put("profile_url", userOne.getProfile_url());
 		map.put("now", now_time);
 		scheduleService.addCaht(map);
+	}
 	
 	@RequestMapping("/schedule/{groupId}/tableUpdate")
 	public String updateTable(@PathVariable("groupId") String groupId, 
