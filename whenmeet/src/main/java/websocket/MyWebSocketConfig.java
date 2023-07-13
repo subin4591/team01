@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSocket
 public class MyWebSocketConfig implements WebSocketConfigurer{
 	
-	final ChatWebSocketHandler handler = new ChatWebSocketHandler();
+	final ChatWebSocketHandler handler;
 
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
