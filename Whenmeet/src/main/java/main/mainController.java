@@ -42,7 +42,6 @@ public class mainController {
 	@RequestMapping("/address")
 	public void addressConfirm(String address,String group_id) {
 		service.address(address, group_id);
-		
 	}
 	
 }
