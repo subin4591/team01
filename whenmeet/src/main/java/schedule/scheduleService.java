@@ -12,6 +12,7 @@ import dto.GroupUserDTO;
 import dto.MeetingScheduleDTO;
 import dto.MeetingScheduleDateDTO;
 import dto.UserDTO;
+import dto.userScheduleDTO;
 
 @Service("scheduleService")
 public class scheduleService {
@@ -42,18 +43,11 @@ public class scheduleService {
 	public List<GroupUserDTO> selectGroupUsers(String group_id) throws Exception{
 		return scheduleMapper.selectGroupUsers(group_id);
 	}
-	
 	public void updateGroupUserSubHost(HashMap<String, Object> map) throws Exception{		
 		scheduleMapper.updateGroupUserSubHost(map);
 	}
-	public String getLocation(String group_id) throws Exception{
-		return scheduleMapper.getLocation(group_id);
-	}
-	void addCaht(HashMap<String, Object> map) throws Exception{
-		scheduleMapper.addChat(map);
-	}
-	List<ChatDTO> getChat(String group_id) throws Exception{
-		return scheduleMapper.getChat(group_id);
+	public void updateGroupUserSetSchedule(HashMap<String, Object> map) throws Exception{		
+		scheduleMapper.updateGroupUserSetSchedule(map);
 	}
 	
 	public  List<MeetingScheduleDTO> selectMeetingScheduleAll(String group_id) throws Exception{
@@ -81,6 +75,28 @@ public class scheduleService {
 		scheduleMapper.updateMeetingScheduleShowViewOne(map);
 	}
 	
+	public int selectUserScheduleDayCnt(HashMap<String, Object> map) throws Exception{
+		return scheduleMapper.selectUserScheduleDayCnt(map);
+	}
+	public userScheduleDTO selectUserSchedule(userScheduleDTO dto) throws Exception{
+		return scheduleMapper.selectUserSchedule(dto);
+	}
+	public List<userScheduleDTO> selectUserScheduleAll(userScheduleDTO dto) throws Exception{
+		return scheduleMapper.selectUserScheduleAll(dto);
+	}
+	public int selectUserScheduleCnt(userScheduleDTO dto) throws Exception{
+		return scheduleMapper.selectUserScheduleCnt(dto);
+	}
+	public int selectUserScheduleCntAll(userScheduleDTO dto) throws Exception{
+		return scheduleMapper.selectUserScheduleCntAll(dto);
+	}
+	public void insertUserSchedule(userScheduleDTO dto) throws Exception{
+		scheduleMapper.insertUserSchedule(dto);
+	}
+	public void updateUserSchedule(userScheduleDTO dto) throws Exception{
+		scheduleMapper.updateUserSchedule(dto);
+	}
+	
 	public MeetingScheduleDateDTO selectMeetingScheduleDate(String group_id) throws Exception{
 		return scheduleMapper.selectMeetingScheduleDate(group_id);
 	}
@@ -92,5 +108,15 @@ public class scheduleService {
 	}
 	public void updateMeetingScheduleDate(HashMap<String, Object> map) throws Exception{
 		scheduleMapper.updateMeetingScheduleDate(map);
+	}
+	
+	public String getLocation(String group_id) throws Exception{
+		return scheduleMapper.getLocation(group_id);
+	}
+	void addCaht(HashMap<String, Object> map) throws Exception{
+		scheduleMapper.addChat(map);
+	}
+	List<ChatDTO> getChat(String group_id) throws Exception{
+		return scheduleMapper.getChat(group_id);
 	}
 }

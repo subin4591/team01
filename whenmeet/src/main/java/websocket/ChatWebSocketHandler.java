@@ -56,31 +56,6 @@ public class ChatWebSocketHandler implements WebSocketHandler{
 		        + "\"profileimg\":\"" + dto.getProfile_url()+ "\","
 		        + "\"name\":\"" + dto.getName() + "\""
 		        + "}";
-
-		/*msg = "<li>\r\n"
-				+ "				<c:choose>\r\n"
-				+ "				    <c:when test=\"${session_id == " + userId + "}\">\r\n"
-				+ "				   		<h3 class=\"sent\">\r\n"
-				+ "				   			<div class=\"chatcontent\">\r\n"
-				+ "					   			<div class=\"message\">"+ text + "</div>\r\n"
-				+ "				   			</div>\r\n"
-				+ "				   			<span class=\"chat_time\">" + date + "</span>\r\n"
-				+ "				   		</h3>\r\n"
-				+ "			   		</c:when>\r\n"
-				+ "			   		<c:otherwise>\r\n"
-				+ "			   			<h3 class=\"receive\">\r\n"
-				+ "			   			<img class = \"profile_img\" src=\"" + dto.getProfile_url() + "\"/>\r\n"
-				+ "			   				<div class=\"chat_wrap\">\r\n"
-				+ "				   				<div class=\"user_name\">" + dto.getName() + "</div>\r\n"
-				+ "					   			<div class=\"chatcontent\">\r\n"
-				+ "						   			<div class=\"message\">"+ text + "</div>\r\n"
-				+ "					   			</div>\r\n"
-				+ "					   		</div>\r\n"
-				+ "					   		<span class=\"chat_time\">" + date + "</span>\r\n"
-				+ "				   		</h3>\r\n"
-				+ "			   		</c:otherwise>\r\n"
-				+ "			   	</c:choose>\r\n"
-				+ "		   	</li>";*/
 		
 		// 접속 모든 클라이언트 메시지 송신
 		for(WebSocketSession socket:list) {

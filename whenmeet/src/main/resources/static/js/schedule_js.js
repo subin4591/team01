@@ -167,11 +167,13 @@ function changeWeek(today){
 	temp1 *= 1;
 	temp2 *= 1;
 	today *= 1;
-	
+	var todayDate = new Date();
+	todayDate = ""+ todayDate.getFullYear() + changeMM(todayDate.getMonth()) + todayDate.getDate();
+
 	if (temp1 > temp2){
 		alert("올바른 기간을 입력해주세요.");
 		return false;
-	} else if (temp1 < today){
+	} else if (temp1 < todayDate){
 		alert("오늘 이전의 날짜는 입력할 수 없습니다.");
 		return false;
 	}
@@ -232,6 +234,30 @@ function changedd(day){	//return : 문자열
 	}
 	return result;
 }
+
+//일정표 색 저장
+function  ScheduleSaveBtnClick(slideMax){
+    	var columnMax = 7;
+    	var iMax = 42;
+    	var indexMax = slideMax;
+    	var resultList = "";
+    	for (var i = 1; i < indexMax+1; i ++){
+    		for (var j = (i-1)* iMax*columnMax; j < i * iMax * columnMax; j ++){
+					var button = $('.tdCol').eq(j);
+    				
+    				if (button.css("background") != "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box"){
+						resultList+= "1";
+					}else{
+						resultList+= "0";
+					}
+					if ((j % 7) == 6){
+						resultList+= "b";
+					}
+			}
+			resultList+= "a";
+    	}
+    	$("#tableFormResult").attr("value", resultList);
+   }
 // table 컬러 바꾸기
 function tbColorChange(element){
 	if( $(element).attr("alt") != "1"){
@@ -281,6 +307,7 @@ function popOpen(id, name, address, phone, email, profile, host, subhost){
 	$(modalPop).show();
 	$(modalBg).show();
 }
+   
 //유저 팝업 닫기
 function popClose(){
 	var modalPop = $('.user_modal');
