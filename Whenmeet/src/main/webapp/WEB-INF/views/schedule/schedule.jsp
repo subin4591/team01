@@ -8,13 +8,11 @@
   <title>일정|언제만나</title>
   <link rel="icon" href="/img/icon.svg">
   <link rel = "stylesheet" href = "/css/schedule_css.css">
-  <link rel = "stylesheet" href = "/css/schedule_location.css">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script src = "/js/schedule_js.js"></script> 
-</head>
-
+  <script src = "/js/schedule_js.js"></script>
+  </head>
 <%@page import = "java.util.*"%>
 <%
 // 사용자 프로필 에러났을 때
@@ -22,61 +20,123 @@ String userImgErr = "/img/user_logo.png";
 %>
 
 <body>
+<c:choose>
+<c:when test = "${session_id == null }">
+	<script>
+	alert("로그인이 필요한 페이지입니다.");
+	location.href = "/meeting/test";		//나중에 로그인 페이지로 수정
+	</script>
+</c:when>
+<c:otherwise>
+
 <div class = "schedule_page">
+
 	<!--헤더 -->
 	<%@ include file="../header.jsp" %>
-	
 	<!-- 맴버 리스트 -->
 	<div class = "member_list">
+		<%
+			String[] allMemberId = (String[])request.getAttribute("groupAllUsersId");
+			int MemberCnt = allMemberId.length;
+		%>
 		<!-- 맴버 리스트 제목  -->
 		<div class = "member_list_title">
-			<h2>맴버 목록</h2>
+			<h2>맴버 목록 (<%=MemberCnt %>)</h2>
 		</div>
 		<!-- 맴버 리스트 -->
 		<div class = "member_list_content">
 			<ul class = memberList>
 			<%
-			//맴버 목록 데이터
-			ArrayList<String> memberName = new ArrayList<String>();
-			memberName.add("방장쓰");
-			memberName.add("부방장쓰");
-			memberName.add("맴버1");
-			memberName.add("맴버2");
-			memberName.add("맴버3");
-			memberName.add("맴버4");
+			//유저 아이디
+			String userId = (String)request.getAttribute("userId");
+			//방장 맴버
+			String[] HostId = (String[])request.getAttribute("groupHostUserId");
+			String[] HostName = (String[])request.getAttribute("groupHostUserName");
+			String[] HostAddress = (String[])request.getAttribute("groupHostUserAddress");
+			String[] HostPhone = (String[])request.getAttribute("groupHostUserPhone");
+			String[] HostEmail = (String[])request.getAttribute("groupHostUserEmail");
+			String[] HostProfileUrl = (String[])request.getAttribute("groupHostUserProfileUrl");
+			//부방장 맴버
+			String[] SubHostId = (String[])request.getAttribute("groupSubHostUsersId");
+			String[] SubHostName = (String[])request.getAttribute("groupSubHostUsersName");
+			String[] SubHostAddress = (String[])request.getAttribute("groupSubHostUsersAddress");
+			String[] SubHostPhone = (String[])request.getAttribute("groupSubHostUsersPhone");
+			String[] SubHostEmail = (String[])request.getAttribute("groupSubHostUsersEmail");
+			String[] SubHostProfileUrl = (String[])request.getAttribute("groupSubHostUsersProfileUrl");
+			//일반 맴버
+			String[] memberId = (String[])request.getAttribute("groupMemberUsersId");
+			String[] memberName = (String[])request.getAttribute("groupMemberUsersName");
+			String[] memberAddress = (String[])request.getAttribute("groupMemberUsersAddress");
+			String[] memberPhone = (String[])request.getAttribute("groupMemberUsersPhone");
+			String[] memberEmail = (String[])request.getAttribute("groupMemberUsersEmail");
+			String[] memberProfileUrl = (String[])request.getAttribute("groupMemberUsersProfileUrl");
 			
-			//누가 방장인가
-			for(int i = 0; i < memberName.size(); i++){
+			//방장>부방장>맴버 순으로 정렬
+			List<String> membersId = new ArrayList<String>();
+			List<String> membersName = new ArrayList<String>();
+			List<String> membersAddress = new ArrayList<String>();
+			List<String> membersPhone = new ArrayList<String>();
+			List<String> membersEmail = new ArrayList<String>();
+			List<String> membersProfileUrl = new ArrayList<String>();
+			
+			for (int i = 0; i < HostName.length; i++){
+				membersId.add(HostId[i]);
+				membersName.add(HostName[i]);
+				membersAddress.add(HostAddress[i]);
+				membersPhone.add(HostPhone[i]);
+				membersEmail.add(HostEmail[i]);
+				membersProfileUrl.add(HostProfileUrl[i]);
+			}
+			for (int i = 0; i < SubHostName.length; i++){
+				membersId.add(SubHostId[i]);
+				membersName.add(SubHostName[i]);
+				membersAddress.add(SubHostAddress[i]);
+				membersPhone.add(SubHostPhone[i]);
+				membersEmail.add(SubHostEmail[i]);
+				membersProfileUrl.add(SubHostProfileUrl[i]);
+			}
+			for (int i = 0; i < memberName.length; i++){
+				membersId.add(memberId[i]);
+				membersName.add(memberName[i]);
+				membersAddress.add(memberAddress[i]);
+				membersPhone.add(memberPhone[i]);
+				membersEmail.add(memberEmail[i]);
+				membersProfileUrl.add(memberProfileUrl[i]);
+			}
+			
+			//출력
+			for(int i = 0; i < membersName.size(); i++){
 				String Img = "/img/방장표시.svg";
-				boolean host = false;
-				boolean subhost = false;
+				int host = 0;
+				int subhost = 0;
 				if (i == 0){ 	//첫 번째 자리면 방장
-					host = true;
+					host = 1;
 				}
-				if (i == 1){ 
-					subhost = true;
+				if (0 < i && i <= SubHostName.length){ 
+					subhost = 1;
 					Img = "/img/부방장표시.svg";
 				}
 			%>
 				<li>
 				  <!-- 모달 팝업 열기-->
 
-				  <a href="#" class = "user_open" onclick="javascript:popOpen('<%= memberName.get(i) %>'); " >
+				  <a href="#" class = "user_open" 
+				  onclick="javascript:popOpen('<%= membersId.get(i)%>', '<%= membersName.get(i)%>', '<%= membersAddress.get(i)%>', '<%= membersPhone.get(i)%>', '<%= membersEmail.get(i)%>', '<%= membersProfileUrl.get(i)%>', '<%=host %>', '<%=subhost %>' ); " >
 				
 				    <div class = "member">				
 					    <!-- 유저 프로필 이미지 설정 -->
 					    <div class = "Uimage">
-						    <img src = "<%= userImgErr %>" 
+						    <img src = "<%= membersProfileUrl.get(i) %>" 
 							    onError = "<%= userImgErr %>" 
 							    alt = "유저 프로필 이미지" class = "userProfile">
 					    </div>
 					    
 					    <div class = "text">
                				 <!-- 유저 이름 설정-->
-						    <h2><%= memberName.get(i) %></h2>
+						    <h2><%= membersName.get(i) %></h2>
 						
 					      <!-- 방장 및 부방장 설정-->	
-						    <%if(host || subhost){ %>
+						    <%if(host == 1 || subhost == 1){ %>
 						      <img src = "<%= Img %>" alt = "방장 표시" 
 							          class = "hostMark">
 						    <%}; %>						
@@ -102,13 +162,22 @@ String userImgErr = "/img/user_logo.png";
 					src = "<%= userImgErr %>" 
 					onError = "<%= userImgErr %>" 
 					alt = "유저 프로필 이미지" class = "userProfile">
+					
+					
+					<form id = "SubHostForm" action= "/schedule/${groupId}/update" method = "POST">
+						<input type = "text" name = "userId" value = "${session_id}" style = "display : None"/>
+						<input type = "text" name = "subHost" value = "0"  style = "display : None">
+						<button type = "submit" class = "SubHostBtn1" >부방장 등록</button>
+						<button type = "submit" class = "SubHostBtn2" >부방장 해제</button>
+					</form>
+					
 		  <div class = "profileText" style = "overflow : hidden; white-space:nowrap; text-overflow : ellipsis;">
 		    <br><br><br><h1 class = "modalUserName"> 정보를 불러올 수 없습니다.</h1>
-		    <br><span>@doremiAccount</span> <br><br>
-		    <div style = "font-size : 20px">
-			    <span><b>주소 |</b> 도레시 미파구 솔라동 시도레 마을</span> <br>
-			    <span><b>전화번호 |</b> 010-1234-5678</span> <br>
-			    <span><b>이메일 |</b> doremi@gmail.com</span> <br>
+		    <br><span>@doremiAccount</span><br><br>
+		    <div style = "font-size : 20px; overflow : hidden; white-space:nowrap; text-overflow : ellipsis;">
+			    <span><b>주소 |</b><a> 도레시 미파구 솔라동 시도레 마을</a></span> <br>
+			    <span><b>전화번호 |</b><a> 010-1234-5678</a></span> <br>
+			    <span><b>이메일 |</b><a> doremi@gmail.com</a></span> <br>
 		    </div>
 		  </div>
 		</div>		
@@ -120,7 +189,7 @@ String userImgErr = "/img/user_logo.png";
         
     <div id="section_two_right">
 			<div id="review_area" >
-				<div id = "chart_div3" style = "margin : auto"></div>
+				<%@ include file="schedule_chat.jsp"%>
 			</div>
       <div id="review_btn">
         <div id = "white_btn_area">
@@ -149,73 +218,89 @@ String userImgErr = "/img/user_logo.png";
 	<!-- 일정 탭 -->
     <div id = "meeting_date" >
 	    <div class="group_info">
+	    
 	    	<!-- 왼쪽 표 / 우클릭 금지, 드래그 금지 -->				
 			  <div id="chart_area" oncontextmenu="return false" ondragstart="return false" onselectstart="return false">
 				<%@page import = "java.text.SimpleDateFormat" %>
           		<%@page import = "java.util.Calendar" %>
          		<%@page import = "java.util.Date" %>
           		<%
-          			String date = "20230101";		//일요일이어야함 -> 값이 변함에 따라 테이블도 변해야 함
-          			String[] dates = new String[7];		// 1주일 간 날짜를 저장
-          			String[] datesY = new String[7];	// 1주일 간 년을 저장
-          			String[] datesM = new String[7];	// 1주일 간 월을 저장
-          			String[] datesD = new String[7];	// 1주일 간 일을 저장
-          			dates[0] = date;	//String을 배열 첫날에 넣기
+          		
           			
-          			SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-         			
-          			Date date1 = format.parse(date);	//첫날 형식 맞추기
+          			int slideMax = 1;	//슬라이드 개수
+         			if (request.getAttribute("tableListCnt") != null){
+              			slideMax = (int)request.getAttribute("tableListCnt");
+              		}
           			
-          			Calendar cal = Calendar.getInstance(); 
-         	  		cal.setTime(date1);		//첫날 넣기
-         			
-         				for (int i = 1; i < 7; i ++){	//1주일 동안
-         					cal.add(Calendar.DATE, 1);	//하루 더하기
-         					Date date2 = cal.getTime();	//저장하기
-         					String temp = format.format(date2);	//다음 날 형식 맞추기
-         					dates[i] = temp;	//날짜배열에 넣기
-         				}
-         			
-         	  			//날짜배열에 있는 값들을 년/월/일로 나누기
-         				for (int i = 0; i < 7; i++){
-         					datesY[i] = dates[i].substring(0, 4);
-         					datesM[i] = dates[i].substring(4, 6);
-         					datesD[i] = dates[i].substring(6, 8);
-         				}
-         			
+          			Date tempDate = new Date();
+          			SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+          			Calendar tempCal = Calendar.getInstance();
+          			tempCal.setTime(tempDate);
+          			tempCal.add(Calendar.DATE, 6);
+         			String[] tableListStart = {format.format(tempDate)};
+         			String[] tableListLast = {format.format(tempCal.getTime())};
+	
           		%>
+
 			<!-- 수정 화면 (처음엔 숨겨짐) -->
-          <div id="timeTable" style = "display : None;">
-          	<!-- 수정 화면 상단 날짜 이동 영역 -->
-          	<div id = "time_table_top" style = "margin : 10px; text-align : center;">						
-          		<button type = "button" class = "total_table_left">◀</button>
+          <div id="timeTable" style = "display : None;">	
+          	<div id = "tableSlide2" style = "width :100%">               
+          	<ul>         	
+          	<%
+          	tableListStart = (String[])request.getAttribute("tableListStart");
+          	tableListLast = (String[])request.getAttribute("tableListLast");
+          	Calendar tableCal = Calendar.getInstance();
+          	SimpleDateFormat tempTableDateFormat = new SimpleDateFormat("MM/dd");
+      		String [] topDates = new String[7];
+      		
+      		int[][] SundayList2 = (int[][])request.getAttribute("SundayList2");
+  			int[][] MondayList2 = (int[][])request.getAttribute("MondayList2");
+  			int[][] TuesdayList2 = (int[][])request.getAttribute("TuesdayList2");
+  			int[][] WednesdayList2 = (int[][])request.getAttribute("WednesdayList2");
+  			int[][] ThusdayList2 = (int[][])request.getAttribute("ThusdayList2");
+  			int[][] FridayList2 = (int[][])request.getAttribute("FridayList2");
+  			int[][] SaturdayList2 = (int[][])request.getAttribute("SaturdayList2");
+  			
+          	for (int index = 0; index < slideMax; index++){ 
+          		String[] tempTableDate = tableListStart[index].split("/");
+          		tableCal.set(Integer.parseInt(tempTableDate[0]), Integer.parseInt(tempTableDate[1])-1, Integer.parseInt(tempTableDate[2]));
+          		
+          		for (int k = 0; k < 7; k ++){
+          			topDates[k] = tempTableDateFormat.format(tableCal.getTime());
+          			tableCal.add(Calendar.DATE , 1);
+          		}
+          	%>
+          	<li>		
+          		<!-- 수정 화면 상단 날짜 이동 영역 -->
+          	<div class = "time_table_top" style = "margin : 10px; text-align : center;">						
+          		<button type = "button" class = "total_table_left"  onclick = "slideTable(<%=slideMax %>, 0)" >◀</button>
           		<h2 style = "display : inline;">
-          		  <%=datesY[0] %>/<%=datesM[0] %>/<%=datesD[0] %> - <%=datesY[6] %>/<%=datesM[6] %>/<%=datesD[6] %>
+          		  <span class = "tableStartDate"><%= tableListStart[index] %></span> -  <span class = "tableEndDate"><%= tableListLast[index] %></span>
           		</h2>	
-          		<button type = "button" class = "total_table_right">▶</button>
+          		<button type = "button" class = "total_table_right" onclick = "slideTable(<%=slideMax %>, 1)">▶</button>
      			<hr style = "width : 50%; height : 5px; background-color : #F25287; border: 0;">	
           	</div>
           			
-          	<br>
-          				
+          	<br><br><br>
+          			
           	<table class = "timeTable" border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">
           		
               <thead>
           			<tr align = "center"  style="height: 54px; font-weight: bold;">
           			  <td style="width: 12.5%;">&nbsp;</td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[0] %>/<%=datesD[0] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=topDates[0] %></span><br>
 								    <span style = "font-size : 20px">일</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[1] %>/<%=datesD[1] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=topDates[1] %></span><br>
 								    <span style = "font-size : 20px">월</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[2] %>/<%=datesD[2] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=topDates[2] %></span><br>
 								    <span style = "font-size : 20px">화</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[3] %>/<%=datesD[3] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=topDates[3] %></span><br>
 								    <span style = "font-size : 20px">수</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[4] %>/<%=datesD[4] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=topDates[4] %></span><br>
 								    <span style = "font-size : 20px">목</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[5] %>/<%=datesD[5] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=topDates[5] %></span><br>
 								    <span style = "font-size : 20px">금</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[6] %>/<%=datesD[6] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=topDates[6] %></span><br>
 								    <span style = "font-size : 20px">토</span></td>						
           				</tr>
    	       			</thead>
@@ -226,6 +311,7 @@ String userImgErr = "/img/user_logo.png";
           						int count = 5;
           						count = count + i/2;
           						String spanT = " style = 'color : #F25287'";
+          						String tbId = ""+ i+ index;
           					%>         			
           					<tr align = "center"  style=" font-weight: bold;">	
           					  <%if ((i%2 == 0)){ %>
@@ -234,64 +320,99 @@ String userImgErr = "/img/user_logo.png";
           						  <%= count%>:00</span>
                       </td>
           					  <%} %>
-          						<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol0<%=i%>" onclick = "javascript:tbColorChange('#tbCol0<%=i%>');" alt = "0"></div></td>
-								      <td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol1<%=i%>" onclick = "javascript:tbColorChange('#tbCol1<%=i%>');" alt = "0"></div></td>
-								      <td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol2<%=i%>" onclick = "javascript:tbColorChange('#tbCol2<%=i%>');" alt = "0"></div></td>
-								      <td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol3<%=i%>" onclick = "javascript:tbColorChange('#tbCol3<%=i%>');" alt = "0"></div></td>
-								      <td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol4<%=i%>" onclick = "javascript:tbColorChange('#tbCol4<%=i%>');" alt = "0"></div></td>
-								      <td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol5<%=i%>" onclick = "javascript:tbColorChange('#tbCol5<%=i%>');" alt = "0"></div></td>
-							      	<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol6<%=i%>" onclick = "javascript:tbColorChange('#tbCol6<%=i%>');" alt = "0"></div></td>
+          								<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol0<%=tbId%>"  
+          								data-color = "0" data-count = <%=SundayList2[index][i] %>></div></td>
+								      	<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol1<%=tbId %>" 
+								      	data-color = "0" data-count =  <%=MondayList2[index][i] %>></div></td>
+								      	<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol2<%=tbId %>" 
+								      	data-color = "0" data-count =  <%=TuesdayList2[index][i] %>></div></td>
+								      	<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol3<%=tbId %>"  
+          								data-color = "0" data-count =  <%=WednesdayList2[index][i] %>></div></td>
+								      	<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol4<%=tbId %>" 
+								      	data-color = "0" data-count =  <%=ThusdayList2[index][i] %>></div></td>
+								      	<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol5<%=tbId %>" 
+								      	data-color = "0" data-count =  <%=FridayList2[index][i] %>></div></td>
+							      		<td style="width: 12.5%;"><div  class = "tdCol" id = "tbCol6<%=tbId %>" 
+							      		data-color = "0" data-count =  <%=SaturdayList2[index][i] %>></div></td>
           					</tr>
           				<%} %>
-          			</tbody>
-          			
-          	</table>
+          			</tbody>          			
+          		</table>
+          		</li>	
+          	<%} %>
+          	</ul>
+          	</div>
           	
-            <br>
-               				
-          	<form class = "tableForm" action = "#second_section" method = "GET">
-          		<!-- for문으로 색깔이 채워져 있으면 1, 비어있으면 0 해서 기다란 STRING 으로 보낼까? -->
-          		<button type = "submit" class = "btns" id = "ScheduleSaveBtn">저장</button>
+            <br>    				
+          	<form class = "tableForm" action = "/schedule/${groupId}/updateUserTable" method = "GET">
+          		<!-- 42 * 7개의 데이터를 slideMax개수 만큼 저장 -->
+          		<input type = "text" style = "display : None" value = ""  name = "code" id = "tableFormResult">
+          		<input type = "text" style = "display : None" value = ""  name = "code" id = "tableFormResult">
+          		<button type = "submit" class = "btns" id = "ScheduleSaveBtn"  onclick = "ScheduleSaveBtnClick(<%= slideMax%>)">저장</button>
           		<br>
           	</form>
           </div>
-          		
-          <div id = "total_table">
-          	<div id = "total_table_top" style = "margin : 10px; text-align : center;">
-              <button type = "button" class = "total_table_left">◀</button>
+          
+          <!-- 전체 회원 테이블  -->	
+          <div id = "total_table">     	
+          	<div id = "tableSlide" style = "width :100%">
+                
+          	<ul>         	
+          	<%
+          	tableListStart = (String[])request.getAttribute("tableListStart");
+          	tableListLast = (String[])request.getAttribute("tableListLast");
+          	
+          	int[][] SundayList = (int[][])request.getAttribute("SundayList");
+  			int[][] MondayList = (int[][])request.getAttribute("MondayList");
+  			int[][] TuesdayList = (int[][])request.getAttribute("TuesdayList");
+  			int[][] WednesdayList = (int[][])request.getAttribute("WednesdayList");
+  			int[][] ThusdayList = (int[][])request.getAttribute("ThusdayList");
+  			int[][] FridayList = (int[][])request.getAttribute("FridayList");
+  			int[][] SaturdayList = (int[][])request.getAttribute("SaturdayList");
+          	
+          	for (int index = 0; index < slideMax; index++){ 
+          		String[] tempTableDate = tableListStart[index].split("/");
+          		tableCal.set(Integer.parseInt(tempTableDate[0]), Integer.parseInt(tempTableDate[1])-1, Integer.parseInt(tempTableDate[2]));
+          		for (int k = 0; k < 7; k ++){
+          			topDates[k] = tempTableDateFormat.format(tableCal.getTime());
+          			tableCal.add(Calendar.DATE , 1);
+          		}
+          	%>
+          	<li>		
+          		<!-- 수정 화면 상단 날짜 이동 영역 -->
+          	<div class = "total_table_top" style = "margin : 10px; text-align : center;">						
+          		<button type = "button" class = "total_table_left"  onclick = "slideTable(<%=slideMax %>, 0)" >◀</button>
           		<h2 style = "display : inline;">
-          		  <%=datesY[0] %>/<%=datesM[0] %>/<%=datesD[0] %> - <%=datesY[6] %>/<%=datesM[6] %>/<%=datesD[6] %>
+          		  <span class = "tableStartDate"><%= tableListStart[index] %></span> -  <span class = "tableEndDate"><%= tableListLast[index] %></span>
           		</h2>	
-          		<button type = "button" class = "total_table_right">▶</button>
-     					<hr style = "width : 50%; height : 5px; background-color : #F25287; border: 0;">	
+          		<button type = "button" class = "total_table_right" onclick = "slideTable(<%=slideMax %>, 1)">▶</button>
+     			<hr style = "width : 50%; height : 5px; background-color : #F25287; border: 0;">	
           	</div>
           			
-          	<br>
-          			
-          	<table class = "totalTable" border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">
-          		
+          	<br><br><br>
+          	<table class = "totalTable" border = "1"  bordercolor="#DDDDDD"  width = "100%" height = "100%" cellspacing = "0">          		
               <thead>
           			<tr align = "center"  style="height: 54px; font-weight: bold;">
           				<td style="width: 12.5%;">&nbsp;</td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[0] %>/<%=datesD[0] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=topDates[0] %></span><br>
 								    <span style = "font-size : 20px">일</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[1] %>/<%=datesD[1] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=topDates[1] %></span><br>
 								    <span style = "font-size : 20px">월</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[2] %>/<%=datesD[2] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=topDates[2] %></span><br>
 								    <span style = "font-size : 20px">화</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[3] %>/<%=datesD[3] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=topDates[3] %></span><br>
 								    <span style = "font-size : 20px">수</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[4] %>/<%=datesD[4] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=topDates[4] %></span><br>
 								    <span style = "font-size : 20px">목</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[5] %>/<%=datesD[5] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=topDates[5] %></span><br>
 								    <span style = "font-size : 20px">금</span></td>
-							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=datesM[6] %>/<%=datesD[6] %></span><br>
+							    <td style="width: 12.5%;"><span style = "color : #F25287;"><%=topDates[6] %></span><br>
 								    <span style = "font-size : 20px">토</span></td>										
           			</tr>
    	       		</thead>
    	       				
               <tbody>
-          			<% 
+          			<%        			
           				for (int i = 0; i < 42; i++){
           					int count = 5;
           					count = count + i/2;
@@ -304,21 +425,23 @@ String userImgErr = "/img/user_logo.png";
           					<%= count%>:00</span>
                   </td>
           				<%} %>
-								  <td style="width: 12.5%;">&nbsp;</td>
-								  <td style="width: 12.5%;">&nbsp;</td>
-								  <td style="width: 12.5%;">&nbsp;</td>
-								  <td style="width: 12.5%;">&nbsp;</td>
-								  <td style="width: 12.5%;">&nbsp;</td>
-								  <td style="width: 12.5%;">&nbsp;</td>
-								  <td style="width: 12.5%;">&nbsp;</td>
+								  <td style="width: 12.5%;" class= "totalCol" data-count = <%=SundayList[index][i] %>>&nbsp;</td>
+								  <td style="width: 12.5%;" class= "totalCol" data-count = <%=MondayList[index][i] %>>&nbsp;</td>
+								  <td style="width: 12.5%;" class= "totalCol" data-count = <%=TuesdayList[index][i] %>>&nbsp;</td>
+								  <td style="width: 12.5%;" class= "totalCol" data-count = <%=WednesdayList[index][i] %>>&nbsp;</td>
+								  <td style="width: 12.5%;" class= "totalCol" data-count = <%=ThusdayList[index][i] %>>&nbsp;</td>
+								  <td style="width: 12.5%;" class= "totalCol" data-count = <%=FridayList[index][i] %>>&nbsp;</td>
+								  <td style="width: 12.5%;" class= "totalCol" data-count = <%=SaturdayList[index][i] %>>&nbsp;</td>
           		  </tr>
           		  <%} %>
-          	  </tbody>
-          			
+          	  </tbody>   			
           	</table>
+          	</li>	
+			<%} %>
+          	</ul>
+          	</div>
           	
             <br>
-          	
             <button type = "button" class = "btns" id = "ScheduleEditBtn">수정</button>
             
             <br>
@@ -326,6 +449,7 @@ String userImgErr = "/img/user_logo.png";
           </div>
         </div>
         
+        <!-- 디데이 입력  -->
         <div id="Dday_area" >
         	<div id="Dday" style = "display : None" >
           	<a><img class = "editDate" src = "/img/방장용_수정_버튼.svg" /></a>
@@ -362,6 +486,8 @@ String userImgErr = "/img/user_logo.png";
           	</form>
           </div>
           <%
+          
+           Calendar cal = Calendar.getInstance();
           	SimpleDateFormat formatToday = new SimpleDateFormat("yyyy/MM/dd (E)");
 			
         	Date dateToday = new Date();
@@ -372,6 +498,16 @@ String userImgErr = "/img/user_logo.png";
         	cal.add(Calendar.DATE, 6);
         	datePlusWeek = cal.getTime();
         	String todayPlusWeek = formatToday.format(datePlusWeek);
+        	
+        	if (request.getAttribute("startDate") != null){
+              	String startDatestr = (String)request.getAttribute("startDate");
+              	String endDatestr = (String)request.getAttribute("endDate");
+
+              	SimpleDateFormat formatStr = new SimpleDateFormat("yyyy-MM-dd");
+              	
+              	today = formatToday.format(formatStr.parse(startDatestr));	
+              	todayPlusWeek = formatToday.format(formatStr.parse(endDatestr));
+              }
         	
           %>		
           <div id="timeTableDateEdit">
@@ -391,11 +527,14 @@ String userImgErr = "/img/user_logo.png";
 					<h1 style = "position : relative; font-size : 28px; margin : 3px; top : 3px; text-align : center; color : white;">일정표 날짜 변경</h1>
 				</div>
 				<div class = "week_modal_content">
-					<form action = "#second_section" method = "get" id = "updateWeekForm">
-						<span>기간 시작일 : <input type = "date" id = "firstDate" ></span>
-						<span>기간 종료일 : <input type = "date"  id = "EndDate" /></span>
-						<input type = "submit" value = "저장" onclick = "javasript:changeWeek();" class = "submitBtn"/>
+				
+					<form action = "/schedule/${groupId}/tableUpdate" method = "post" id = "updateWeekForm" onsubmit = "return changeWeek('<%= today %>');" >
+						<span>기간 시작일 : <input type = "date" name = "start" id = "firstDate" ></span>
+						<span>기간 종료일 : <input type = "date"  name = "end" id = "EndDate" /></span>
+						<input type = "text" style = "display : None" name = "data" id = "updateTableData" value = ""/>
+						<input type = "submit" value = "저장"  class = "submitBtn"/>
 					</form>
+					
 				</div>		
   			</div>
             		
@@ -403,9 +542,12 @@ String userImgErr = "/img/user_logo.png";
               <p>참여한 사람|</p>
               <div id="join_member">
               <%
-              for (int i = 0; i < 2; i++){
+              String [] groupSetScheduleUsersName = (String[])request.getAttribute("groupSetScheduleUsersName");
+              int ssuCnt = groupSetScheduleUsersName.length;
+              
+              for (int i = 0; i < ssuCnt; i++){
               %>
-                <li><p>방장쓰</p></li>
+                <li><p><%=groupSetScheduleUsersName[i] %></p></li>
               <%
               }
               %>
@@ -644,7 +786,7 @@ String userImgErr = "/img/user_logo.png";
 	    valueSDate.push(null);
 	    valueEDate.push(new Date(2023, 8));
 	    valueDur.push(null);
-	    valuePC.push(0);
+	    valuePC.push(100);
 	<%}%>
 	function drawChart() {
 
@@ -661,7 +803,7 @@ String userImgErr = "/img/user_logo.png";
 			  var index = i+"";
 	      	data.addRow([
 	        	index, valueName.at(i), valueSDate.at(i), valueEDate.at(i),
-	      		valueDur.at(i), valuePC.at(i), null
+	      		valueDur.at(i), valuePC.at(i)-10*i, null
 				]);
 			}
 
@@ -734,16 +876,53 @@ String userImgErr = "/img/user_logo.png";
 
 	      var chart1 = new google.visualization.Gantt(document.getElementById('chart_div1'));
 	      var chart2 = new google.visualization.Gantt(document.getElementById('chart_div2'));
-	      var chart3 = new google.visualization.Gantt(document.getElementById('chart_div3'));
-
-		
+	
 	      chart1.draw(data, options2);
 	      chart2.draw(data, options);
-	      chart3.draw(data, options);
 	    }
 	</script>
 	<script>
 	$(document).ready(function () {
+		
+		//방장인가 부방장인가?				
+		<% if ( HostId[0].equals(userId)) { %>
+			IamHost();
+		<% }		
+		//부방장
+		else{			
+			for (int i = 0; i < SubHostId.length; i++){
+				if (SubHostId[i].equals(userId)){
+			%> 
+			IamSubHost();
+			<% break;
+				}
+			}		
+		} %>
+		
+		//일정표 색 결과 보여주기
+		var people = <%=ssuCnt%>; //참여 인원 수
+		var k = 1/people;	//1인당 투명도
+		for (var i = 0; i < <%=slideMax*42*7%>; i++){
+			var resultColor = k*$(".totalCol").eq(i).attr("data-count");
+			$(".totalCol").eq(i).css("background", "rgba(242, 82, 135, "+ resultColor +")");	
+			
+		}
+		//수정 페이지
+		for (var i = 0; i < <%=slideMax*42*7%>; i++){
+			if($('.tdCol').eq(i).attr("data-count") == 1){
+				$(".tdCol").eq(i).css("background", "rgba(242,82,135,1)");
+				$(".tdCol").eq(i).attr("data-color", "1");
+			}
+		}
+		
+		//일정 버튼 초기 색
+		if(<%=slideMax%> == 1){
+				$(".total_table_left").css("color", "#C9C9C9");
+				$(".total_table_right").css("color", "#C9C9C9");
+			}else{
+				$(".total_table_right").css("color", "#F25287");
+			}
+		
 	 	/* 간트 차트 */
 	  	$("#ganttCreateBtn").click(function(){
 	  		drawChart();
@@ -778,7 +957,7 @@ String userImgErr = "/img/user_logo.png";
 			<div class = "group_information" style = "display : flex; margin : auto; background : white; width : 95%; height : 90%">
 				<div style= " display : flex;  margin : auto; width : 90%; height : 80%">
 					<div id = "group_detail_left" >
-						<h1>감자 프로젝트 그룹</h1>
+						<h1>${groupName}</h1>
 						<h3>개설자 : 방장쓰</h3>
 						<h3></h3>
 						
@@ -840,5 +1019,7 @@ String userImgErr = "/img/user_logo.png";
 		<%@ include file="../footer.jsp" %>
 	</div>
 </div>
+</c:otherwise>
+</c:choose>
 </body>
 </html>

@@ -29,6 +29,8 @@ public class MeetingController {
 	@Qualifier("meetingetcservice")
 	MeetingEtcService etcService;
 	
+	int div_num = 10;
+	
 	
 	@RequestMapping("/meeting")
 	public ModelAndView meeting(@RequestParam(value="category", defaultValue="all") String category, HttpSession session) {
@@ -51,7 +53,7 @@ public class MeetingController {
 		
 		mv.addObject("category", category);
 		mv.addObject("total_cnt", total_cnt);
-		mv.addObject("div_num", 10);
+		mv.addObject("div_num", div_num);
 		mv.addObject("meeting_list", meeting_list);
 		mv.setViewName("meeting/meeting_category");
 		
@@ -123,12 +125,12 @@ public class MeetingController {
 		mv.addObject("user_dto", user_dto);
 		mv.addObject("total_cnt", total_cnt);
 		mv.addObject("total_cnt_wt", total_cnt_wt);
-		mv.addObject("div_num", 10);
+		mv.addObject("div_num", div_num);
 		mv.addObject("app_list", app_list);
 		mv.addObject("app_list_wt", app_list_wt);
 		mv.addObject("user_app_cnt", user_app_cnt);
 		if (dto == null) {
-			mv.setViewName("meeting/meeting_not_found");
+			mv.setViewName("schedule/scheduleError");
 		}
 		else {
 			mv.setViewName("meeting/meeting_detailed");
@@ -151,14 +153,14 @@ public class MeetingController {
 		// 게시글 목록 update
 		List<ApplicantDTO> app_list = etcService.getApplicantList(seq, 1);
 		
-		// 게시글 개수
+		// 신청 댓글 개수
 		int total_cnt = service.applicantCount(seq);
 		
 		// data 전송
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("app_list", app_list);
 		map.put("total_cnt", total_cnt);
-		map.put("div_num", 10);
+		map.put("div_num", div_num);
 		
 		return map;
 	}
@@ -195,14 +197,14 @@ public class MeetingController {
 		// 게시글 목록 update
 		List<ApplicantDTO> app_list = etcService.getApplicantList(seq, 1);
 		
-		// 게시글 개수
+		// 신청 댓글 개수
 		int total_cnt = service.applicantCount(seq);
 		
 		// data 전송
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("app_list", app_list);
 		map.put("total_cnt", total_cnt);
-		map.put("div_num", 10);
+		map.put("div_num", div_num);
 		
 		return map;
 	}
@@ -246,7 +248,7 @@ public class MeetingController {
 		// 결과
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("total_cnt", etcService.getApplicantCount(seq, sort));
-		map.put("div_num", 10);
+		map.put("div_num", div_num);
 		map.put("app_list", app_list);
 		
 		return map;
@@ -268,7 +270,7 @@ public class MeetingController {
 		// 결과
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("total_cnt", etcService.getApplicantCount(seq, sort));
-		map.put("div_num", 10);
+		map.put("div_num", div_num);
 		map.put("app_list", app_list);
 		
 		return map;
@@ -286,7 +288,7 @@ public class MeetingController {
 		// 결과
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("total_cnt", total_cnt);
-		map.put("div_num", 10);
+		map.put("div_num", div_num);
 		map.put("app_list", app_list);
 		return map;
 	}
@@ -360,9 +362,9 @@ public class MeetingController {
 		// 게시글 목록 생성
 		List<MeetingDTO> meeting_list;
 		int total_cnt = 0;
-		if (category.equals("result")) {
-			meeting_list = etcService.getMeetingList(category, "notfinish_open", 1, user_id);
-			total_cnt = etcService.getMeetingCount(category, "notfinish_open", user_id);
+		if (category.equals("notfinish") || category.equals("yetfinish") || category.equals("finish")) {
+			meeting_list = etcService.getMeetingList(category, "open", 1, user_id);
+			total_cnt = etcService.getMeetingCount(category, "open", user_id);
 		}
 		else {
 			meeting_list = etcService.getMeetingList(category, "time", 1, user_id);
@@ -371,7 +373,7 @@ public class MeetingController {
 		
 		mv.addObject("category", category);
 		mv.addObject("total_cnt", total_cnt);
-		mv.addObject("div_num", 10);
+		mv.addObject("div_num", div_num);
 		mv.addObject("meeting_list", meeting_list);
 		mv.setViewName("meeting/meeting_my");
 		
@@ -389,7 +391,7 @@ public class MeetingController {
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("meeting_list", meeting_list);
 		map.put("total_cnt", total_cnt);
-		map.put("div_num", 10);
+		map.put("div_num", div_num);
 		return map;
 	}
 	
@@ -437,7 +439,7 @@ public class MeetingController {
 		
 		mv.addObject("category", category);
 		mv.addObject("total_cnt", total_cnt);
-		mv.addObject("div_num", 10);
+		mv.addObject("div_num", div_num);
 		mv.addObject("meeting_list", meeting_list);
 		mv.setViewName("meeting/meeting_myapp");
 		
@@ -476,7 +478,7 @@ public class MeetingController {
 		}
 		else {
 			seq_list = new ArrayList<>(service.userAppSeqList(user_id));
-			meeting_list = etcService.getMeetingList(category, sort, 1, seq_list);
+			meeting_list = etcService.getMeetingList(category, sort, page, seq_list);
 		}
 		
 		return meeting_list;
@@ -504,7 +506,7 @@ public class MeetingController {
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("meeting_list", meeting_list);
 		map.put("total_cnt", seq_list.size());
-		map.put("div_num", 10);
+		map.put("div_num", div_num);
 		
 		return map;
 	}

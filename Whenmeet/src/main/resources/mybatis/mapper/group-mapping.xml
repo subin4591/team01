@@ -30,8 +30,8 @@
 	<!-- Group insert -->
 	<!-- 그룹 생성 -->
 	<insert id="insertGroup" parameterType="groupdto">
-		insert into `group_table` (group_id, group_name, group_create_time, group_description)
-		values (#{group_id}, #{group_name}, now(), #{group_description})
+		insert into `group_table` (group_id, group_name, group_create_time, group_description, project_end_time)
+		values (#{group_id}, #{group_name}, now(), #{group_description}, #{project_end_time})
 	</insert>
 	<insert id="insertGroupUser" parameterType="groupuserdto">
 		insert into `group_user_table` (group_id, user_id, host, sub_host, set_schedule)

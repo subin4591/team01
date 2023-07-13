@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"main","login","schedule","meeting","search","group"})
+@ComponentScan(basePackages = {"main","login","schedule","meeting","search","group","websocket"})
 @MapperScan(basePackages = {"main","login","schedule","meeting","search","group"})
 public class WhenmeetApplication {
 

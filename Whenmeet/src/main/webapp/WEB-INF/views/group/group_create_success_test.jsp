@@ -12,15 +12,6 @@
 	<script>
 		$(document).ready(function() {
 			alert("그룹 생성이 완료되었습니다.");
-			
-			// 개설일
-			let today = new Date();
-			let year = today.getFullYear();
-			let month = String(today.getMonth() + 1).padStart(2, '0');
-			let day = String(today.getDate()).padStart(2, '0');
-			today = year + "-" + month + "-" + day;
-			
-			$("#ifrt_left p").text(today);
 		});
 	</script>
 </head>
@@ -87,7 +78,7 @@
 						<div id="info_form_right_top">
 							<div id="ifrt_left">
 								<h2>개설일<span>|</span></h2>
-								<p>2023</p>
+								<p>2023-07-07</p>
 							</div>
 							<div id="ifrt_right">
 								<h2>종료일<span>|</span></h2>

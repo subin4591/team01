@@ -9,19 +9,19 @@
 	
 	<c:choose>
 		<c:when test="${ category == 'all' }">
-			<title>전체모임 | 언제만나</title>	
+			<title>전체모집 | 언제만나</title>	
 		</c:when>
 		<c:when test="${ category == 'exercise' }">
-			<title>운동모임 | 언제만나</title>	
+			<title>운동모집 | 언제만나</title>	
 		</c:when>
 		<c:when test="${ category == 'hobby' }">
-			<title>취미모임 | 언제만나</title>	
+			<title>취미모집 | 언제만나</title>	
 		</c:when>
 		<c:when test="${ category == 'study' }">
-			<title>공부모임 | 언제만나</title>	
+			<title>공부모집 | 언제만나</title>	
 		</c:when>
 		<c:when test="${ category == 'etc' }">
-			<title>기타모임 | 언제만나</title>	
+			<title>기타모집 | 언제만나</title>	
 		</c:when>
 		<c:when test="${ category == 'result' }">
 			<title>신청결과 | 언제만나</title>	
@@ -178,7 +178,7 @@
 	<%@ include file="../header.jsp" %>
 	
 	<div id="my_title">
-		<h1>${ user_dto.name }님의 모임신청</h1>	
+		<h1>${ user_dto.name }님의 그룹신청</h1>	
 	</div>
 	
 	<!-- category -->
@@ -201,7 +201,6 @@
 				<c:choose>
 					<c:when test="${ category == 'result' }">
 						<a href="" class="sort_a" data-target="yes">승인</a>
-						<a href="" class="sort_a" data-target="no">거절</a>
 						<a href="" class="sort_a" data-target="yet">대기</a>	
 					</c:when>
 					<c:otherwise>
