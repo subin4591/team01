@@ -13,7 +13,7 @@ $(document).ready(function(){
 	$("#chatinput").on('keydown', function(e) {
 		setTimeout(function(){
 			var input = $("#chatinput").val().trim();
-			if(input !== ""){
+			if(input !== "" && e.keyCode != 13 || e.ctrlKey){
 				$("#chatsend").css("backgroundColor","#F25287");
 			}else{
 				$("#chatsend").css("backgroundColor","rgb(224, 224, 224)");
@@ -45,6 +45,7 @@ $(document).ready(function(){
 					return;
 				},0);
 			}
+			$("#chatsend").css("backgroundColor","rgb(224, 224, 224)");
 			$("#chatinput").submit();
 			
 		}
