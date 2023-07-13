@@ -21,7 +21,7 @@ String userImgErr = "/img/user_logo.png";
 
 <body>
 <c:choose>
-<c:when test = "${userId == null }">
+<c:when test = "${session_id == null }">
 	<script>
 	alert("로그인이 필요한 페이지입니다.");
 	location.href = "/login";
@@ -165,7 +165,7 @@ String userImgErr = "/img/user_logo.png";
 					
 					
 					<form id = "SubHostForm" action= "/schedule/${groupId}/update" method = "POST">
-						<input type = "text" name = "userId" value = "${userId}" style = "display : None"/>
+						<input type = "text" name = "userId" value = "${session_id}" style = "display : None"/>
 						<input type = "text" name = "subHost" value = "0"  style = "display : None">
 						<button type = "submit" class = "SubHostBtn1" >부방장 등록</button>
 						<button type = "submit" class = "SubHostBtn2" >부방장 해제</button>

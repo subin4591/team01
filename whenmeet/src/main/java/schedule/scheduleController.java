@@ -37,8 +37,6 @@ public class scheduleController {
 		UserDTO user = scheduleService.selectUserOne(userId);
 		model.addAttribute("username", user.getName());
 		
-		userId = "admin";	//나중에 꼭 지우기! 방장 아이디임
-		
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("userId", userId);
 		map.put("groupId", groupId);
@@ -538,7 +536,6 @@ public class scheduleController {
 			HttpSession session) throws Exception {
 		
 		String userId = (String)session.getAttribute("session_id");
-		userId = "admin";	//나중에 지우기!
 		
 		userScheduleDTO dto = new userScheduleDTO();
 		dto.setGroup_id(groupId);
