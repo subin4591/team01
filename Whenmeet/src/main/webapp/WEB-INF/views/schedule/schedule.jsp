@@ -452,14 +452,14 @@ String userImgErr = "/img/user_logo.png";
         <!-- 디데이 입력  -->
         <div id="Dday_area" >
         	<div id="Dday" style = "display : None" >
-          	<a><img class = "editDate" src = "/img/방장용_수정_버튼.svg" /></a>
-            <span>D-day</span>
-            <span>14</span>
-            <span>2022년 12월 31일 (토)</span>
-            <span>14:00 - 15:30</span>
+          		<a><img class = "editDate" style = "display : None" src = "/img/방장용_수정_버튼.svg" /></a>
+            	<span>D-day</span>
+            	<span>${finalScheduleList[3]}</span>
+           	 	<span>${finalScheduleList[0]}</span>
+            	<span>${finalScheduleList[1]} - ${finalScheduleList[2]}</span>
           </div>
           <div id="DdayInit" >
-          	<a><img class = "editDate" src = "/img/방장용_수정_버튼.svg" /></a>
+          	<a><img class = "editDate" style = "display : None" src = "/img/방장용_수정_버튼.svg" /></a>
             <span>D-day가<br>아직 등록되지 않았습니다.</span>
           </div>
           		
@@ -469,20 +469,20 @@ String userImgErr = "/img/user_logo.png";
           	<!-- 이 부분은 최종 결정 난 날짜와 시각을 방장 or 부방장이 수동으로 입력 -->
           	<!-- 편집 표시 자체를 방장들만 볼 수 있게 -->
           	<!-- 이미지버튼으로 캘린더 띄우기 참고 : https://velog.io/@rkio/CSS-input-type-date-캘린더-아이콘-커스텀하기 -->
-          	<form action = "#second_section" method = "get" id = "Dday_frm">
+          	<form action = "/schedule/${groupId}/updateDday#second_section" method = "POST" id = "Dday_frm" onsubmit = "return DdayError()">
           		<br><br>
           		<span><a id = "DdayEditDate">날짜 : 0000-00-00</a>
-          			<input type = "date" class = "spanImg" id = "finalDate" placeholder = "" onchange = "changeDate()"/>
+          			<input type = "date" name = "date" class = "spanImg" id = "finalDate" placeholder = "" onchange = "changeDate()"/>
           		</span>          	
           		<br><br>
           		<span><a id = "DdayEditTime1">시작 시각 : 00:00</a>
-          			<input type = "time" class = "spanImg" id = "finalStartTime" placeholder = "" onchange = "changeTime1()"/>
+          			<input type = "time" name = "start" class = "spanImg" id = "finalStartTime" placeholder = "" onchange = "changeTime1()"/>
           		</span>       
             	<br><br>
             	<span><a id = "DdayEditTime2">종료 시각 : 00:00</a>
-          			<input type = "time" class = "spanImg" id = "finalEndTime" placeholder = "" onchange = "changeTime2()"/>
+          			<input type = "time" name = "end" class = "spanImg" id = "finalEndTime" placeholder = "" onchange = "changeTime2()"/>
             	<br>
-            	<input type = "submit" value = "저장" alt = 0; class = "submitBtn" onclick="DdayUpdate()"/>            
+            	<input type = "submit" value = "저장" class = "submitBtn"/>            
           	</form>
           </div>
           <%
@@ -898,6 +898,12 @@ String userImgErr = "/img/user_logo.png";
 				}
 			}		
 		} %>
+		
+		//Dday 초기화 화면 숨기기
+		if (<%=(int)request.getAttribute("DdayTrue")%> == 1){
+			$("#Dday").show();
+			$("#DdayInit").hide();			
+		}
 		
 		//일정표 색 결과 보여주기
 		var people = <%=ssuCnt%>; //참여 인원 수

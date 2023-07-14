@@ -33,6 +33,9 @@ public class scheduleService {
 	public GroupDTO selectGroupOne(String group_id) throws Exception {
 		return scheduleMapper.selectGroupOne(group_id);
 	}
+	public void updateGroupSchedule(HashMap<String, String> map) throws Exception {
+		scheduleMapper.updateGroupSchedule(map);
+	}
 	
 	public List<GroupUserDTO> selectGroupUser() throws Exception{
 		return scheduleMapper.selectGroupUser();

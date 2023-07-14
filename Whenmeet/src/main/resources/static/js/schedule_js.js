@@ -4,10 +4,11 @@
 //방장의 관리
 function IamHost(){
 	$("#SubHostForm").show();
+	$("#Dday_area .editDate").show();
 }
 //부방장의 관리
 function IamSubHost(){
-	
+	$("#Dday_area .editDate").show();
 }
 //슬라이드 테이블
 var slidecount = 1;
@@ -47,48 +48,24 @@ function slideTable(max, LR){
 	}
 }
 
-//d-day 업데이트하기
-function DdayUpdate(){
-	var Dday = $("#Dday").children('span').eq(1);
-	var finalDate = $("#Dday").children('span').eq(2);
-	var finalTime = $("#Dday").children('span').eq(3);
-	
+//d-day 에러 체크하기
+function DdayError(){
 	var date = $("#finalDate").val();
-	var startTime = $("#finalStartTime").val();
-	var endTime = $("#finalEndTime").val();
 	
 	var temp = date.split("-");
 	var Day = getDayOfWeek(temp);
 	var today = new Date();
 	Ddate = new Date(date);
 	
-	if (today > Ddate || date == ""){
+	if (Math.floor((today.getTime()/(24*60*60*1000))) > (Ddate.getTime()/(24*60*60*1000)) || date == ""){
+		console.log(Math.floor((today.getTime()/(24*60*60*1000))));
+		console.log(Ddate.getTime()/(24*60*60*1000));
 		alert("정확한 날짜를 입력해주세요.");
 		return false;
 	}
-	else if (today.getFullYear() == Ddate.getFullYear() && today.getMonth() == Ddate.getMonth() && today.getDate() == Ddate.getDate()){
-		Dday.text("Today");
-	}else{
-		Dday.text(
-		Math.ceil(Math.abs((Ddate.getTime() - today.getTime())/(1000*60*60*24)))-1
-		);
-	}
-	$(this).attr("alt", 1);
-	
-	finalDate.text(temp[0]+"년 "+ temp[1]+"월 "+temp[2]+"일 ("+Day+")");
-	
-	if(startTime == ""){
-		startTime = "미정";
-	}
-	if(endTime == ""){
-		endTime = "미정";
-	}
-	
-	finalTime.text(startTime + " - " + endTime);
-	
-	$("#Dday_edit").hide();
-	$("#Dday").show();
+
 }
+
 //리스트 삭제하기
 function deleteBtn(element){
 	var temp = $("#DoItContainer");
@@ -492,20 +469,24 @@ $("#ScheduleEditBtn").click(function(){
 	});
 	$("#timeTable").show();
 })
+
+//Dday
 $(".editDate").click(function(){
-	var today = new Date();
 	$("#Dday_edit").show();
 	$("#DdayInit").hide();
 	$("#Dday").hide();
 })
 $("#endEditDate").click(function(){
 	$("#Dday_edit").hide();
-	if ($("#Dday_frm .submitBtn").attr("alt") == 1){
+	if ($("#Dday").children("span").eq(1).text() == "*"){
+		console.log("DdayInit");
+		$("#DdayInit").show();
+	}else{
 		$("#DdayInit").hide();
 		$("#Dday").show();
-	}else{
-		$("#DdayInit").show();
+		console.log("Dday");
 	}
 })
 
+	
 });

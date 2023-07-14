@@ -417,6 +417,22 @@ public class scheduleController {
 			request.setAttribute("ThusdayList2", ThusdayList2);
 			request.setAttribute("FridayList2", FridayList2);
 			request.setAttribute("SaturdayList2", SaturdayList2);
+			
+		//D-day 표시
+		String final_schedule_str = scheduleService.selectGroupOne(groupId).getFinal_schedule();
+		String[] finalScheduleList;
+		if (final_schedule_str != null) {
+			finalScheduleList = final_schedule_str.split(",");
+			request.setAttribute("DdayTrue", 1);
+		}else {
+			finalScheduleList = new String[4];
+			finalScheduleList[0] = "-";
+			finalScheduleList[1] = "미정";
+			finalScheduleList[2] = "미정";
+			finalScheduleList[3] = "*";
+			request.setAttribute("DdayTrue", 0);
+		}
+		model.addAttribute("finalScheduleList", finalScheduleList);
 		
 		request.setAttribute("userId", userId);
 		
@@ -642,4 +658,52 @@ public class scheduleController {
 		return "redirect:";
 	}
 	
+	@RequestMapping("/schedule/{groupId}/updateDday")
+	public String updateDday(@PathVariable("groupId") String groupId,
+			@RequestParam(value = "date", required = false) String date,
+			@RequestParam(value = "start", required = false) String start,
+			@RequestParam(value = "end", required = false) String end) throws Exception {
+		
+		if (date == null || date == "") {
+			return "redirect:";
+		}
+		if (start == null || start == "") {
+			start = "미정";
+		}
+		if (end == null || end == "") {
+			end = "미정";
+		}
+		
+		HashMap<String, String> map = new HashMap<String, String>();
+		
+		Date today = new Date();
+		Date date2 = new Date();
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy년 MM월 dd일 (E)");
+		
+		String[] dates = date.split("-");
+		cal.setTime(date2);
+		
+		cal.set(Integer.parseInt(dates[0]), Integer.parseInt(dates[1])-1, Integer.parseInt(dates[2]));		
+		date2= cal.getTime();
+		
+		int dday = (int) (Math.ceil(Math.abs((date2.getTime() - today.getTime())/(1000*60*60*24) )));
+		
+		String resultDday = dday+"";
+		if (dday == 0) {
+			resultDday = "Today";
+		}
+		else if (dday < 0) {
+			resultDday = "+ " + resultDday;
+		}
+		
+		String resultDate = format.format(date2);
+		resultDate += "," + start + "," + end + "," + resultDday;
+		
+		map.put("group_id", groupId);
+		map.put("final_schedule", resultDate);
+		
+		scheduleService.updateGroupSchedule(map);
+		return "redirect:";
+	}
 }
