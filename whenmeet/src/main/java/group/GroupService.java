@@ -1,5 +1,7 @@
 package group;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +29,23 @@ public class GroupService {
 	}
 	
 	// 그룹 유저 정보
-	public List<UserDTO> groupUserInfo(GroupCreateDTO dto) {
-		return dao.groupUserInfo(dto);
+	public List<UserDTO> groupUserInfo(ArrayList<String> list) {
+		return dao.groupUserInfo(list);
 	}
 	
 	// 그룹 아이디 중복체크
 	public int findGroupID(String group_id) {
 		return dao.findGroupID(group_id);
+	}
+	
+	// 그룹 방장, 부방장 아이디
+	public List<String> groupWhoHost(HashMap<String, String> map) {
+		return dao.groupWhoHost(map);
+	}
+	
+	// 그룹 정보
+	public GroupDTO groupInfo(String group_id) {
+		return dao.groupInfo(group_id);
 	}
 	
 	
