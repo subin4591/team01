@@ -31,16 +31,11 @@
 			
 			// submit event
 			$("#group_submit").on("click", function() {
-				let ra_txt = "";
 				let in_txt = "";
 				let gn_len = $("#group_name").val().length;
 				let tx_len = $("#info_form_right textarea").val().length;
 				let alert_TF = false;
 				
-				if (!$("#create_forms input[name='sub_host_id']:checked").val()) {
-					ra_txt = "부방장을 선택하세요.\n";
-					alert_TF = true;
-				}
 				if (gn_len == 0 && tx_len == 0) {
 					in_txt = "그룹 이름, 그룹 설명을 입력하세요.";
 					alert_TF = true;
@@ -55,7 +50,7 @@
 				}
 				
 				if (alert_TF) {
-					alert(ra_txt + in_txt);
+					alert(in_txt);
 				}
 				else {
 					$("#create_forms").submit();
@@ -98,8 +93,11 @@
 								<div class="profile_img">
 									<img alt="profile_img" src="${ user.profile_url }">
 								</div>
-								<label for="ra_${ user.user_id }"><h2>${ user.name }</h2></label>
-								<input id="ra_${ user.user_id }" class="sub_host_radio" type="radio" name="sub_host_id" value="${ user.user_id }">
+								<h2>${ user.name }</h2>
+								<div class="sub_chk_list">
+									<input id="chk_${ user.user_id }" class="sub_checkboxs" type="checkbox" name="sub_host_id" value="${ user.user_id }">
+									<label for="chk_${ user.user_id }"></label>
+								</div>
 								<input type="hidden" name="user_list[]" value="${ user.user_id }">
 							</li>
 						</c:forEach>

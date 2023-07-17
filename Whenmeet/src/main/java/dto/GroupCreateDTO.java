@@ -3,8 +3,8 @@ package dto;
 import java.util.ArrayList;
 
 public class GroupCreateDTO {
-	String host_id, sub_host_id;
-	ArrayList<String> user_list;
+	String host_id;
+	ArrayList<String> sub_host_id, user_list;
 	String group_name, group_description, project_end_time;
 	
 	public String getHost_id() {
@@ -13,10 +13,10 @@ public class GroupCreateDTO {
 	public void setHost_id(String host_id) {
 		this.host_id = host_id;
 	}
-	public String getSub_host_id() {
+	public ArrayList<String> getSub_host_id() {
 		return sub_host_id;
 	}
-	public void setSub_host_id(String sub_host_id) {
+	public void setSub_host_id(ArrayList<String> sub_host_id) {
 		this.sub_host_id = sub_host_id;
 	}
 	public ArrayList<String> getUser_list() {

@@ -51,13 +51,17 @@
 							<label for="ra_${ host_info.user_id }"><h2>${ host_info.name }</h2></label>
 							<img class="host_img" src="/img/방장표시.svg">
 						</li>
-						<li>
-							<div class="profile_img">
-								<img alt="profile_img" src="${ sub_host_info.profile_url }">
-							</div>
-							<label for="ra_${ sub_host_info.user_id }"><h2>${ sub_host_info.name }</h2></label>
-							<img class="host_img" src="/img/부방장표시.svg">
-						</li>
+						
+						<c:forEach items="${ sub_host_info }" var="sub">
+							<li>
+								<div class="profile_img">
+									<img alt="profile_img" src="${ sub.profile_url }">
+								</div>
+								<h2>${ sub.name }</h2>
+								<img class="host_img" src="/img/부방장표시.svg">
+							</li>
+						</c:forEach>
+						
 						<c:forEach items="${ user_info }" var="user">
 							<li>
 								<div class="profile_img">
