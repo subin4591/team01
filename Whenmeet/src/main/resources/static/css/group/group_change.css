@@ -17,8 +17,8 @@ a:hover {
 	text-decoration: underline;
 }
 
-/* group_create */
-#group_create{
+/* group_change */
+#group_change{
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -48,26 +48,35 @@ a:hover {
 #host_info span:first-child {
 	color: #F25287;
 }
-#create_forms {
+#change_forms {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	width: 80%;
 	margin-top: 20px;
 }
 
-/* group_create_form */
-#group_user_form, #group_info_form {
+/* group_user_form */
+#group_user_form {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	height: 600px;
+	width: 100%;
+	background-color: red;
+}
+#host_form, #sub_form, #out_form {
 	display: flex;
 	flex-direction: column;
-	background-color: white;
-	height: 600px;
+	align-items: center;
+	justify-content: center;
+	width: 30%;
+	height: 100%;
+	background-color: pink;
 }
-#group_user_form {
-	flex: 3;	
-}
-#user_form_title, #info_form_title {
+.user_form_title, #info_form_title {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -75,17 +84,17 @@ a:hover {
 	width: 100%;
 	height: 50px;
 }
-#user_from_ul {
-	height: 100%;
+.user_from_ul {
+	width: 100%;
 	overflow-y: auto;
 }
-#user_from_ul::-webkit-scrollbar{
+.user_from_ul::-webkit-scrollbar{
 	width : 10px;
 }
-#user_from_ul::-webkit-scrollbar-thumb {
+.user_from_ul::-webkit-scrollbar-thumb {
     background-color: #F25287;
 }
-#user_from_ul::-webkit-scrollbar-track {
+.user_from_ul::-webkit-scrollbar-track {
     background-color: #D9D9D9;
 }
 #group_user_form ul {
@@ -109,8 +118,7 @@ a:hover {
 	margin-bottom: 10px;
 	padding: 0 10px;
 }
-/*
-.sub_host_radio {
+.host_radio {
 	width: 25px;
     height: 25px;
 
@@ -119,18 +127,17 @@ a:hover {
     border-radius: 50%;
     transition: border 0.5s ease-in-out;
 }
-.sub_host_radio:checked {
+.host_radio:checked {
     border: 0.5em solid #F25287;
 }
-.sub_host_radio:focus-visible {
+.host_radio:focus-visible {
     outline-offset: max(2px, 0.1em);
     outline: max(2px, 0.1em) dotted #F25287;
 }
-.sub_host_radio:hover {
+.host_radio:hover {
     box-shadow: 0 0 0 max(2px, 0.2em) #DB9F9F;
     cursor: pointer;
 }
-*/
 .sub_chk_list {
 	display: flex;
 	flex-direction: row;
@@ -157,21 +164,24 @@ a:hover {
 	text-align: center;
 	margin-left: 5px;
 }
-.host_img {
-	width: 25px;
-	height: 25px;
-}
 
 /* group_info_form */
 #group_info_form {
-	flex: 7;
-	margin-left: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: white;
+	height: 600px;
+	width: 100%;
+	margin-top: 20px;
+	background-color: white;
 }
 #info_form {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	height: 100%;
+	width: 90%;
 	padding: 25px 20px;
 }
 #info_form_left {
@@ -185,7 +195,7 @@ a:hover {
 	height: 100%;
 }
 #group_name {
-	margin-top: 40%;
+	margin-top: 30%;
 	font-weight: bold;
 	font-size: 30px;
 	text-align: center;
@@ -259,6 +269,8 @@ a:hover {
 	font-size: 18px;
 	color: #AAAAAA;
 }
+
+/* btn */
 #group_submit {
 	width: 350px;
 	height: 80px;
@@ -271,33 +283,25 @@ a:hover {
 	border-color: #F25287;
 	margin-top: 30px;
 }
-#group_submit:hover {
-	color: white;
-	background-color: #F25287;
-	transition: 0.5s;
-}
-#group_submit:active {
-	transform: scale(0.9);
-}
-#gcs_btns * {
-	width: 150px;
-	height: 40px;
-	font-size: 18px;
-	border: 2px solid;
-	border-radius: 10px;
-	margin-top: 30px;
-	margin-left: 5px;
-	margin-right: 5px;
-}
-#go_main {
-	font-weight: bold;
+.chn_btn:hover {
 	color: #F25287;
 	background-color: #F9F3F3;
 	border-color: #F25287;
+	transition: 0.5s;
 }
-#go_schedule {
+.chn_btn:active {
+	transform: scale(0.9);
+}
+.chn_btn {
+	width: 130px;
+	height: 50px;
+	border: 3px solid;
+	border-radius: 40px;
+	font-size: 20px;
+	font-weight: bold;
 	font-weight: bold;
 	color: white;
 	background-color: #F25287;
 	border-color: #F25287;
+	margin: 10px 0;
 }

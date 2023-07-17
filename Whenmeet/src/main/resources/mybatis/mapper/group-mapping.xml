@@ -16,14 +16,34 @@
 	</select>
 	
 	<!-- 그룹 유저 정보 -->
-	<select id="groupUserInfo" parameterType="groupcreatedto" resultType="userdto">
+	<select id="groupUserInfo" parameterType="java.util.ArrayList" resultType="userdto">
 		select user_id, name, profile_url from user_table where
-		<foreach collection="user_list" item="user" separator=" or ">user_id = #{user}</foreach>
+		<foreach collection="list" item="user" separator=" or ">user_id = #{user}</foreach>
 	</select>
 	
 	<!-- 그룹 아이디 중복체크 -->
 	<select id="findGroupID" parameterType="String" resultType="int">
 		select count(*) from `group_table`
+		where group_id = #{group_id}
+	</select>
+	
+	<!-- 그룹 방장, 부방장 아이디 -->
+	<select id="groupWhoHost" parameterType="hashmap" resultType="String">
+		select user_id from `group_user_table`
+		where group_id = #{group_id}
+		<choose>
+			<when test="host == 'host' || host == 'sub_host'">
+				and ${host} = 1
+			</when>
+			<otherwise>
+				and host = 0 and sub_host = 0
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 그룹 정보 -->
+	<select id="groupInfo" parameterType="String" resultType="groupdto">
+		select * from `group_table`
 		where group_id = #{group_id}
 	</select>
 	
