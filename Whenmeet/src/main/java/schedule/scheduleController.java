@@ -34,6 +34,9 @@ public class scheduleController {
 	public String start(@PathVariable("groupId") String groupId, Model model, HttpSession session, HttpServletRequest request) throws Exception {
 		
 		String userId = (String) session.getAttribute("session_id");
+		if (userId == null) {
+			return "schedule/schedule";
+		}
 		UserDTO user = scheduleService.selectUserOne(userId);
 		model.addAttribute("username", user.getName());
 		
@@ -321,7 +324,6 @@ public class scheduleController {
 		int[][] FridayList = new int[seqs.length][42]; 
 		int[][] SaturdayList = new int[seqs.length][42]; 
 
-		if (scheduleService.selectUserScheduleCntAll(usdto) > 0) {
 			/*group_id / seq / count 가 일치할 때, sun~sat에 1인 값의 총 개수 합
 			이 배열의 크기는 group_id/seq/count의 개수만큼 존재한다.*/
 			usmap.put("group_id", groupId);
@@ -330,31 +332,40 @@ public class scheduleController {
 			for (int i = 0; i < seqs.length; i++) {
 				usmap.put("seq", seqs[i]);
 				for (int j = 0; j < 42; j++) {
-					usmap.put("cnt", j);
-					usmap.put("sun", 1);
-					SundayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
-					usmap.put("sun", 0);
-					usmap.put("mon", 1);
-					MondayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
-					usmap.put("mon", 0);
-					usmap.put("tue", 1);
-					TuesdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
-					usmap.put("tue", 0);
-					usmap.put("wed", 1);
-					WednesdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
-					usmap.put("wed", 0);
-					usmap.put("thu", 1);
-					ThusdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
-					usmap.put("thu", 0);
-					usmap.put("fri", 1);
-					FridayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
-					usmap.put("fri", 0);
-					usmap.put("sat", 1);
-					SaturdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
-					usmap.put("sat", 0);
+					if (scheduleService.selectUserScheduleCntAll(usdto) > 0) {
+						usmap.put("cnt", j);
+						usmap.put("sun", 1);
+						SundayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+						usmap.put("sun", 0);
+						usmap.put("mon", 1);
+						MondayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+						usmap.put("mon", 0);
+						usmap.put("tue", 1);
+						TuesdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+						usmap.put("tue", 0);
+						usmap.put("wed", 1);
+						WednesdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+						usmap.put("wed", 0);
+						usmap.put("thu", 1);
+						ThusdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+						usmap.put("thu", 0);
+						usmap.put("fri", 1);
+						FridayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+						usmap.put("fri", 0);
+						usmap.put("sat", 1);
+						SaturdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+						usmap.put("sat", 0);
+					}else {
+						SundayList[i][j] = 0;
+						MondayList[i][j] = 0;
+						TuesdayList[i][j] = 0;
+						WednesdayList[i][j] = 0;
+						ThusdayList[i][j] = 0;
+						FridayList[i][j] = 0;
+						SaturdayList[i][j] = 0;
+					}
 				}
 			}
-
 			request.setAttribute("SundayList", SundayList);
 			request.setAttribute("MondayList", MondayList);
 			request.setAttribute("TuesdayList", TuesdayList);
@@ -362,11 +373,67 @@ public class scheduleController {
 			request.setAttribute("ThusdayList", ThusdayList);
 			request.setAttribute("FridayList", FridayList);
 			request.setAttribute("SaturdayList", SaturdayList);
-		}
 
 		//유저 별 일정표 수정 표시 (이전에 입력했던 거 보이도록)
-		// *** 시간 남으면 작성... 이거 없으면 수정할 때마다 처음부터 다시 입력해야하는 불편함이 있음
-				
+		usdto.setGroup_id(groupId);
+		usdto.setUser_id(userId);
+		//sunday의 배열 : 이중배열. [seq][cnt] = 입력된 갯수
+		int[][] SundayList2 = new int[seqs.length][42]; 
+		int[][] MondayList2 = new int[seqs.length][42]; 
+		int[][] TuesdayList2 = new int[seqs.length][42]; 
+		int[][] WednesdayList2 = new int[seqs.length][42]; 
+		int[][] ThusdayList2 = new int[seqs.length][42]; 
+		int[][] FridayList2 = new int[seqs.length][42]; 
+		int[][] SaturdayList2 = new int[seqs.length][42]; 
+			/*group_id / seq / count 가 일치할 때, sun~sat에 1인 값
+			이 배열의 크기는 group_id/seq/count의 개수만큼 존재한다.*/
+			for (int i = 0; i < seqs.length; i++) {
+				usdto.setSeq(seqs[i]);
+				for (int j = 0; j < 42; j++) {
+					usdto.setCnt(j);
+					if (scheduleService.selectUserScheduleCnt(usdto) > 0) {
+						SundayList2[i][j] = scheduleService.selectUserSchedule(usdto).getSun();
+						MondayList2[i][j] = scheduleService.selectUserSchedule(usdto).getMon();
+						TuesdayList2[i][j] = scheduleService.selectUserSchedule(usdto).getTue();
+						WednesdayList2[i][j] = scheduleService.selectUserSchedule(usdto).getWed();
+						ThusdayList2[i][j] = scheduleService.selectUserSchedule(usdto).getThu();
+						FridayList2[i][j] = scheduleService.selectUserSchedule(usdto).getFri();
+						SaturdayList2[i][j] = scheduleService.selectUserSchedule(usdto).getSat();
+					}else {
+						SundayList2[i][j] = 0;
+						MondayList2[i][j] = 0;
+						TuesdayList2[i][j] = 0;
+						WednesdayList2[i][j] = 0;
+						ThusdayList2[i][j] = 0;
+						FridayList2[i][j] = 0;
+						SaturdayList2[i][j] = 0;
+					}
+				}
+			}
+			request.setAttribute("SundayList2", SundayList2);
+			request.setAttribute("MondayList2", MondayList2);
+			request.setAttribute("TuesdayList2", TuesdayList2);
+			request.setAttribute("WednesdayList2", WednesdayList2);
+			request.setAttribute("ThusdayList2", ThusdayList2);
+			request.setAttribute("FridayList2", FridayList2);
+			request.setAttribute("SaturdayList2", SaturdayList2);
+			
+		//D-day 표시
+		String final_schedule_str = scheduleService.selectGroupOne(groupId).getFinal_schedule();
+		String[] finalScheduleList;
+		if (final_schedule_str != null) {
+			finalScheduleList = final_schedule_str.split(",");
+			request.setAttribute("DdayTrue", 1);
+		}else {
+			finalScheduleList = new String[4];
+			finalScheduleList[0] = "-";
+			finalScheduleList[1] = "미정";
+			finalScheduleList[2] = "미정";
+			finalScheduleList[3] = "*";
+			request.setAttribute("DdayTrue", 0);
+		}
+		model.addAttribute("finalScheduleList", finalScheduleList);
+		
 		request.setAttribute("userId", userId);
 		
 		model.addAttribute("userId", userId);		
@@ -591,4 +658,52 @@ public class scheduleController {
 		return "redirect:";
 	}
 	
+	@RequestMapping("/schedule/{groupId}/updateDday")
+	public String updateDday(@PathVariable("groupId") String groupId,
+			@RequestParam(value = "date", required = false) String date,
+			@RequestParam(value = "start", required = false) String start,
+			@RequestParam(value = "end", required = false) String end) throws Exception {
+		
+		if (date == null || date == "") {
+			return "redirect:";
+		}
+		if (start == null || start == "") {
+			start = "미정";
+		}
+		if (end == null || end == "") {
+			end = "미정";
+		}
+		
+		HashMap<String, String> map = new HashMap<String, String>();
+		
+		Date today = new Date();
+		Date date2 = new Date();
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy년 MM월 dd일 (E)");
+		
+		String[] dates = date.split("-");
+		cal.setTime(date2);
+		
+		cal.set(Integer.parseInt(dates[0]), Integer.parseInt(dates[1])-1, Integer.parseInt(dates[2]));		
+		date2= cal.getTime();
+		
+		int dday = (int) (Math.ceil(Math.abs((date2.getTime() - today.getTime())/(1000*60*60*24) )));
+		
+		String resultDday = dday+"";
+		if (dday == 0) {
+			resultDday = "Today";
+		}
+		else if (dday < 0) {
+			resultDday = "+ " + resultDday;
+		}
+		
+		String resultDate = format.format(date2);
+		resultDate += "," + start + "," + end + "," + resultDday;
+		
+		map.put("group_id", groupId);
+		map.put("final_schedule", resultDate);
+		
+		scheduleService.updateGroupSchedule(map);
+		return "redirect:";
+	}
 }

@@ -28,6 +28,13 @@
 			where group_id = #{group_id}
 		]]>
 	</select>
+	<update id = "updateGroupSchedule" parameterType = "HashMap">
+	<![CDATA[
+		update group_table
+		set final_schedule = #{final_schedule}
+		where group_id = #{group_id};
+	]]>
+	</update>
 	
 	<!-- 그룹-유저 테이블 관련 -->
 	<select id = "selectGroupUser" resultType = "dto.GroupUserDTO">
@@ -167,9 +174,20 @@
 	<![CDATA[
 		select count(*)
 		from user_schedule_table
-		where group_id = #{group_id} and user_id = #{user_id} and seq = #{seq} and cnt = #{cnt}
+		where group_id = #{group_id} and user_id = #{user_id} 
 	]]>
+	<if test = "seq != null">
+	<![CDATA[
+		and seq = #{seq}
+	]]>
+	</if>
+	<if test = "cnt != null">
+	<![CDATA[
+		and cnt = #{cnt}
+	]]>
+	</if>
 	</select>
+	
 	<select id = "selectUserScheduleCntAll" parameterType = "dto.userScheduleDTO" resultType = "int">
 	<![CDATA[
 		select count(*)
