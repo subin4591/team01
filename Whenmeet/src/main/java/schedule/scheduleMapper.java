@@ -21,6 +21,7 @@ public interface scheduleMapper {
 	
 	List<GroupDTO> selectGroup() throws Exception;
 	GroupDTO selectGroupOne(String group_id) throws Exception;
+	void updateGroupSchedule(HashMap<String, String> map);
 	
 	List<GroupUserDTO> selectGroupUser() throws Exception;
 	GroupUserDTO selectGroupUserOne(HashMap<String, Object> map) throws Exception;
