@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import dto.GroupCreateDTO;
@@ -170,12 +171,24 @@ public class GroupController {
 				// 부방장 정보
 				map.put("host", "sub_host");
 				ArrayList<String> sub_list = new ArrayList<>(service.groupWhoHost(map));
-				List<UserDTO> sub_info = service.groupUserInfo(sub_list);
+				List<UserDTO> sub_info;
+				if (sub_list.size() != 0) {
+					sub_info = service.groupUserInfo(sub_list);
+				}
+				else {
+					sub_info = null;
+				}
 				
 				// 멤버 정보
 				map.put("host", "member");
 				ArrayList<String> mem_list = new ArrayList<>(service.groupWhoHost(map));
-				List<UserDTO> mem_info = service.groupUserInfo(mem_list);
+				List<UserDTO> mem_info;
+				if (mem_list.size() != 0) {
+					mem_info = service.groupUserInfo(mem_list);
+				}
+				else {
+					mem_info = null;
+				}
 				
 				// 그룹 정보
 				GroupDTO group_info = service.groupInfo(groupId);
@@ -195,6 +208,114 @@ public class GroupController {
 		}
 		
 		return mv;
+	}
+	
+	@RequestMapping("/group/change/host")
+	@ResponseBody
+	public HashMap<String, String> groupChangeHost(GroupCreateDTO dto, HttpSession session) {
+		// 기존 host, 변경 host
+		String session_id = (String)session.getAttribute("session_id");
+		String host_id = dto.getHost_id();
+		
+		// 기존 host 일반 멤버로 변경
+		ArrayList<String> user_list = new ArrayList<>();
+		user_list.add(session_id);
+		dto.setUser_list(user_list);
+		
+		service.updateNotHost(dto);
+		
+		// host 변경
+		user_list.clear();
+		user_list.add(host_id);
+		dto.setUser_list(user_list);
+		dto.setHost_id("host");
+		
+		service.updateHost(dto);
+		
+		// 새 host 정보
+		UserDTO user = service.groupHostInfo(host_id);
+		
+		// return
+		HashMap<String, String> map = new HashMap<>();
+		map.put("host", user.getName());
+		
+		return map;
+	}
+	
+	@RequestMapping("/group/change/subHost")
+	@ResponseBody
+	public HashMap<String, Object> groupChangeSubHost(GroupCreateDTO dto) {
+		// 기존 sub host
+		ArrayList<String> getName = new ArrayList<>();
+		ArrayList<String> getList = dto.getUser_list();
+		
+		if (getList != null) {
+			for (int i = 0; i < getList.size(); i++) {
+				getName.add(service.groupHostInfo(getList.get(i)).getName());
+			}
+			
+			// 기존 sub host 일반 멤버로 변경
+			service.updateNotHost(dto);
+		}
+		else {
+			getName.add("없음");
+		}
+		
+		String origin_sub = String.join(", ", getName);
+		
+		// 변경 sub host
+		getName.clear();
+		getList = dto.getSub_host_id();
+		
+		if (getList != null) {
+			for (int i = 0; i < getList.size(); i++) {
+				getName.add(service.groupHostInfo(getList.get(i)).getName());
+			}
+			
+			// sub host 변경
+			dto.setUser_list(getList);
+			dto.setHost_id("sub_host");
+			
+			service.updateHost(dto);
+		}
+		else {
+			getName.add("없음");
+		}
+		
+		String change_sub = String.join(", ", getName);
+		
+		// return
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("origin_sub", origin_sub);
+		map.put("change_sub", change_sub);
+		map.put("sub_host_id", dto.getSub_host_id());
+		
+		return map;
+	}
+	
+	@RequestMapping("/group/change/member")
+	@ResponseBody
+	public HashMap<String, Object> groupChangeMember(GroupCreateDTO dto) {
+		int cnt = service.deleteMember(dto);
+		
+		// return
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("cnt", cnt);
+		return map;
+	}
+	
+	@RequestMapping("/group/change/info")
+	@ResponseBody
+	public HashMap<String, Object> groupChangeInfo(GroupDTO dto) {
+		if (dto.getProject_end_time().equals("")) { dto.setProject_end_time(null); }
+		
+		// 그룹 수정
+		service.updateGroupInfo(dto);
+		
+		// return
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("result", "성공");
+		return map;
 	}
 	
 	/// test

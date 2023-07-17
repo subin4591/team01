@@ -64,4 +64,26 @@ public class GroupService {
 	public void updateMeetingEnd(int seq) {
 		dao.updateMeetingEnd(seq);
 	}
+	
+	// 일반 멤버로 변경
+	public void updateNotHost(GroupCreateDTO dto) {
+		dao.updateNotHost(dto);
+	}
+	
+	// 방장, 부방장 설정
+	public void updateHost(GroupCreateDTO dto) {
+		dao.updateHost(dto);
+	}
+	
+	// 그룹 정보 수정
+	public void updateGroupInfo(GroupDTO dto) {
+		dao.updateGroupInfo(dto);
+	}
+	
+	
+	/// Group delete
+	// 멤버 탈퇴
+	public int deleteMember(GroupCreateDTO dto) {
+		return dao.deleteMember(dto);
+	}
 }
