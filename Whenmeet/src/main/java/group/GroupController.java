@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import dto.GroupCreateDTO;
@@ -170,12 +171,24 @@ public class GroupController {
 				// 부방장 정보
 				map.put("host", "sub_host");
 				ArrayList<String> sub_list = new ArrayList<>(service.groupWhoHost(map));
-				List<UserDTO> sub_info = service.groupUserInfo(sub_list);
+				List<UserDTO> sub_info;
+				if (sub_list.size() != 0) {
+					sub_info = service.groupUserInfo(sub_list);
+				}
+				else {
+					sub_info = null;
+				}
 				
 				// 멤버 정보
 				map.put("host", "member");
 				ArrayList<String> mem_list = new ArrayList<>(service.groupWhoHost(map));
-				List<UserDTO> mem_info = service.groupUserInfo(mem_list);
+				List<UserDTO> mem_info;
+				if (mem_list.size() != 0) {
+					mem_info = service.groupUserInfo(mem_list);
+				}
+				else {
+					mem_info = null;
+				}
 				
 				// 그룹 정보
 				GroupDTO group_info = service.groupInfo(groupId);
@@ -197,86 +210,111 @@ public class GroupController {
 		return mv;
 	}
 	
-	/// test
-	@RequestMapping("/group/create/test")
-	public ModelAndView groupCreateTest() {
-		// test data
-		int seq = 51;
-		String session_id = "hwang1";
+	@RequestMapping("/group/change/host")
+	@ResponseBody
+	public HashMap<String, String> groupChangeHost(GroupCreateDTO dto, HttpSession session) {
+		// 기존 host, 변경 host
+		String session_id = (String)session.getAttribute("session_id");
+		String host_id = dto.getHost_id();
 		
-		// 승인된 유저 목록 생성
-		List<UserDTO> user_info;
-		GroupCreateDTO dto = new GroupCreateDTO();
-		dto.setHost_id(session_id);
-		dto.setUser_list(new ArrayList<>(service.groupOkUsers(seq)));
-		if (dto.getUser_list().size() == 0) {
-			user_info = null;
-		}
-		else {
-			user_info = service.groupUserInfo(dto.getUser_list());
-		}
+		// 기존 host 일반 멤버로 변경
+		ArrayList<String> user_list = new ArrayList<>();
+		user_list.add(session_id);
+		dto.setUser_list(user_list);
 		
-		// 방장 정보 생성
-		UserDTO host_info = service.groupHostInfo(session_id);
+		service.updateNotHost(dto);
 		
-		// ModelAndView 생성
-		ModelAndView mv = new ModelAndView();
-		mv.addObject("host_info", host_info);
-		mv.addObject("user_info", user_info);
-		mv.setViewName("group/group_create_test");	
-		return mv;
+		// host 변경
+		user_list.clear();
+		user_list.add(host_id);
+		dto.setUser_list(user_list);
+		dto.setHost_id("host");
+		
+		service.updateHost(dto);
+		
+		// 새 host 정보
+		UserDTO user = service.groupHostInfo(host_id);
+		
+		// return
+		HashMap<String, String> map = new HashMap<>();
+		map.put("host", user.getName());
+		
+		return map;
 	}
 	
-	@RequestMapping("/group/create/result/test")
-	public ModelAndView groupCreateResultTest() {
-		// test data
-		int seq = 51;
-		String session_id = "hwang1";
+	@RequestMapping("/group/change/subHost")
+	@ResponseBody
+	public HashMap<String, Object> groupChangeSubHost(GroupCreateDTO dto) {
+		// 기존 sub host
+		ArrayList<String> getName = new ArrayList<>();
+		ArrayList<String> getList = dto.getUser_list();
 		
-		// 승인된 유저 목록 생성
-		GroupCreateDTO dto = new GroupCreateDTO();
-		dto.setHost_id(session_id);
-		dto.setUser_list(new ArrayList<>(service.groupOkUsers(seq)));
-		dto.setGroup_name("통기타 힐링");
-		dto.setGroup_description("통기타를 함께 연주하며 힐링하는 그룹입니다.");
-		dto.setProject_end_time("2023-08-31");
-		
-		// 부방장
-		HashMap<String, String> map = new HashMap<>();
-		map.put("group_id", "rdEn0Ipu");
-		map.put("host", "sub_host");
-		
-		ArrayList<String> sub = new ArrayList<>(service.groupWhoHost(map));
-		dto.setSub_host_id(sub);
-				
-		// 부방장 user_list에서 제거
-		ArrayList<String> user_list = dto.getUser_list();
-		for (int i = 0; i < sub.size(); i++) {
-			user_list.remove(sub.get(i));
+		if (getList != null) {
+			for (int i = 0; i < getList.size(); i++) {
+				getName.add(service.groupHostInfo(getList.get(i)).getName());
+			}
+			
+			// 기존 sub host 일반 멤버로 변경
+			service.updateNotHost(dto);
+		}
+		else {
+			getName.add("없음");
 		}
 		
-		// GroupDTO 생성
-		GroupDTO group_dto = new GroupDTO();
-		group_dto.setGroup_name(dto.getGroup_name());
-		group_dto.setGroup_description(dto.getGroup_description());
-		group_dto.setProject_end_time(dto.getProject_end_time());
-		group_dto.setGroup_id("rdEn0Ipu");
+		String origin_sub = String.join(", ", getName);
 		
-		// 유저 정보 생성
-		UserDTO host_info = service.groupHostInfo(dto.getHost_id());	// 방장
-		List<UserDTO> sub_host_info;
-		sub_host_info = service.groupUserInfo(sub);	// 부방장
+		// 변경 sub host
+		getName.clear();
+		getList = dto.getSub_host_id();
 		
-		List<UserDTO> user_info;
-		user_info = service.groupUserInfo(user_list);
+		if (getList != null) {
+			for (int i = 0; i < getList.size(); i++) {
+				getName.add(service.groupHostInfo(getList.get(i)).getName());
+			}
+			
+			// sub host 변경
+			dto.setUser_list(getList);
+			dto.setHost_id("sub_host");
+			
+			service.updateHost(dto);
+		}
+		else {
+			getName.add("없음");
+		}
 		
-		ModelAndView mv = new ModelAndView();
-		mv.addObject("group_dto", group_dto);
-		mv.addObject("host_info", host_info);
-		mv.addObject("sub_host_info", sub_host_info);
-		mv.addObject("user_info", user_info);
-		mv.addObject("group_id", "rdEn0Ipu");
-		mv.setViewName("group/group_create_success_test");
-		return mv;
+		String change_sub = String.join(", ", getName);
+		
+		// return
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("origin_sub", origin_sub);
+		map.put("change_sub", change_sub);
+		map.put("sub_host_id", dto.getSub_host_id());
+		
+		return map;
+	}
+	
+	@RequestMapping("/group/change/member")
+	@ResponseBody
+	public HashMap<String, Object> groupChangeMember(GroupCreateDTO dto) {
+		int cnt = service.deleteMember(dto);
+		
+		// return
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("cnt", cnt);
+		return map;
+	}
+	
+	@RequestMapping("/group/change/info")
+	@ResponseBody
+	public HashMap<String, Object> groupChangeInfo(GroupDTO dto) {
+		if (dto.getProject_end_time().equals("")) { dto.setProject_end_time(null); }
+		
+		// 그룹 수정
+		service.updateGroupInfo(dto);
+		
+		// return
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("result", "성공");
+		return map;
 	}
 }

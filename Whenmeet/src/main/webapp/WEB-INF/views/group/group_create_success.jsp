@@ -83,8 +83,10 @@
 						<h2 id="group_name">${ group_dto.group_name }</h2>
 						<h3>개설자 : ${ host_info.name }</h3>
 						<div id="info_imgs">
-							<img src="/img/액자.png">
-							<img src="${ host_info.profile_url }">
+							<img id="info_frame" src="/img/액자.png">
+							<div id="host_profile_img">
+								<img src="${ host_info.profile_url }">							
+							</div>
 						</div>
 					</div>
 					<div id="info_form_right">
