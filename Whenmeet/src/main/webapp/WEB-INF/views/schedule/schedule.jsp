@@ -1132,10 +1132,10 @@ String userImgErr = "/img/user_logo.png";
 				<div style= " display : flex;  margin : auto; width : 90%; height : 80%">
 					<div id = "group_detail_left" >
 						<h1>${groupName}</h1>
-						<h3>개설자 : 방장쓰</h3>
+						<h3><span>일반맴버</span> : ${thisUserName}</h3>
 						<h3></h3>
 						
-						<img src = "/img/user_logo.png" style = "width : 100px; height : 100px; border-radius : 50%;">
+						<img src = "${thisUserImg }" onerror = "/img/user_logo.png" style = "width : 100px; height : 100px; border-radius : 50%;">
 						<img src = "/img/액자.png" style = "position : absolute; width : 150px; height : 150px; top : 400px"/>
 					</div>
 					<div id = "group_detail_right" >

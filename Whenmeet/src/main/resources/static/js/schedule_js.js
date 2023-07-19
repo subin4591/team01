@@ -15,6 +15,9 @@ function IamHost(){
 	$("#ganttResultEditBtn").show();
 	$("#ganttCreateBtn").show();
 	$("#ganttCreate").children().eq(1).hide();
+	
+	//그룹카드 관련
+	$("#group_detail_left").children().eq(1).children('span').text("방장");
 }
 //부방장의 관리
 function IamSubHost(){
@@ -23,6 +26,9 @@ function IamSubHost(){
 	$("#ganttResultEditBtn").show();
 	$("#ganttCreateBtn").show();
 	$("#ganttCreate").children().eq(2).hide();
+	
+	//그룹카드 관련
+	$("#group_detail_left").children().eq(1).children('span').text("부방장");
 }
 //그룹 탈퇴
 function deleteGroupUser(){

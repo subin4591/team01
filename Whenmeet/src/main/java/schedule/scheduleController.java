@@ -575,6 +575,8 @@ public class scheduleController {
 		model.addAttribute("groupId", groupId);
 		model.addAttribute("chatlist", chatlist);
 		
+		model.addAttribute("thisUserName", scheduleService.selectUserOne(userId).getName());
+		model.addAttribute("thisUserImg", scheduleService.selectUserOne(userId).getProfile_url());
 		return "schedule/schedule";
 	}
 	
