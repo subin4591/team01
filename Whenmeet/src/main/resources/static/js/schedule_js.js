@@ -5,10 +5,34 @@
 function IamHost(){
 	$("#SubHostForm").show();
 	$("#Dday_area .editDate").show();
+	$("#delete_btn").text("그룹 관리");
+	$("#delete_btn").hover(	function(){
+		$(this).css({"background-color": "white", "color" : "black",  "border": "3px solid #f25287"});
+	}, function(){
+		$(this).css({"background-color": "#f25287", "color" : "white"});
+	})
+	$("#ganttInitBtn").show();
+	$("#ganttResultEditBtn").show();
+	$("#ganttCreateBtn").show();
+	$("#ganttCreate").children().eq(1).hide();
 }
 //부방장의 관리
 function IamSubHost(){
 	$("#Dday_area .editDate").show();
+	$("#ganttInitBtn").show();
+	$("#ganttResultEditBtn").show();
+	$("#ganttCreateBtn").show();
+	$("#ganttCreate").children().eq(2).hide();
+}
+//그룹 탈퇴
+function deleteGroupUser(){
+	var result = confirm("정말로 탈퇴하시겠습니까?");
+	if (result){
+		return true;
+	}
+	else{
+		return false;
+	}
 }
 //슬라이드 테이블
 var slidecount = 1;
@@ -66,28 +90,6 @@ function DdayError(){
 
 }
 
-//리스트 삭제하기
-function deleteBtn(element){
-	var temp = $("#DoItContainer");
-	temp = temp.children();
-	temp = temp.children().eq(element);
-	var result = confirm("하위 항목이 모두 사라집니다. 정말로 삭제하시겠습니까?");
-	if(result){
-		temp.remove();
-	}else{
-		return false;
-	}	
-}
-function deleteBtn2(element){
-	var temp = $("#DoItListChild");
-	temp = temp.children().eq(element);
-	var result = confirm("정말로 삭제하시겠습니까?");
-	if(result){
-		temp.remove();
-	}else{
-		return false;
-	}	
-}
 //간트차트 수정화면 자식리스트 열기
 function openDoItList(element){
 	var var1 = "#DoItCheck" + element;
@@ -239,18 +241,21 @@ function  ScheduleSaveBtnClick(slideMax){
 var ispressed = false;
 var colorfill = true;
 function tbColorChange(element){
-	if( $(element).attr("data-color") != "1"){
+	if( $(element).attr("data-color") == "0"){
 		$(element).css({
 			"background" : "rgba(242, 82, 135, 1)"
 		});
 		$(element).attr("data-color", "1");
-			}
-		else if ($(element).attr("data-color") == "1"){
-			$(element).css({
+	}
+	else if ($(element).attr("data-color") == "1"){
+		$(element).css({
 			"background" : "rgba(0,0,0,0)"
 		});
 		$(element).attr("data-color", "0");
-		}
+	}
+	else{
+		
+	}
 }
 //유저 팝업을 열기
 function popOpen(id, name, address, phone, email, profile, host, subhost){

@@ -68,6 +68,13 @@
 			where group_id = #{group_id} and user_id = #{user_id}
 		]]>
 	</update>
+	<delete id ="deleteGroupUser"  parameterType = "hashMap">
+	<![CDATA[
+			delete 
+			from group_user_table
+			where group_id = #{group_id} and user_id = #{user_id}
+		]]>
+	</delete>
 	
 	<!-- 그룹 별 일정표 테이블 관련 -->
 	<select id = "selectMeetingScheduleAll" resultType = "dto.MeetingScheduleDTO" parameterType = "String">
@@ -228,6 +235,7 @@
 			where group_id = #{group_id} and user_id = #{user_id} and seq = #{seq} and cnt = #{cnt}
 		]]>
 	</update>
+	
 	<!-- 그룹 당 일정 세팅 관련 -->
 	<select id = "selectMeetingScheduleDate" resultType = "dto.MeetingScheduleDateDTO" parameterType = "String">
 		<![CDATA[
@@ -261,7 +269,117 @@
 		]]>
 	</update>
 	
-		<!-- 위치 / 채팅 -->
+	<!-- 간트차트 만들기 -->
+	<select id = "selectGroupGantt" resultType = "dto.GroupGanttDTO" parameterType = "String">
+	<![CDATA[
+		select * from group_gantt_table
+		where group_id = #{group_id}
+	]]>
+	</select>
+	<select id = "selectGroupGanttCnt" resultType = "int" parameterType = "String">
+	<![CDATA[
+		select count(*) from group_gantt_table
+		where group_id = #{group_id}
+	]]>
+	</select>
+	<select id = "selectDistinctGanttToDo" resultType = "dto.GroupGanttDTO" parameterType = "String">
+	<![CDATA[
+		select distinct group_id, big_todo, big_todo_content, check_do, big_todo_start, big_todo_end
+		from group_gantt_table
+		where group_id = #{group_id}
+	]]>
+	</select>
+	<select id = "selectGroupGanttToDo" resultType = "dto.GroupGanttDTO" parameterType = "HashMap">
+	<![CDATA[
+		select * from group_gantt_table
+		where group_id = #{group_id} and big_todo = #{big_todo}
+	]]>
+	</select>
+	<select id = "selectDoItMax" resultType = "int" parameterType = "String">
+	<![CDATA[
+		select max(big_todo) from group_gantt_table
+		where group_id = #{group_id}
+	]]>
+	</select>
+	<insert id = "insertGroupGanttInit" parameterType = "HashMap">
+		<![CDATA[
+			insert into group_gantt_table
+			values (
+				#{group_id},
+				#{big_todo},
+				#{small_todo},
+				default,
+				default,
+				default,
+				null,
+				null
+			);
+		]]>
+	</insert>
+	<insert id = "insertGroupGantt" parameterType = "HashMap">
+		<![CDATA[
+			insert into group_gantt_table
+			values (
+				#{group_id},
+				#{big_todo},
+				#{small_todo},
+				#{big_todo_content},
+				#{small_todo_content},
+				#{check_do},
+				#{big_todo_start},
+				#{big_todo_end}
+			);
+		]]>
+	</insert>
+	<update id = "updateGroupGantt" parameterType = "HashMap">
+	<![CDATA[
+	update group_gantt_table
+	set group_id = group_id
+	]]>
+	<if test = "big_todo != null">
+		,big_todo = #{big_todo}
+	</if>
+	<if test = "small_todo != null">
+		,small_todo = #{small_todo}
+	</if>
+	<if test = "big_todo_content != null">
+		,big_todo_content = #{big_todo_content}
+	</if>
+	<if test = "small_todo_content != null">
+		,small_todo_content = #{small_todo_content}
+	</if>
+	<if test = "check_do != null">
+		,check_do = #{check_do}
+	</if>
+	<if test = "big_todo_start != null">
+		,big_todo_start = #{big_todo_start}
+	</if>
+	<if test = "big_todo_end != null">
+		,big_todo_end = #{big_todo_end}
+	</if>
+	<![CDATA[
+	where group_id = #{group_id}
+	]]>
+	<if test = "big_todo2 != null">
+		and big_todo = #{big_todo2}
+	</if>
+	</update>
+	<delete id = "deleteGroupGanttAll"  parameterType = "String">
+	<![CDATA[
+	delete from group_gantt_table 
+	where group_id = #{group_id}
+	]]>
+	</delete>
+	<delete id = "deleteGroupGanttOne"  parameterType = "HashMap">
+	<![CDATA[
+	delete from group_gantt_table 
+	where group_id = #{group_id} and big_todo = #{big_todo}]]>
+	<if test = "small_todo != null">
+	and small_todo = #{small_todo}
+	</if>
+	</delete>
+	
+	<!-- 위치 / 채팅 -->
 	<select id="getLocation" resultType="String" parameterType="String">
 		select final_location from group_table where group_id = #{group_id};
 	</select>

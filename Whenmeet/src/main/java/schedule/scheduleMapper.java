@@ -10,6 +10,7 @@ import dto.MeetingScheduleDTO;
 import dto.MeetingScheduleDateDTO;
 import dto.UserDTO;
 import dto.userScheduleDTO;
+import dto.GroupGanttDTO;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -28,6 +29,7 @@ public interface scheduleMapper {
 	List<GroupUserDTO> selectGroupUsers(String group_id) throws Exception;
 	void updateGroupUserSubHost(HashMap<String, Object> map) throws Exception;
 	void updateGroupUserSetSchedule(HashMap<String, Object> map) throws Exception;
+	void deleteGroupUser(HashMap<String, Object> map) throws Exception;
 	
 	List<MeetingScheduleDTO> selectMeetingScheduleAll(String group_id) throws Exception;
 	List<MeetingScheduleDTO> selectMeetingScheduleAllShow(HashMap<String, Object> map) throws Exception;
@@ -50,6 +52,17 @@ public interface scheduleMapper {
 	int selectMeetingScheduleDateCnt(String group_id) throws Exception;
 	void insertMeetingScheduleDate(HashMap<String, Object> map) throws Exception;
 	void updateMeetingScheduleDate(HashMap<String, Object> map) throws Exception;
+	
+	List<GroupGanttDTO> selectGroupGantt(String group_id) throws Exception;
+	int selectGroupGanttCnt(String group_id) throws Exception;
+	List<GroupGanttDTO> selectDistinctGanttToDo(String group_id) throws Exception;
+	List<GroupGanttDTO> selectGroupGanttToDo(HashMap<String, Object> map) throws Exception;
+	int selectDoItMax(String group_id) throws Exception;
+	void insertGroupGanttInit(HashMap<String, Object> map) throws Exception;
+	void insertGroupGantt(HashMap<String, Object> map) throws Exception;
+	void updateGroupGantt(HashMap<String, Object> map) throws Exception;
+	void deleteGroupGanttAll(String group_id) throws Exception;
+	void deleteGroupGanttOne(HashMap<String, Object> map) throws Exception;
 	
 	String getLocation(String group_id) throws Exception;
 	void addChat(HashMap<String, Object> map) throws Exception;

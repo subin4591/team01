@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import dto.ChatDTO;
 import dto.GroupDTO;
+import dto.GroupGanttDTO;
 import dto.GroupUserDTO;
 import dto.MeetingScheduleDTO;
 import dto.MeetingScheduleDateDTO;
@@ -51,6 +52,9 @@ public class scheduleService {
 	}
 	public void updateGroupUserSetSchedule(HashMap<String, Object> map) throws Exception{		
 		scheduleMapper.updateGroupUserSetSchedule(map);
+	}
+	public void deleteGroupUser(HashMap<String, Object> map) throws Exception{
+		scheduleMapper.deleteGroupUser(map);
 	}
 	
 	public  List<MeetingScheduleDTO> selectMeetingScheduleAll(String group_id) throws Exception{
@@ -111,6 +115,37 @@ public class scheduleService {
 	}
 	public void updateMeetingScheduleDate(HashMap<String, Object> map) throws Exception{
 		scheduleMapper.updateMeetingScheduleDate(map);
+	}
+	
+	public List<GroupGanttDTO> selectGroupGantt(String groupId) throws Exception{
+		return scheduleMapper.selectGroupGantt(groupId);
+	}
+	public int selectGroupGanttCnt(String groupId) throws Exception{
+		return scheduleMapper.selectGroupGanttCnt(groupId);
+	}
+	public List<GroupGanttDTO> selectDistinctGanttToDo(String group_id) throws Exception{
+		return scheduleMapper.selectDistinctGanttToDo(group_id);
+	}
+	public List<GroupGanttDTO> selectGroupGanttToDo(HashMap<String, Object> map) throws Exception{
+		return scheduleMapper.selectGroupGanttToDo(map);
+	}
+	public int selectDoItMax(String group_id) throws Exception{
+		return scheduleMapper.selectDoItMax(group_id);
+	}
+	public void insertGroupGanttInit(HashMap<String, Object> map) throws Exception{
+		scheduleMapper.insertGroupGanttInit(map);
+	}
+	public void insertGroupGantt(HashMap<String, Object> map) throws Exception{
+		scheduleMapper.insertGroupGantt(map);
+	}
+	public void updateGroupGantt(HashMap<String, Object> map) throws Exception{
+		scheduleMapper.updateGroupGantt(map);
+	}
+	public void deleteGroupGanttAll(String groupId) throws Exception{
+		scheduleMapper.deleteGroupGanttAll(groupId);
+	}
+	public void deleteGroupGanttOne(HashMap<String, Object> map) throws Exception{
+		scheduleMapper.deleteGroupGanttOne(map);
 	}
 	
 	public String getLocation(String group_id) throws Exception{

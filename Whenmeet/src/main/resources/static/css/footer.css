@@ -12,7 +12,8 @@
 	color: white;
 	background-color: #F25287;
 	border: 1px solid #F25287;
-	border-radius: 50%
+	border-radius: 50%;
+	z-index : 998;
 }
 
 /* footer */
