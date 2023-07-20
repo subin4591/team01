@@ -5,6 +5,11 @@
 <link href="/css/header.css" rel=stylesheet>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
+
+$(document).ready(function(){
+	let session_id = <%=session.getAttribute("session_id")%>;
+	}
+	
 	$(document).ready(function() {
 		// 검색창 Toggle
 		$("#pop_search").hide();

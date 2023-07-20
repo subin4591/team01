@@ -14,5 +14,6 @@
 		<typeAlias type="dto.GroupUserDTO" alias="groupuserdto"/>
 		<typeAlias type="dto.MainDTO" alias="maindto"/>
 		<typeAlias type="dto.ChatDTO" alias="chatdto"/>
+		<typeAlias type="login.MemberDTO" alias="memberdto"/>
 	</typeAliases>
 </configuration>
