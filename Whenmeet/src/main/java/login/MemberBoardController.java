@@ -1,8 +1,15 @@
 package login;
 
 
+import java.io.IOException;
 import java.util.List;
-
+import java.io.File;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.IOException;
 import org.apache.ibatis.javassist.compiler.ast.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -65,6 +73,9 @@ public ModelAndView signupForm(MemberDTO dto) {
 	System.out.println("파라미터유저아이디 : " + dto.getUser_id());
 	//1. 회원가 form data 받기 
 	//2. 서비스 로직 구현 
+	 // 프로필 사진을 받지 않으므로 profile_url은 빈 문자열로 설정
+    dto.setProfile_url("");
+
 	service.insertMember(dto);	
 	ModelAndView mv = new ModelAndView();
 	mv.addObject("memberresult", "회원 가입 성공");
@@ -196,5 +207,30 @@ public int idCheck(@RequestParam("user_id") String user_id) {
 public int emailCheck(@RequestParam("email") String email) {
     int cnt = service.emailCheck(email);
     return cnt;
+}
+
+
+
+
+@PostMapping("/uploadProfile")
+public String uploadProfile(@RequestParam("profile") MultipartFile file, HttpSession session) {
+    if (!file.isEmpty()) {
+        try {
+            // 파일을 저장할 경로
+            String uploadDir = "/Users/chaesuwon/kdt/upload/";
+            
+            String fileName = session.getAttribute("session_id") + "_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            
+            // 파일을 지정된 경로에 저장
+            File uploadedFile = new File(uploadDir + fileName);
+            file.transferTo(uploadedFile);
+
+            // 세션에 업로드된 파일의 경로를 저장합니다.
+            session.setAttribute("profile_url", uploadedFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    return "redirect:/myinfo"; // 업로드가 완료되면 다시 myinfo 페이지로 이동합니다.
 }
 }

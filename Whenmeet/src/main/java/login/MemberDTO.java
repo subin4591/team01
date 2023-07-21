@@ -1,6 +1,7 @@
 package login;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 @Component
 public class MemberDTO {
@@ -69,6 +70,17 @@ public class MemberDTO {
 	public void setProfile_url(String profile_url) {
 		this.profile_url = profile_url;
 	}
+	
+	private MultipartFile profile; // 프로필 사진을 받기 위한 MultipartFile 필드
+
+    public MultipartFile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(MultipartFile profile) {
+        this.profile = profile;
+    }
+
 	public String toString() {
 		return user_id+":"+pw+":"+name+":"+address+":"+phone+":"+email;
 	}

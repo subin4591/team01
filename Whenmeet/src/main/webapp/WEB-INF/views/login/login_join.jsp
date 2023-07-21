@@ -100,10 +100,6 @@
   		<span class="email_ok">사용 가능한 이메일입니다.</span>
   		<span class="email_already">이미 사용 중인 이메일입니다.</span>
 	</div>
-    <div>
-      <label for="profile">프로필 사진 :</label>
-      <input type="file" id="profile" name="profile_url" accept=".jpg" required>
-    </div>
     <div id="captcha"></div>
   <input type="submit" value="가입하기">
   </form>
