@@ -65,4 +65,42 @@
 		set end = "완료"
 		where seq = #{seq}
 	</update>
+	
+	<!-- 일반 멤버로 변경 -->
+	<update id="updateNotHost" parameterType="groupcreatedto">
+		update `group_user_table`
+		set host = 0, sub_host = 0
+		where group_id = #{group_id} and
+		(<foreach collection="user_list" item="user" separator=" or ">user_id = #{user}</foreach>)
+	</update>
+	
+	<!-- 방장, 부방장 설정 -->
+	<update id="updateHost" parameterType="groupcreatedto">
+		update `group_user_table` set
+		<choose>
+			<when test="host_id == 'host'">
+				host = 1
+			</when>
+			<when test="host_id == 'sub_host'">
+				sub_host = 1
+			</when>
+		</choose>
+		where group_id = #{group_id} and
+		(<foreach collection="user_list" item="user" separator=" or ">user_id = #{user}</foreach>)
+	</update>
+	
+	<!-- 그룹 정보 수정 -->
+	<update id="updateGroupInfo" parameterType="groupdto">
+		update `group_table`
+		set group_name = #{group_name}, group_description = #{group_description}, project_end_time = #{project_end_time}
+		where group_id = #{group_id}
+	</update>
+	
+	<!-- Group delete -->
+	<!-- 멤버 탈퇴 -->
+	<delete id="deleteMember" parameterType="groupcreatedto">
+		delete from `group_user_table`
+		where group_id = #{group_id} and
+		(<foreach collection="user_list" item="user" separator=" or ">user_id = #{user}</foreach>)
+	</delete>
 </mapper>
