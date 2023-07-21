@@ -1,6 +1,7 @@
 package schedule;
 
 import java.util.*;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,18 +12,113 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import dto.UserDTO;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import dto.ChatDTO;
 import dto.GroupDTO;
 import dto.GroupUserDTO;
 import dto.MeetingScheduleDTO;
 import dto.userScheduleDTO;
+import dto.MeetingScheduleDateDTO;
+import dto.GroupGanttDTO;
 
 @Controller
 public class scheduleController {
 	
 	@Autowired
 	private scheduleService scheduleService;
+	
+	private void ganttSetting(String groupId, HttpServletRequest request, Model model) throws Exception {
+		//간트차트 화면
+				int groupGanttCnt = scheduleService.selectGroupGanttCnt(groupId);
+				
+				List<Integer> DoItIndex = new ArrayList<Integer>();
+				List<String> DoIt = new ArrayList<String>();
+				int DoItCnt = 0;
+				int smallDoItCnt = 0;
+				
+				// group_id의 간트차트가 1개 이상 존재하는지
+				if(scheduleService.selectGroupGanttCnt(groupId) >= 1) {
+					request.setAttribute("groupGanttCnt", groupGanttCnt);	
+					
+					//큰 doit 넣기
+					DoItCnt = scheduleService.selectDistinctGanttToDo(groupId).size();
+					for (int i = 0; i < DoItCnt; i++) {				
+						DoItIndex.add(scheduleService.selectDistinctGanttToDo(groupId).get(i).getBig_todo());
+						DoIt.add(scheduleService.selectDistinctGanttToDo(groupId).get(i).getBig_todo_content());			
+						}
+					request.setAttribute("DoItCnt", DoItCnt);	
+					request.setAttribute("DoItIndex", DoItIndex);	
+					request.setAttribute("DoIt", DoIt);	
+					
+					List<String>[] DoItDetail = new ArrayList[DoIt.size()];		
+					HashMap<String, Object> DoItData =new HashMap<String, Object>();
+					DoItData.put("group_id", groupId);
+					DoItData.put("big_todo", 0);
+					smallDoItCnt = scheduleService.selectGroupGanttToDo(DoItData).size();
+					
+					for (int i = 0; i < DoItCnt; i++) {
+						DoItDetail[i] = new ArrayList<String>();
+						DoItData.put("big_todo", i);
+						
+						for (int j = 0; j < smallDoItCnt; j++) {
+							DoItDetail[i].add(scheduleService.selectGroupGanttToDo(DoItData).get(j).getSmall_todo_content());
+						}
+					}
+					request.setAttribute("smallDoItCnt", smallDoItCnt);	
+					request.setAttribute("DoItDetail", DoItDetail);	
+				}else {
+					request.setAttribute("groupGanttCnt", groupGanttCnt);	
+				}
+				int DoItMax = 0;
+				if (scheduleService.selectGroupGanttCnt(groupId) >= 1) {
+					DoItMax = scheduleService.selectDoItMax(groupId);
+				}
+
+				request.setAttribute("DoItMax", DoItMax);
+				int [] smallDoItMax =  new int[DoItMax+1];
+				if (scheduleService.selectGroupGanttCnt(groupId) >= 1) {
+					HashMap<String, Object> smallmap = new HashMap();
+					smallmap.put("group_id", groupId);
+					for (int i = 0; i < DoItMax+1; i++) {
+						smallmap.put("big_todo", i);
+						smallDoItMax[i] = scheduleService.selectSmallDoItMax(smallmap);
+					}		
+				}
+				request.setAttribute("smallDoItMax", smallDoItMax);
+				request.setAttribute("DoItMax", DoItMax);
+				
+				//check List
+				HashMap<String, Object> ggmap = new HashMap<String, Object>();
+				int [] checkList = new int[DoItCnt];
+				Date [] DoItStartDate = new Date[DoItCnt];
+				Date [] DoItEndDate = new Date[DoItCnt];
+				List<Integer>[] checkListOne = new ArrayList[DoIt.size()];		
+				ggmap.put("group_id", groupId);
+				int count = 0;
+				for (int i = 0; i < DoItCnt; i++) {
+					ggmap.put("big_todo", i);
+					for (int j = 0; j < scheduleService.selectGroupGanttToDo(ggmap).size(); j++ ) {
+					count += scheduleService.selectGroupGanttToDo(ggmap).get(j).getCheck_do();	
+					int a = scheduleService.selectGroupGanttToDo(ggmap).get(j).getCheck_do();
+					checkListOne[i] = new ArrayList();
+					checkListOne[i].add(a);
+					System.out.println(checkListOne[i].get(j));
+					}	
+					count = (count/scheduleService.selectGroupGanttToDo(ggmap).size())*100;
+					checkList[i] = count;
+					count = 0;
+					
+					DoItStartDate[i] = scheduleService.selectGroupGanttToDo(ggmap).get(0).getBig_todo_start();
+					DoItEndDate[i] = scheduleService.selectGroupGanttToDo(ggmap).get(0).getBig_todo_end();
+					
+				}
+
+				request.setAttribute("checkList", checkList);
+				request.setAttribute("checkListOne", checkListOne);
+				request.setAttribute("DoItStartDate", DoItStartDate);
+				request.setAttribute("DoItEndDate", DoItEndDate);
+	}
 	
 	@RequestMapping(value = {"/schedule", "/schedule/"})
 	public String start() throws Exception {
@@ -43,6 +139,13 @@ public class scheduleController {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("userId", userId);
 		map.put("groupId", groupId);
+		
+		map.put("user_id", userId);
+		map.put("group_id", groupId);
+		
+		if(scheduleService.selectGroupUserOne(map) == null) {
+			return "schedule/scheduleError";
+		}
 		
 		List<UserDTO> userList = new ArrayList<UserDTO>();
 		UserDTO userOne = new UserDTO();
@@ -292,7 +395,7 @@ public class scheduleController {
 		}
 		request.setAttribute("tableListCnt", tableListCnt);
 		
-		//그룹 당 설정된 날짜
+		//그룹 당 설정된 날짜	
 		if(scheduleService.selectMeetingScheduleDateCnt(groupId) > 0) {
 			startDate 
 			= scheduleService.selectMeetingScheduleDate(groupId).getSet_date1();
@@ -301,6 +404,11 @@ public class scheduleController {
 		}
 		request.setAttribute("startDate", startDate);
 		request.setAttribute("endDate", endDate);
+		Calendar realDateCal = Calendar.getInstance();
+		realDateCal.set(Integer.parseInt(startDate.split("-")[0]), Integer.parseInt(startDate.split("-")[1])-1, Integer.parseInt(startDate.split("-")[2]));
+		int realDay1 = realDateCal.get(Calendar.DAY_OF_WEEK) -1;
+		realDateCal.set(Integer.parseInt(endDate.split("-")[0]), Integer.parseInt(endDate.split("-")[1])-1, Integer.parseInt(endDate.split("-")[2]));
+		int realDay2 = realDateCal.get(Calendar.DAY_OF_WEEK) -1;
 		
 		//유저 별 일정 테이블 표시
 		List<MeetingScheduleDTO> msdto = new ArrayList<MeetingScheduleDTO>();
@@ -355,14 +463,45 @@ public class scheduleController {
 						usmap.put("sat", 1);
 						SaturdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
 						usmap.put("sat", 0);
+						if (i == 0) {
+							if(realDay1 == 0)
+								continue;
+							if(0< realDay1)
+								SundayList[i][j] = -1;
+							if(1< realDay1)
+								MondayList[i][j] = -1;
+							if(2< realDay1)
+								TuesdayList[i][j] = -1;
+							if(3< realDay1)
+								WednesdayList[i][j] = -1;
+							if(4< realDay1)
+								ThusdayList[i][j] = -1;
+							if(5< realDay1)
+								FridayList[i][j] = -1;
+						}else if (i == seqs.length-1) {
+							if(realDay2 == 6)
+								continue;
+							if(6> realDay2)
+								SaturdayList[i][j] = -1;
+							if(5> realDay2)
+								FridayList[i][j] = -1;
+							if(4> realDay2)
+								ThusdayList[i][j] = -1;
+							if(3> realDay2)
+								WednesdayList[i][j] = -1;
+							if(2> realDay2)
+								ThusdayList[i][j] = -1;
+							if( 1>realDay2)
+								MondayList[i][j] = -1;
+						}
 					}else {
-						SundayList[i][j] = 0;
-						MondayList[i][j] = 0;
-						TuesdayList[i][j] = 0;
-						WednesdayList[i][j] = 0;
-						ThusdayList[i][j] = 0;
-						FridayList[i][j] = 0;
-						SaturdayList[i][j] = 0;
+						SundayList[i][j] = -1;
+						MondayList[i][j] = -1;
+						TuesdayList[i][j] = -1;
+						WednesdayList[i][j] = -1;
+						ThusdayList[i][j] = -1;
+						FridayList[i][j] = -1;
+						SaturdayList[i][j] = -1;
 					}
 				}
 			}
@@ -399,14 +538,45 @@ public class scheduleController {
 						ThusdayList2[i][j] = scheduleService.selectUserSchedule(usdto).getThu();
 						FridayList2[i][j] = scheduleService.selectUserSchedule(usdto).getFri();
 						SaturdayList2[i][j] = scheduleService.selectUserSchedule(usdto).getSat();
+						if (i == 0) {
+							if(realDay1 == 0)
+								continue;
+							if(0< realDay1)
+								SundayList2[i][j] = -1;
+							if(1< realDay1)
+								MondayList2[i][j] = -1;
+							if(2< realDay1)
+								TuesdayList2[i][j] = -1;
+							if(3< realDay1)
+								WednesdayList2[i][j] = -1;
+							if(4< realDay1)
+								FridayList2[i][j] = -1;
+							if(5< realDay1)
+								SaturdayList2[i][j] = -1;
+						}else if (i == seqs.length-1) {
+							if(realDay2 == 6)
+								continue;
+							if(6> realDay2)
+								SaturdayList2[i][j] = -1;
+							if(5> realDay2)
+								FridayList2[i][j] = -1;
+							if(4> realDay2)
+								ThusdayList2[i][j] = -1;
+							if(3> realDay2)
+								WednesdayList2[i][j] = -1;
+							if(2> realDay2)
+								ThusdayList2[i][j] = -1;
+							if( 1>realDay2)
+								MondayList2[i][j] = -1;
+						}
 					}else {
-						SundayList2[i][j] = 0;
-						MondayList2[i][j] = 0;
-						TuesdayList2[i][j] = 0;
-						WednesdayList2[i][j] = 0;
-						ThusdayList2[i][j] = 0;
-						FridayList2[i][j] = 0;
-						SaturdayList2[i][j] = 0;
+						SundayList2[i][j] = -1;
+						MondayList2[i][j] = -1;
+						TuesdayList2[i][j] = -1;
+						WednesdayList2[i][j] = -1;
+						ThusdayList2[i][j] = -1;
+						FridayList2[i][j] = -1;
+						SaturdayList2[i][j] = -1;
 					}
 				}
 			}
@@ -434,7 +604,10 @@ public class scheduleController {
 		}
 		model.addAttribute("finalScheduleList", finalScheduleList);
 		
+		ganttSetting(groupId, request, model);
+		
 		request.setAttribute("userId", userId);
+		request.setAttribute("groupId", groupId);
 		
 		model.addAttribute("userId", userId);		
 		model.addAttribute("groupName", groupName);
@@ -445,6 +618,8 @@ public class scheduleController {
 		model.addAttribute("groupId", groupId);
 		model.addAttribute("chatlist", chatlist);
 		
+		model.addAttribute("thisUserName", scheduleService.selectUserOne(userId).getName());
+		model.addAttribute("thisUserImg", scheduleService.selectUserOne(userId).getProfile_url());
 		return "schedule/schedule";
 	}
 	
@@ -527,18 +702,12 @@ public class scheduleController {
 		
 		//시트가 중복으로 저장되는 오류가 있었는데 어떤 조건에서 나는지 못찾음...
 		for (int i = 0; i < WeeksCntInt; i++) {
-			System.out.println("첫 날 : " + date1);
-			System.out.println("마지막 날 : " + date3);
 			long diffDays = (date1.getTime()-date3.getTime())/(24*60*60*1000);
 			int diffDay = Long.valueOf(diffDays).intValue();
-			System.out.println("날짜 차이 : " + diffDay);
 			diffDay /= 7;
-			System.out.println("주 차이 : " + diffDay);
 			seqList[i] = diffDay;
 			startWeekFirstList[i] = format.format(date1);
 			startWeekLastList[i] = format.format(date2);
-			System.out.println("입력일1 : " + startWeekFirstList[i]);
-			System.out.println("입력일2 : " + startWeekLastList[i]);
 			cal1.add( Calendar.DATE , 7);
 			cal2.add( Calendar.DATE , 7);
 			date1 = cal1.getTime();
@@ -575,7 +744,6 @@ public class scheduleController {
 	public void addchat(@PathVariable("groupId") String groupId, String userId, String text) throws Exception {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		UserDTO userOne = scheduleService.selectUserOne(userId);
-		System.out.println(userId);
 		LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd HH:mm");
 
@@ -706,4 +874,182 @@ public class scheduleController {
 		scheduleService.updateGroupSchedule(map);
 		return "redirect:";
 	}
+	
+	@RequestMapping("/schedule/{groupId}/CreateGantt")
+	public void CreateGantt(@PathVariable("groupId") String groupId, HttpServletRequest request, Model model) throws Exception {
+		
+		if (scheduleService.selectGroupGanttCnt(groupId) == 0) {
+		
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("group_id", groupId);
+		map.put("big_todo", 0);
+		map.put("small_todo", 0);
+		
+		scheduleService.insertGroupGanttInit(map);
+		ganttSetting(groupId, request, model);
+		}
+	}
+	@ResponseBody
+	@RequestMapping("/schedule/{groupId}/InsertGantt")
+	public String InsertGantt(@PathVariable("groupId") String groupId,
+			@RequestParam HashMap<String, Object> map) throws Exception{
+				
+		int big_todo= Integer.parseInt(map.get("big_todo").toString());
+		int small_todo= Integer.parseInt(map.get("small_todo").toString());
+		String big_todo_content = map.get("big_todo_content").toString();
+		String small_todo_content = map.get("small_todo_content").toString();	
+		int check_do= Integer.parseInt(map.get("check_do").toString());
+
+		map.put("group_id", groupId);
+		map.put("big_todo", big_todo);
+		map.put("small_todo", small_todo);
+		map.put("big_todo_content", big_todo_content);
+		map.put("small_todo_content", small_todo_content);
+		map.put("check_do", check_do);
+		
+		scheduleService.insertGroupGantt(map);
+		
+		String data = "success";
+		return data;
+	}	
+	@ResponseBody
+	@RequestMapping("/schedule/{groupId}/InsertGantt2")
+	public String InsertGantt2(@PathVariable("groupId") String groupId,
+			@RequestParam HashMap<String, Object> map,
+			HttpServletRequest request) throws Exception{
+		
+		int big_todo= Integer.parseInt(map.get("big_todo").toString());
+		int small_todo= Integer.parseInt(map.get("small_todo").toString());
+		String big_todo_content = map.get("big_todo_content").toString();	
+		String small_todo_content = map.get("small_todo_content").toString();	
+
+		map.put("group_id", groupId);
+		map.put("big_todo", big_todo);
+		map.put("small_todo", small_todo);
+		map.put("big_todo_content", big_todo_content);
+		map.put("small_todo_content", small_todo_content);
+		map.put("check_do", 0);
+		System.out.println(big_todo + " " + big_todo_content +" " + small_todo + " " + small_todo_content);
+
+		scheduleService.insertGroupGantt(map);
+		
+		String data = "success";
+		return data;
+	}	
+	@ResponseBody
+	@RequestMapping("/schedule/{groupId}/InsertGantt3")
+	public String InsertGantt3(@PathVariable("groupId") String groupId,
+			@RequestParam("index") int index,
+			@RequestParam("big_todo_start") String big_todo_start,
+			@RequestParam("big_todo_end") String big_todo_end,
+			HttpServletRequest request) throws Exception{
+		
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("group_id", groupId);
+		map.put("big_todo2", index);
+		
+		List<GroupGanttDTO> dto = new ArrayList<GroupGanttDTO>();
+		dto = scheduleService.selectGroupGanttToDo(map);
+
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date bigTodoStart= format.parse(big_todo_start);
+		Date bigTodoEnd= format.parse(big_todo_end);
+		
+		map.put("big_todo_start", bigTodoStart);
+		map.put("big_todo_end", bigTodoEnd);
+		
+		scheduleService.updateGroupGantt(map);
+		
+		String data = "success";
+		return data;
+	}
+	@RequestMapping("/schedule/{groupId}/InitGantt")
+	public void InitGantt(@PathVariable("groupId") String groupId) throws Exception{
+		scheduleService.deleteGroupGanttAll(groupId); 
+	}	
+	@RequestMapping("/schedule/deleteGroupUser")
+	@ResponseBody
+	public void deleteGroupUser(@RequestParam("groupId") String groupId,
+			@RequestParam("userId") String userId,
+			HttpServletResponse response) throws Exception{
+		HashMap <String, Object> map = new HashMap();
+		map.put("group_id", groupId);
+		map.put("user_id", userId);
+		
+		scheduleService.deleteGroupUser(map); 
+		
+		response.setContentType("text/html; charset=UTF-8");
+		PrintWriter out = response.getWriter();
+
+		out.println("<script>alert('탈퇴가 완료되었습니다.'); location.href='/'; </script>");
+
+		out.flush();
+	}	
+	@RequestMapping("/schedule/{groupId}/deleteGanttDoIt")
+	@ResponseBody
+	public String deleteGanttDoIt(@PathVariable("groupId") String groupId,
+			@RequestParam("big_todo") int big_todo,
+			@RequestParam(required = false, defaultValue = "-1") int small_todo) throws Exception{
+		
+		HashMap <String, Object> map = new HashMap();
+		map.put("group_id", groupId);
+		map.put("big_todo", big_todo);
+		if (small_todo != -1)
+			map.put("small_todo", small_todo);
+		
+		scheduleService.deleteGroupGanttOne(map); 
+		
+		HashMap <String, Object> map2 = new HashMap();
+		map2.put("group_id", groupId);
+		
+		for (int i = 0; i < scheduleService.selectGroupGanttCnt(groupId); i++) {
+			
+			if(big_todo < scheduleService.selectDistinctGanttToDo(groupId).get(i).getBig_todo()) {
+				map2.put("big_todo2", scheduleService.selectDistinctGanttToDo(groupId).get(i).getBig_todo());
+				map2.put("big_todo", scheduleService.selectDistinctGanttToDo(groupId).get(i).getBig_todo()-1);
+				scheduleService.updateGroupGantt(map2);
+			}
+		}
+		
+		String data = "success";
+		return data;
+	}
+	
+	@RequestMapping("/schedule/{groupId}/check")
+	public void check(@PathVariable("groupId") String groupId,
+			@RequestParam("big_todo") String big_todo,
+			@RequestParam("small_todo") String small_todo) throws Exception{
+		
+		HashMap <String, Object> map = new HashMap();
+		
+		int bigTodo = Integer.parseInt(big_todo);
+		int SmallTodo = Integer.parseInt(small_todo);
+		
+		map.put("group_id", groupId);
+		map.put("big_todo2", big_todo);
+		map.put("small_todo2", small_todo);
+		map.put("check_do", 1);
+		
+		scheduleService.updateGroupGantt(map);
+	}
+	
+	@RequestMapping("/schedule/{groupId}/check2")
+	public void check2(@PathVariable("groupId") String groupId,
+			@RequestParam("big_todo") String big_todo,
+			@RequestParam("small_todo") String small_todo) throws Exception{
+		
+		HashMap <String, Object> map = new HashMap();
+		
+		int bigTodo = Integer.parseInt(big_todo);
+		int SmallTodo = Integer.parseInt(small_todo);
+		
+		map.put("group_id", groupId);
+		map.put("big_todo2", big_todo);
+		map.put("small_todo2", small_todo);
+		map.put("check_do", 0);
+		
+		scheduleService.updateGroupGantt(map);
+	}
 }
+
