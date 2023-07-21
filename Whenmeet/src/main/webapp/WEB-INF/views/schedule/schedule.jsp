@@ -194,7 +194,7 @@ String userImgErr = "/img/user_logo.png";
 				<%@ include file="schedule_chat.jsp"%>
 			</div>
       <div id="review_btn">
-        <form action = "/schedule/deleteGroupUser" method ="GET" onsubmit="return deleteGroupUser()">
+        <form action = "/schedule/deleteGroupUser" method ="GET"  onsubmit="return deleteGroupUser()">
         	<input type = "text" style = "display:None" name = "groupId" value = "${groupId}"/>
         	<input type = "text" style = "display:None" name = "userId" value = "${userId}"/>
         	<button type="submit" id="delete_btn">그룹 탈퇴</button>
@@ -792,6 +792,11 @@ String userImgErr = "/img/user_logo.png";
 		doItCal[i].setTime(DoItStartDate[i]);
 		doItCal2[i].setTime(DoItEndDate[i]);
 		doItCal2[i].add(Calendar.DATE, 7);
+		doItCal[i].add(Calendar.MONTH, 1);
+		doItCal2[i].add(Calendar.MONTH, 1);
+		
+		System.out.println(doItCal[i].getTime());
+		System.out.println(doItCal2[i].getTime());
 	}
 	
 	if ((Date[])request.getAttribute("DoItStartDate") != null 
@@ -980,7 +985,7 @@ String userImgErr = "/img/user_logo.png";
 		
 		//방장인가 부방장인가?				
 		<% if ( HostId[0].equals(userId)) { %>
-			IamHost();
+			IamHost('${groupId}');
 		<% }
 		
 		//부방장

@@ -2,7 +2,7 @@
  * 
  */
 //방장의 관리
-function IamHost(){
+function IamHost(groupId){
 	$("#SubHostForm").show();
 	$("#Dday_area .editDate").show();
 	$("#delete_btn").text("그룹 관리");
@@ -10,6 +10,9 @@ function IamHost(){
 		$(this).css({"background-color": "white", "color" : "black",  "border": "3px solid #f25287"});
 	}, function(){
 		$(this).css({"background-color": "#f25287", "color" : "white"});
+	})
+	$("#delete_btn").on("click", function(){
+		location.replace("/group/change/" + groupId);
 	})
 	$("#ganttInitBtn").show();
 	$("#ganttResultEditBtn").show();
@@ -32,11 +35,15 @@ function IamSubHost(){
 }
 //그룹 탈퇴
 function deleteGroupUser(){
-	var result = confirm("정말로 탈퇴하시겠습니까?");
-	if (result){
-		return true;
-	}
-	else{
+	if ("그룹 관리"!=$("#delete_btn").text()){
+		var result = confirm("정말로 탈퇴하시겠습니까?");
+		if (result){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}else{
 		return false;
 	}
 }
@@ -508,5 +515,4 @@ $("#endEditDate").click(function(){
 	}
 })
 
-	
 });
