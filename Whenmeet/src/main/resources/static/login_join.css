@@ -5,12 +5,12 @@ body {
 }
 
 .container {
-    width: 400px; /* 프레임의 너비 조정 */
-    background-color: #fff; /* 하얀색 배경색 */
+    width: 500px; /* Increase the width to make the box bigger */
+    background-color: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    margin: 20px auto; /* 본문을 수직으로 가운데로 정렬 */
+    margin: 20px auto;
     text-align: center;
 }
 
@@ -63,5 +63,25 @@ input[type="submit"] {
 input[type="submit"]:hover,
 button:hover {
     background-color: #da6a82;
+}
+
+.id_ok{
+color:#008000;
+display: none;
+}
+
+.id_already{
+color:#6A82FB; 
+display: none;
+}
+
+.email_ok{
+	color:#008000;
+display: none;
+}
+
+.email_already{
+		color:#008000;
+display: none;
 }
 

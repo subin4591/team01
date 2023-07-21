@@ -5,21 +5,14 @@ body {
 }
 
 .container {
-	
     width: 400px; /* 프레임의 너비 조정 */
     background-color: #fff; /* 하얀색 배경색 */
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    margin: 0 auto; /* 가운데 정렬을 위한 margin 설정 */
-    margin-top: 130px;
+    margin: 130px auto; /* 가운데 정렬을 위한 margin 설정 */
     text-align: center;
 }
-
-header {
-    margin-bottom: 20px; /* 헤더와 본문 사이 간격 추가 */
-}
-
 
 h2 {
     color: #333;
@@ -56,4 +49,8 @@ a {
 
 a:hover {
     text-decoration: underline;
+}
+
+.error-message {
+    color: red;
 }
