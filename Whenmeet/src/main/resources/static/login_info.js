@@ -22,11 +22,5 @@
         console.log("이메일 중복 체크");
     });
 
-    $("form").submit(function(event) {
-        event.preventDefault();
-        var formData = $(this).serialize();
-        // TODO: 회원 정보 저장 데이터 전송 및 처리
-        console.log(formData);
-    });
 });
 

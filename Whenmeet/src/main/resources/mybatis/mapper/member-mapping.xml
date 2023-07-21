@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="login.MemberDAO">
+
+    <select id="oneMember" resultType="memberdto" parameterType="String">
+        select * from user_table where user_id=#{user_id}
+    </select>
+
+    <insert id="insertMember" parameterType="memberdto" >
+        INSERT into user_table(user_id, pw, name, address, phone, email, profile_url)
+        values (#{user_id}, #{pw}, #{name}, #{address}, #{phone}, #{email}, #{profile_url});
+    </insert>
+
+    <select id="loginMember" parameterType="memberdto" resultType="memberdto">
+        select user_id, pw from user_table where user_id=#{user_id} and pw = #{pw}
+    </select>
+
+    <select id="infoMember" parameterType="String" resultType="memberdto">
+        SELECT * FROM user_table WHERE user_id = #{user_id}
+    </select>
+
+    <update id="updateMember" parameterType="memberdto" >
+        UPDATE user_table
+        SET name = #{name}, pw = #{pw}, address = #{address}, phone = #{phone}, email = #{email}, profile_url = #{profile_url}
+        WHERE user_id = #{user_id}
+    </update>
+
+    <delete id="deleteMember" parameterType="String">
+        DELETE FROM user_table WHERE user_id = #{user_id}
+    </delete>
+
+    <select id="getAllMembers" resultType="memberdto">
+        SELECT * FROM user_table
+    </select>
+    
+    <select id="idCheck" parameterType="String" resultType="int">
+    	SELECT COUNT(*) FROM user_table WHERE user_id = #{user_id}
+	</select>
+
+	<select id="emailCheck" parameterType="String" resultType="int">
+    	SELECT COUNT(*) FROM user_table WHERE email = #{email}
+	</select>
+</mapper>
+
+
