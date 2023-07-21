@@ -268,7 +268,7 @@ body{
 	position : relative;
   	width: 130px;
  	height: 50px;
-	top : 40px;
+	bottom : -170px;
 	
   border-radius: 30px;
   border: 3px solid #f25287;
@@ -756,14 +756,14 @@ li {
 #ganttCreateBtn:click{
 	background : #DF2D68;
 }
-/*
-#ganttResult .loader{
+
+.loader{
 	position : absolute;
-	width : 95%;
-	height : 90%;
+	width : 100%;
+	height : 100%;
 	z-index : 997;
 	margin : auto;
-	background : white;
+	background : rgba(255, 255, 255, 0.8);
 }
 .loader .loaderIcon{
 	position : absolute;
@@ -791,7 +791,7 @@ li {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
- */
+
  
  #leftGanttFirstEdit, #GRleft{
  	display : flex; 
@@ -845,9 +845,6 @@ li {
   	background: transparent;
   	color: transparent;
   	cursor : pointer;
-}
-#leftGanttFirstEdit #GFEDate{
-	height : 17%;
 }
 #DoItContainer, #GRDoItContainer{
 	-webkit-user-select:none;
@@ -983,7 +980,7 @@ li {
 #GFEDoIt, #GRDoIt{
 	background : white; 
 	width : 80%; 
-	height : 70%;
+	height : 90%;
 }
 #GRDoIt{
 	height : 92%;

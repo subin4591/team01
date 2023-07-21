@@ -49,6 +49,8 @@ String userImgErr = "/img/user_logo.png";
 			<%
 			//유저 아이디
 			String userId = (String)request.getAttribute("userId");
+			//그룹 아이디
+			String groupId = (String)request.getAttribute("groupId");
 			//방장 맴버
 			String[] HostId = (String[])request.getAttribute("groupHostUserId");
 			String[] HostName = (String[])request.getAttribute("groupHostUserName");
@@ -192,17 +194,11 @@ String userImgErr = "/img/user_logo.png";
 				<%@ include file="schedule_chat.jsp"%>
 			</div>
       <div id="review_btn">
-        <div id = "white_btn_area">
-          <button type="button" id = "temp" onclick="location.href='#'" style = "margin : 5px"class="btns">
-            비공개
-          </button>
-          <button type="button" onclick="location.href='#'" style = "margin : 5px" class="btns">
-            공유
-          </button>
-        </div>
-        <button type="button" onclick="location.href='#'" id="delete_btn">
-          그룹 탈퇴
-        </button>
+        <form action = "/schedule/deleteGroupUser" method ="GET" onsubmit="return deleteGroupUser()">
+        	<input type = "text" style = "display:None" name = "groupId" value = "${groupId}"/>
+        	<input type = "text" style = "display:None" name = "userId" value = "${userId}"/>
+        	<button type="submit" id="delete_btn">그룹 탈퇴</button>
+        </form>
       </div>
 		</div>
   </div>
@@ -218,7 +214,9 @@ String userImgErr = "/img/user_logo.png";
 	<!-- 일정 탭 -->
     <div id = "meeting_date" >
 	    <div class="group_info">
-	    
+	    	<div class = "loader" style = "">
+				    <div class = "loaderIcon"></div>
+			    </div>
 	    	<!-- 왼쪽 표 / 우클릭 금지, 드래그 금지 -->				
 			  <div id="chart_area" oncontextmenu="return false" ondragstart="return false" onselectstart="return false">
 				<%@page import = "java.text.SimpleDateFormat" %>
@@ -565,45 +563,42 @@ String userImgErr = "/img/user_logo.png";
 	  </div>
 	
 	  <div id = "gantt_chart" style = "display : none;">
-		  <div class="group_info">		
+		  <div class="group_info">
+		  		
 			  <div id = "ganttCreate">
-				  <button id = "ganttCreateBtn"><h1><img src = "/img/plusIcon.svg">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;새로운 차트</h1></button>
+				  <button id = "ganttCreateBtn" style = "display : None"><h1><img src = "/img/plusIcon.svg">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;새로운 차트</h1></button>
+			  	<h1 style = "position : relative; text-align : center; top : 300px; font-size : 50px"><span style = "color : #f25287">아</span>직 차트가 등록되지 않았습니다.</h1>
 			  </div>	
 
 			  <div id = "ganttFirstEdit" style = "display : None;">
 			  	<div id = "leftGanttFirstEdit">
-			  		<div id = "GFEDate">
-			  			<h2 style = "display : inline">시작일 : <input type = "date" name = "startDate"/><br>
-			  			종료일 : <input type = "date" name = "EndDate"/></h2>
-			  		</div>
 			  		<div id = "GFEDoIt" >
 			  			<h2 style = "margin : 0px; text-align : center">할 일 목록</h2>
 			  			<hr style = "border : 3px solid #f25287">
 			  			<div id = "DoItContainer">
+			  				<div id = "ajaxContainer">
 			  				<ul style = "list-style:none; margin : 0px; padding : 0">
 			  					<%
-			  					List<String> DoIt = new ArrayList<String>();
-			  					DoIt.add("주제 정하기");
-			  					DoIt.add("토의하기");
-			  					DoIt.add("과자먹기");
-			  					DoIt.add("발표 준비하기");
-			  					DoIt.add("잠자기");
-	  					
-			  					List<String>[] DoItDetail = new ArrayList[DoIt.size()];
-			  					for (int i =0; i < DoIt.size(); i++){
-			  						DoItDetail[i] = new ArrayList<String>();
+			  					
+								int DoItCnt = 0;
+			  					if (request.getAttribute("DoItCnt") != null){
+			  						DoItCnt = (int)request.getAttribute("DoItCnt");
 			  					}
-			  					DoItDetail[0].add("하위메뉴 1");
-			  					DoItDetail[1].add("하위메뉴 2");
-			  					DoItDetail[1].add("하위메뉴 3");
-			  					DoItDetail[2].add("하위메뉴 4");
-			  					DoItDetail[2].add("하위메뉴 5");
-			  					DoItDetail[2].add("하위메뉴 6");
-			  					DoItDetail[3].add("하위메뉴 7");
-			  					DoItDetail[3].add("하위메뉴 8");
-			  					DoItDetail[3].add("하위메뉴 9");
-			  					DoItDetail[4].add("하위메뉴 10");
-			  					DoItDetail[4].add("하위메뉴 11");
+			  					
+			  					List<String> DoIt = new ArrayList<String>();
+			  					if(request.getAttribute("DoIt") != null){
+			  						DoIt = (List<String>)request.getAttribute("DoIt");
+			  					}
+			  					
+			  					List<String>[] DoItDetail = new ArrayList[DoIt.size()];
+			  					if(request.getAttribute("DoItDetail") != null){
+			  						DoItDetail = (List<String>[])request.getAttribute("DoItDetail");
+			  					}
+			  					
+			  					List<Integer>[] checkListOne = new ArrayList[DoIt.size()];
+			  					if(request.getAttribute("checkListOne") != null){
+			  						checkListOne = (List<Integer>[])request.getAttribute("checkListOne");
+			  					}
 			  					
 			  					int count = 0;
 			  					for (int i = 0; i < DoIt.size(); i++){
@@ -612,15 +607,15 @@ String userImgErr = "/img/user_logo.png";
 			  						}
 			  					}
 
-			  					for (int i = 0; i < DoIt.size(); i++){
+			  					for (int i = 0; i < DoItCnt; i++){
 			  					%>
 			  					
 			  						<li>
 			  							<div class = "DoItList" >
 			  								<input type = "checkbox" class = "DoItCheck" id = "DoItCheck<%=i%>" alt = "0" onclick = "openDoItList('<%=i%>')">
 			  								<label for = "DoItCheck<%=i%>"></label>&nbsp;<%= DoIt.get(i) %>
-			  								<img src = "/img/방장용_수정_버튼.svg" class ="DoItListEditBtn" onclick = "DpopOpen('<%=DoIt.get(i) %>', '<%=DoItDetail[i]%>')"/>
-			  								<button type = "button" class = "deleteBtn" onclick="deleteBtn('<%=i%>')">✕</button>
+			  								<img src = "/img/방장용_수정_버튼.svg" class ="DoItListEditBtn" onclick = "DpopOpen(<%= i %>,'<%=DoIt.get(i) %>', '<%=DoItDetail[i]%>')"/>
+			  								<button type = "button" class = "deleteBtn" onclick="deleteBtn('<%=i%>', '<%=DoItCnt%>', '${groupId }')">✕</button>
 			  							</div>
 			  							<div>
 			  								<ul class = "DoItListChild" id = "DoItListChild<%=i%>" style = "display : None; ">
@@ -635,11 +630,12 @@ String userImgErr = "/img/user_logo.png";
 			  							</div>
 			  						</li>
 			  					<%} %>
-			  				</ul>	
+			  				</ul>
+			  				</div>	
 			  			</div>	  		
-			  			<div style = "display : flex; margin-top : 20px;">
-			  				<input type = "text" placeholder = "  새 작업 추가하기" name = "newValue"/>
-			  				<button name = "newValueBtn" class = "newValueBtn">+</button>
+			  			<div id = "GanttEditValueBox" style = "display : flex; margin-top : 20px;">
+			  				<input type = "text" placeholder = "  새 작업 추가하기" class = "newValue"/>
+			  				<button class = "newValueBtn">+</button>
 			  			</div>
 			  		</div>
 			  	</div>
@@ -647,7 +643,8 @@ String userImgErr = "/img/user_logo.png";
 			  		<div id = "chart_div1_container">
 			  		<br>
 			  		<h2 style = "text-align : center">차트 미리보기</h2>
-			  			<div id="chart_div1" ></div>
+			  			<!-- <button id = "RefreshBtn" >새로고침</button>  -->
+			  				<div id="chart_div1" ></div>
 			  		</div>
 			  		<div id = "GFESubmitBtn" >
 						<button id = "ganttFirstEditCancelBtn">취소</button>
@@ -660,17 +657,14 @@ String userImgErr = "/img/user_logo.png";
 			  </div>
 
 			  <div id = "ganttResult" style = "display:None">
-			    <!-- 
-			    <div class = "loader">
-				    <div class = "loaderIcon"></div>
-			    </div>
-			    -->
+			   
 			    <div style = "display : flex; height : 100%;">
 			    	<div id = "GRleft">
 			    		<div id = "GRDoIt" >
 			  				<h2 style = "margin : 0px; text-align : center">할 일 목록</h2>
 			  				<hr style = "border : 3px solid #f25287">
 			  				<div id = "GRDoItContainer">
+			  					<div id = "GRAjax">
 			  					<ul style = "list-style:none; margin : 0px; padding : 0">
 			  						<%
 			  							for (int i = 0; i < DoIt.size(); i++){
@@ -684,7 +678,7 @@ String userImgErr = "/img/user_logo.png";
 			  									<ul class = "DoItListChild" id = "DoItListChild2<%=i%>" style = "display : None;">
 			  										<% for (int j = 0; j < DoItDetail[i].size(); j++){ %>
 			  											<li>
-			  												<input type = "checkbox"  class = "DoItCheck3" id = "DoItCheck3<%=i%><%=j%>" alt = "0" onclick = "GRchecked('<%=i%><%=j%>', <%=count%>)">
+			  												<input type = "checkbox"  class = "DoItCheck3" id = "DoItCheck3<%=i%><%=j%>" data-check = "<%=checkListOne[i].get(j) %>" onclick = "GRchecked('<%=i%>','<%=j%>', <%=count%>)">
 			  												<label for = "DoItCheck3<%=i%><%=j%>"></label>
 			  												<div class = "DoItListItem" >
 			  													<span style = "margin-left : 10px;"><%=DoItDetail[i].get(j) %></span>
@@ -696,6 +690,7 @@ String userImgErr = "/img/user_logo.png";
 			  							</li>
 			  						<%} %>
 			  					</ul>	
+			  				</div>
 			  				</div>	  		
 			  				<div style = " margin-top : 20px;">
 			  					<h1>프로젝트 진행도 : <span style = "color : #f25287" id = "percentage">00.0</span>%</h1>
@@ -711,9 +706,9 @@ String userImgErr = "/img/user_logo.png";
 					  		<br>
 					  		<div id="chart_div2"></div>
 				  		</div>
-				  		<div id = "GRubmitBtn">
-				  			<button id = "ganttInitBtn">초기화</button>
-				  			<button id = "ganttResultEditBtn">수정</button>
+				  		<div id = "GRubmitBtn" >
+				  			<button id = "ganttInitBtn"  style = "display : None">초기화</button>
+				  			<button id = "ganttResultEditBtn" style = "display : None">수정</button>
 				  		</div>
 				  	</div>
 				  </div>
@@ -724,25 +719,42 @@ String userImgErr = "/img/user_logo.png";
 	 <script>
 	 var cnt = 0;
 	//간트 결과 체크박스 이벤트
-	function GRchecked(element, count){
+	function GRchecked(element1, element2, count){
+		var element = element1 + element2;
 		var temp1 = "#DoItCheck3"+element;
 		var item = $(temp1).parent();
 		var text = item.children('.DoItListItem');
 		
-		if($(temp1).attr("alt") == "0"){
+		if($(temp1).attr("data-check") == "0"){
 			text.css({
 				"color": "#D9D9D9",
 				"text-decoration" : "line-through"
 			});
 			cnt++;
-			$(temp1).attr("alt" , "1");
+			$.ajax({
+				url : "/schedule/${groupId}/check",
+				type : "get",
+				data : ({
+					big_todo : element1,
+					small_todo : element2
+				})
+			})
+			$(temp1).attr("data-check" , "1");
 		}else{
 			text.css({
 				"color": "black",
 				"text-decoration" : "None"
 			});
 			cnt--;
-			$(temp1).attr("alt",  "0");
+			$.ajax({
+				url : "/schedule/${groupId}/check2",
+				type : "get",
+				data : ({
+					big_todo : element1,
+					small_todo : element2
+				})
+			})
+			$(temp1).attr("data-check",  "0");
 		}
 		var result = (cnt/count)*100;
 		result = result.toFixed(1);
@@ -765,7 +777,34 @@ String userImgErr = "/img/user_logo.png";
 		}
 		$("#fighting").text(fight);
 	}
+
+	<%
+	Date[] DoItStartDate = new Date[DoItCnt];
+	Date[] DoItEndDate = new Date[DoItCnt];
+	Calendar[] doItCal = new Calendar[DoItCnt];
+	Calendar[] doItCal2 = new Calendar[DoItCnt];
+
+	for (int i = 0; i < DoItCnt; i++){
+		DoItStartDate[i] = new Date();
+		DoItEndDate[i] = new Date();
+		doItCal[i] = Calendar.getInstance();
+		doItCal2[i] = Calendar.getInstance();
+		doItCal[i].setTime(DoItStartDate[i]);
+		doItCal2[i].setTime(DoItEndDate[i]);
+		doItCal2[i].add(Calendar.DATE, 7);
+	}
 	
+	if ((Date[])request.getAttribute("DoItStartDate") != null 
+			&& (Date[])request.getAttribute("DoItEndDate") != null ){
+		DoItStartDate = (Date[])request.getAttribute("DoItStartDate") ;
+		DoItEndDate = (Date[])request.getAttribute("DoItEndDate");
+		for (int i = 0; i < DoItCnt; i++){
+			doItCal[i].setTime(DoItStartDate[i]);
+			doItCal2[i].setTime(DoItEndDate[i]);
+		}
+	}
+	%>
+
 	/*구글 차트 api*/
 	google.charts.load('current', {'packages':['gantt']});
 	google.charts.setOnLoadCallback(drawChart);
@@ -780,14 +819,21 @@ String userImgErr = "/img/user_logo.png";
 	var valueDur = [];
 	var valuePC = [];
 	<%
-  	for (int t = 0; t < DoIt.size(); t++){
+	int[] checkList = new int [DoItCnt];
+	if (request.getAttribute("checkList")!=null)
+		checkList = (int[])request.getAttribute("checkList");
+
+  	for (int t = 0; t < DoItCnt; t++){
   	%>
   		valueName.push('<%=DoIt.get(t)%>');
-	    valueSDate.push(null);
-	    valueEDate.push(new Date(2023, 8));
+
+	    valueSDate.push(new Date(<%=doItCal[t].get(Calendar.YEAR) %>,<%=doItCal[t].get(Calendar.MONTH) %>, <%=doItCal[t].get(Calendar.DATE) %>));
+	    valueEDate.push(new Date(<%=doItCal2[t].get(Calendar.YEAR) %>,<%=doItCal2[t].get(Calendar.MONTH) %>, <%=doItCal2[t].get(Calendar.DATE) %>));
+	    
 	    valueDur.push(null);
-	    valuePC.push(100);
-	<%}%>
+	    valuePC.push(<%=checkList[t]%>);
+	<%}
+	%>
 	function drawChart() {
 
 	      var data = new google.visualization.DataTable();
@@ -803,7 +849,7 @@ String userImgErr = "/img/user_logo.png";
 			  var index = i+"";
 	      	data.addRow([
 	        	index, valueName.at(i), valueSDate.at(i), valueEDate.at(i),
-	      		valueDur.at(i), valuePC.at(i)-10*i, null
+	      		valueDur.at(i), valuePC.at(i), null
 				]);
 			}
 
@@ -816,7 +862,8 @@ String userImgErr = "/img/user_logo.png";
 			gantt: {
 				barHeight: 40,
 				trackHeight: 50,
-				defaultStartDate: today,
+				defaultStartDate: '<%=DoItStartDate%>',
+				defaultEndDate: '<%=DoItEndDate%>',
 				
 				innerGridHorizLine:{
 					stroke : "#F9F3F3"
@@ -879,15 +926,63 @@ String userImgErr = "/img/user_logo.png";
 	
 	      chart1.draw(data, options2);
 	      chart2.draw(data, options);
-	    }
-	</script>
-	<script>
+	  }
+
+	<% int DoItMax = (int)request.getAttribute("DoItMax");%>
+	var max = <%= DoItMax%>;
+	<% 
+	 int [] smallDoItMax = (int[])request.getAttribute("smallDoItMax");
+	 //System.out.println(smallDoItMax[0]);
+	 %>
+		var smallMax = [];
+		<% for (int i = 0; i < smallDoItMax.length; i++){ %>
+			smallMax[<%=i%>] = <%=smallDoItMax[i]%>;
+		<%}%>
+	
+	var IndexInt = 0;
+	var Element;
+	//할일 팝업을 열기
+	function DpopOpen(indexint, element, childs){
+		var list = $("#DoItListChild");
+		IndexInt = indexint;
+		Element = element;
+		//temp의 child
+		var child = [];
+		child = childs.split(",");
+		child[0] = child[0].replace("[", "");
+		child[child.length-1] = child[child.length-1].replace("]", "");
+		
+		
+		var modalPop = $('.DoIt_modal');
+		var modalBg = $('.DoIt_modal_bg');
+		
+		$(".modalDoItName").text(element);
+		
+		for (var i = 0; i < child.length; i++){
+			list.append('<li><div class = "DoItListItem" style = "width : 98%; " >&nbsp;'+child[i]+'</div></li>');
+			$("#DoItListChild").children().eq(i).children().append('<button type = "button" class = "deleteBtn" onclick="deleteBtn2('+i+')">✕</button>');
+		}
+		
+		$(modalPop).show();
+		$(modalBg).show();
+	}
+	//할일 팝업 닫기
+	function DpopClose(){
+		var list = $("#DoItListChild *");
+		var modalPop = $('.DoIt_modal');
+		var modalBg = $('.DoIt_modal_bg');
+		$(modalPop).hide();
+		$(modalBg).hide();	
+		list.remove();
+	}
+	
 	$(document).ready(function () {
 		
 		//방장인가 부방장인가?				
 		<% if ( HostId[0].equals(userId)) { %>
 			IamHost();
-		<% }		
+		<% }
+		
 		//부방장
 		else{			
 			for (int i = 0; i < SubHostId.length; i++){
@@ -899,27 +994,187 @@ String userImgErr = "/img/user_logo.png";
 			}		
 		} %>
 		
+		//로드
+		$(".loader").css("display", "None");
+
+		
+		//ajax
+		 $("#ganttCreateBtn").on("click", function(){
+			$.ajax({
+				url : "/schedule/<%= groupId%>/CreateGantt",
+				type : "get",
+				complete : function(){
+					location.reload();	//새고해야 제대로 떠서 일단 새고시킴...
+				}
+			})
+		})	
+
+	$("#GanttEditValueBox .newValueBtn").on("click", function(){
+		 if ($("#GanttEditValueBox .newValue").val() == ""){
+			 alert("값을 입력하세요");
+		 }
+		 else{
+
+			 $.ajax({
+					url : "/schedule/<%= groupId%>/InsertGantt",
+					type : "get",
+					data : {
+						group_id : "<%= 	groupId%>",
+						big_todo : ++max,
+						small_todo : 0,
+						big_todo_content : $("#GanttEditValueBox .newValue").val(),
+						small_todo_content : "하위 메뉴",
+						check_do : 0
+					},
+					success : function(data){
+						$('#ajaxContainer').load(window.location.href + " #ajaxContainer",function(){	
+							drawChart();	//갱신 안 됨...
+						});
+					},
+					error : function(){
+						alert("입력 중 에러가 발생했습니다.");
+						location.reload();
+						$("#meeting_date").hide();
+						$("#gantt_chart").show();
+					},
+					complete : function(){
+						$("#GanttEditValueBox .newValue").val(null);
+					}
+				})  
+			 } 
+		})	
+			
+		//모달 창 입력 ajax
+		$("#DoItChildDate .newValueBtn").click(function(){
+			var list = $("#DoItListChild");
+		 if ($("#DoItChildDate .newValue").val() == ""){
+			 alert("값을 입력하세요");
+		 }
+		 else{
+				
+			 console.log(smallMax[IndexInt]);
+			 $.ajax({
+					url : "/schedule/<%= groupId%>/InsertGantt2",
+					type : "get",
+					data : {
+						group_id : "<%= 	groupId%>",
+						big_todo : IndexInt,
+						small_todo : ++smallMax[IndexInt],
+						big_todo_content : Element,
+						small_todo_content : $("#DoItChildDate .newValue").val()
+					},
+					success : function(data){
+						list.append('<li><div class = "DoItListItem" style = "width : 98%; " >&nbsp;'+$("#DoItChildDate .newValue").val()+'</div></li>');
+						$("#DoItListChild").children().eq(smallMax[IndexInt]).children().append('<button type = "button" class = "deleteBtn" onclick="deleteBtn2('+smallMax[IndexInt]+')">✕</button>');
+					},
+					error : function(){
+						alert("입력 중 에러가 발생했습니다.");
+						//location.reload();
+					},
+					complete : function(){
+						$("#DoItChildDate .newValue").val(null);
+						$('#ajaxContainer').load(window.location.href + " #ajaxContainer");
+						$('#GRAjax').load(window.location.href + " #GRAjax");
+					}
+				})  
+			 } 
+		})
+		//저장 버튼
+		$("#updateDoItForm .submitBtn").click(function(){
+			changeGantt('${groupId}', IndexInt);
+			<% for (int i = 0; i < smallDoItMax.length; i++){ %>
+				smallMax[<%=i%>] = <%=smallDoItMax[i]%>;
+			<%}%>
+		});
+		
+		//체크박스 초기화
+		cnt = 0;
+		<%
+		 for (int i = 0; i < DoIt.size(); i++){
+				for (int j = 0; j < DoItDetail[i].size(); j++){
+					%>
+					var temp1 = "#DoItCheck3<%=i%><%=j%>";
+					var item = $(temp1).parent();
+					var text = item.children('.DoItListItem');
+					
+					if($("#DoItCheck3<%=i%><%=j%>").attr("data-check") == "0"){
+						text.css({
+							"color": "black",
+							"text-decoration" : "None"
+						});
+						$("#DoItCheck3<%=i%><%=j%>").attr("checked", false);
+					}else{
+						$(text).css({
+							"color": "#D9D9D9",
+							"text-decoration" : "line-through"
+						});
+						cnt++;
+						$("#DoItCheck3<%=i%><%=j%>").attr("checked", true);
+					}
+					
+					var result = (cnt/<%=count%>)*100;
+					result = result.toFixed(1);
+					$("#percentage").text(result);
+					
+					var fight = "천리 길도 한 걸음부터!";
+
+					if (0 < result && result < 20){
+						fight = "차근차근 쌓아가보아요";
+					}else if (20<= result && result < 40){
+						fight = "잘하고 있어요! 이대로만 해봐요";
+					}else if (40<= result && result < 60){
+						fight = "목표에 점점 가까워지고 있어요";
+					}else if (60<= result && result < 80){
+						fight = "노력은 배신하지 않는다고 해요";
+					}else if (80<= result && result < 100){
+						fight = "거의 다 왔어요! 조금만 더 힘내요";
+					}else if (100 == result){
+						fight = "훌륭해요! 뛰어난 성과를 자랑해봐요";
+					}
+					$("#fighting").text(fight);
+					<%
+				}
+			}
+		%>
 		//Dday 초기화 화면 숨기기
 		if (<%=(int)request.getAttribute("DdayTrue")%> == 1){
 			$("#Dday").show();
 			$("#DdayInit").hide();			
 		}
-		
+			
 		//일정표 색 결과 보여주기
 		var people = <%=ssuCnt%>; //참여 인원 수
 		var k = 1/people;	//1인당 투명도
 		for (var i = 0; i < <%=slideMax*42*7%>; i++){
-			var resultColor = k*$(".totalCol").eq(i).attr("data-count");
-			$(".totalCol").eq(i).css("background", "rgba(242, 82, 135, "+ resultColor +")");	
-			
+			if($(".totalCol").eq(i).attr("data-count") == -1){
+				$(".totalCol").eq(i).css("background", "#E9E9E9");
+
+			}else{
+				var resultColor = k*$(".totalCol").eq(i).attr("data-count");
+				$(".totalCol").eq(i).css("background", "rgba(242, 82, 135, "+ resultColor +")");		
+			}
 		}
 		//수정 페이지
 		for (var i = 0; i < <%=slideMax*42*7%>; i++){
-			if($('.tdCol').eq(i).attr("data-count") == 1){
+			if($('.tdCol').eq(i).attr("data-count") == -1){
+				$(".tdCol").eq(i).css("background", "#E9E9E9");
+				$(".tdCol").eq(i).attr("data-color", "-1");
+			}
+			else if($('.tdCol').eq(i).attr("data-count") == 1){
 				$(".tdCol").eq(i).css("background", "rgba(242,82,135,1)");
 				$(".tdCol").eq(i).attr("data-color", "1");
 			}
 		}
+		
+		$("#gantt_chart_btn").on('click', function(){
+			//간트차트 있을 때 바로 결과창
+			if ( <%=DoItCnt%> >0){
+				drawChart();
+				$("#ganttCreate").hide();
+				$("#ganttFirstEdit").hide();
+				$("#ganttResult").show();
+			}
+		})
 		
 		//일정 버튼 초기 색
 		if(<%=slideMax%> == 1){
@@ -929,19 +1184,19 @@ String userImgErr = "/img/user_logo.png";
 				$(".total_table_right").css("color", "#F25287");
 			}
 		
-	 	/* 간트 차트 */
-	  	$("#ganttCreateBtn").click(function(){
-	  		drawChart();
-			$("#ganttFirstEdit").show();
-			$("#ganttFirstEdit").css({
-				"display" : "flex"
-			});
-			$("#ganttCreate").hide();
-		})
+	 	/* 간트 차트 */	
+
 	  	$("#ganttFirstEditCancelBtn").click(function(){
 	  		drawChart();
-			$("#ganttCreate").show();
-			$("#ganttFirstEdit").hide();
+	  		if ( <%=DoItCnt%> >0){
+	  			drawChart();
+				$("#ganttCreate").hide();
+				$("#ganttFirstEdit").hide();
+				$("#ganttResult").show();
+			}else{
+				$("#ganttCreate").show();
+				$("#ganttFirstEdit").hide();	
+			}
 		})	
 	  	$("#ganttFirstEditSaveBtn").click(function(){
 	  		drawChart();
@@ -956,7 +1211,51 @@ String userImgErr = "/img/user_logo.png";
 			});
 			$("#ganttResult").hide();
 		})
+		$("#ganttInitBtn").on("click", function(){
+			var result = confirm("정말 초기화하시겠습니까? 모든 데이터가 영구적으로 삭제됩니다.");
+			
+			if(result){
+				$.ajax({
+					url : "/schedule/<%= groupId%>/InitGantt",
+					type : "get",
+					complete : function(){
+						location.reload();
+					}
+				})
+			}
+			else{
+				
+			}
+		})
+		
 	 });
+	
+	//리스트 삭제하기
+	function deleteBtn(element, cnt, groupId){
+		 console.log(cnt);
+		var result = confirm("하위 항목이 모두 사라집니다. 정말로 삭제하시겠습니까?");
+		if(result){
+			if(cnt <=1){
+				alert("항목이 하나 이상 존재해야 합니다.");
+				return false;
+			}else{
+				$.ajax({
+					url : "/schedule/" + groupId + "/deleteGanttDoIt",
+					type : "get",
+					data : {big_todo : element},
+					success : function(){
+						$('#ajaxContainer').load(window.location.href + " #ajaxContainer",function(){	
+						drawChart();	//갱신 안 됨...
+						max--;
+					});
+					}
+				})
+			}
+		}else{
+			return false;
+		}	
+	}
+	
 	</script>
 	  <div id = "group_detail" style = "display : none;">
 		  <div class="group_info">
@@ -964,10 +1263,10 @@ String userImgErr = "/img/user_logo.png";
 				<div style= " display : flex;  margin : auto; width : 90%; height : 80%">
 					<div id = "group_detail_left" >
 						<h1>${groupName}</h1>
-						<h3>개설자 : 방장쓰</h3>
+						<h3><span>일반맴버</span> : ${thisUserName}</h3>
 						<h3></h3>
 						
-						<img src = "/img/user_logo.png" style = "width : 100px; height : 100px; border-radius : 50%;">
+						<img src = "${thisUserImg }" onerror = "/img/user_logo.png" style = "width : 100px; height : 100px; border-radius : 50%;">
 						<img src = "/img/액자.png" style = "position : absolute; width : 150px; height : 150px; top : 400px"/>
 					</div>
 					<div id = "group_detail_right" >
@@ -995,24 +1294,26 @@ String userImgErr = "/img/user_logo.png";
 							<h1 style = "position : relative; font-size : 28px; margin : 3px; top : 3px; text-align : center; color : white;" class="modalDoItName">오류가 발생했습니다</h1>
 						</div>
 					<div class = "DoIt_modal_content" >
-						<form action = "#second_section" method = "get" id = "updateDoItForm">
+						<div id = "updateDoItForm">
 							<div style = "display : flex;">
 								<div id = "DoItChildDate" style = "margin : 10px">
-			  						<h2 style = "display : inline"> Task 시작일 : <br><input type = "date" name = "startDate"/><br><br>
-			  							Task 종료일 : <br><input type = "date" name = "EndDate"/></h2> <br>
-			  						<input type = "text" placeholder = "  새 작업 추가하기" name = "newValue"/>
-			  						<button name = "newValueBtn" class = "newValueBtn" style = "width : 40px; height : 40px; font-size : 25px;">+</button>
+			  						<h2 style = "display : inline"> Task 시작일 : <br><input type = "date" class = "startDate"/><br><br>
+			  							Task 종료일 : <br><input type = "date" class = "endDate"/></h2> <br>
+			  						<input type = "text" placeholder = "  새 작업 추가하기" class = "newValue"/>
+			  						<button class = "newValueBtn" style = "width : 40px; height : 40px; font-size : 25px;">+</button>
 			  					</div>
 			  					<div id = "DoItChildList">
-			  						<div class = "DoItListChild" >
-			  							<ul id = "DoItListChild">
-			  							
-			  							</ul>
+			  						<div id = "DoItChildListAjax">
+			  							<div class = "DoItListChild" >
+			  								<ul id = "DoItListChild">
+			  								
+			  								</ul>
+			  							</div>
 			  						</div>
 			  					</div>
 			  				</div>
-							<input type = "submit" value = "저장" onclick = "" class = "submitBtn"  style = "left : 42%; margin-top : 10px;"/>
-						</form>
+							<input type = "button" value = "저장"  class = "submitBtn"  style = "left : 42%; margin-top : 10px;"/>
+						</div>
 					</div>		
   				</div>
 			  </div>
