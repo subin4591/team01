@@ -132,6 +132,9 @@ public class scheduleService {
 	public int selectDoItMax(String group_id) throws Exception{
 		return scheduleMapper.selectDoItMax(group_id);
 	}
+	public int selectSmallDoItMax(HashMap<String, Object> map) throws Exception{
+		return scheduleMapper.selectSmallDoItMax(map);
+	}
 	public void insertGroupGanttInit(HashMap<String, Object> map) throws Exception{
 		scheduleMapper.insertGroupGanttInit(map);
 	}
@@ -147,7 +150,7 @@ public class scheduleService {
 	public void deleteGroupGanttOne(HashMap<String, Object> map) throws Exception{
 		scheduleMapper.deleteGroupGanttOne(map);
 	}
-	
+
 	public String getLocation(String group_id) throws Exception{
 		return scheduleMapper.getLocation(group_id);
 	}

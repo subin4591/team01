@@ -133,6 +133,7 @@ function getDayOfWeek(string){
     return dayOfWeek;
 
 }
+// 날짜가 올바른지 체크하기
 function changeWeek(today){
 	var result1 = $("#firstDate").val();
 	var result2 = $("#EndDate").val();
@@ -169,7 +170,45 @@ function changeWeek(today){
 		WpopClose();
 	}
 }
+//날짜가 올바른지 체크하기
+function changeGantt(groupId, indexint){
+	var result1 = $("#DoItChildDate .startDate").val();
+	var result2 = $("#DoItChildDate .endDate").val();
 
+	   console.log(result1);
+	    console.log(result2);
+	
+	if (result1 == "" || result2 == ""){
+		alert("기간을 입력해주세요.");
+		return false;
+	}
+	
+	var results1 = result1.split("-");
+	var results2 = result2.split("-");
+	var temp1 = results1[0]+results1[1]+results1[2];
+	var temp2 = results2[0]+results2[1]+results2[2];
+	temp1 *= 1;
+	temp2 *= 1;
+
+	if (temp1 > temp2){
+		alert("올바른 기간을 입력해주세요.");
+		return false;
+	} 
+	else{
+		$.ajax({
+			url : "/schedule/"+groupId+"/InsertGantt3",
+			type : "get",
+			data : {
+				index : indexint,
+				big_todo_start : result1,
+				big_todo_end : result2
+			},
+			complete: function(){
+				DpopClose();	
+			}
+		})
+	}
+}
 function tbDateChange(start, end){	// 입력 : 2000/00/00 (월)
 	var start = start.split(" ")[0];
 	var end = end.split(" ")[0];
@@ -321,36 +360,6 @@ function WpopClose(){
 	$(modalPop).hide();
 	$(modalBg).hide();
 }
-//할일 팝업을 열기
-function DpopOpen(element, childs){
-	var list = $("#DoItListChild");
-	var child = [];
-	child = childs.split(",");
-	child[0] = child[0].replace("[", "");
-	child[child.length-1] = child[child.length-1].replace("]", "");
-	
-	var modalPop = $('.DoIt_modal');
-	var modalBg = $('.DoIt_modal_bg');
-	
-	$(".modalDoItName").text(element);
-	
-		
-	for (var i = 0; i < child.length; i++){
-		list.append('<li><div class = "DoItListItem" style = "width : 98%; " >&nbsp;'+child[i]+'</div></li>');
-		$("#DoItListChild").children().eq(i).children().append('<button type = "button" class = "deleteBtn" onclick="deleteBtn2('+i+')">✕</button>');
-	}
-	$(modalPop).show();
-	$(modalBg).show();
-}
-//할일 팝업 닫기
-function DpopClose(){
-	var list = $("#DoItListChild *");
-	var modalPop = $('.DoIt_modal');
-	var modalBg = $('.DoIt_modal_bg');
-	$(modalPop).hide();
-	$(modalBg).hide();	
-	list.remove();
-}
 
 //로딩창 종료하기
 function loadingClose(){
@@ -360,7 +369,7 @@ function loadingClose(){
 
 
 $(document).ready(function () {
-	
+
 	//테이블 드래그 관련
 	$(".tdCol").mousedown(function(){
 		console.log("mousedown" + $(this).attr("id"));

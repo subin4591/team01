@@ -594,6 +594,12 @@ String userImgErr = "/img/user_logo.png";
 			  					if(request.getAttribute("DoItDetail") != null){
 			  						DoItDetail = (List<String>[])request.getAttribute("DoItDetail");
 			  					}
+			  					
+			  					List<Integer>[] checkListOne = new ArrayList[DoIt.size()];
+			  					if(request.getAttribute("checkListOne") != null){
+			  						checkListOne = (List<Integer>[])request.getAttribute("checkListOne");
+			  					}
+			  					
 			  					int count = 0;
 			  					for (int i = 0; i < DoIt.size(); i++){
 			  						for (int j = 0; j < DoItDetail[i].size(); j++){
@@ -601,14 +607,14 @@ String userImgErr = "/img/user_logo.png";
 			  						}
 			  					}
 
-			  					for (int i = 0; i < DoIt.size(); i++){
+			  					for (int i = 0; i < DoItCnt; i++){
 			  					%>
 			  					
 			  						<li>
 			  							<div class = "DoItList" >
 			  								<input type = "checkbox" class = "DoItCheck" id = "DoItCheck<%=i%>" alt = "0" onclick = "openDoItList('<%=i%>')">
 			  								<label for = "DoItCheck<%=i%>"></label>&nbsp;<%= DoIt.get(i) %>
-			  								<img src = "/img/방장용_수정_버튼.svg" class ="DoItListEditBtn" onclick = "DpopOpen('<%=DoIt.get(i) %>', '<%=DoItDetail[i]%>')"/>
+			  								<img src = "/img/방장용_수정_버튼.svg" class ="DoItListEditBtn" onclick = "DpopOpen(<%= i %>,'<%=DoIt.get(i) %>', '<%=DoItDetail[i]%>')"/>
 			  								<button type = "button" class = "deleteBtn" onclick="deleteBtn('<%=i%>', '<%=DoItCnt%>', '${groupId }')">✕</button>
 			  							</div>
 			  							<div>
@@ -658,6 +664,7 @@ String userImgErr = "/img/user_logo.png";
 			  				<h2 style = "margin : 0px; text-align : center">할 일 목록</h2>
 			  				<hr style = "border : 3px solid #f25287">
 			  				<div id = "GRDoItContainer">
+			  					<div id = "GRAjax">
 			  					<ul style = "list-style:none; margin : 0px; padding : 0">
 			  						<%
 			  							for (int i = 0; i < DoIt.size(); i++){
@@ -671,7 +678,7 @@ String userImgErr = "/img/user_logo.png";
 			  									<ul class = "DoItListChild" id = "DoItListChild2<%=i%>" style = "display : None;">
 			  										<% for (int j = 0; j < DoItDetail[i].size(); j++){ %>
 			  											<li>
-			  												<input type = "checkbox"  class = "DoItCheck3" id = "DoItCheck3<%=i%><%=j%>" alt = "0" onclick = "GRchecked('<%=i%><%=j%>', <%=count%>)">
+			  												<input type = "checkbox"  class = "DoItCheck3" id = "DoItCheck3<%=i%><%=j%>" data-check = "<%=checkListOne[i].get(j) %>" onclick = "GRchecked('<%=i%>','<%=j%>', <%=count%>)">
 			  												<label for = "DoItCheck3<%=i%><%=j%>"></label>
 			  												<div class = "DoItListItem" >
 			  													<span style = "margin-left : 10px;"><%=DoItDetail[i].get(j) %></span>
@@ -683,6 +690,7 @@ String userImgErr = "/img/user_logo.png";
 			  							</li>
 			  						<%} %>
 			  					</ul>	
+			  				</div>
 			  				</div>	  		
 			  				<div style = " margin-top : 20px;">
 			  					<h1>프로젝트 진행도 : <span style = "color : #f25287" id = "percentage">00.0</span>%</h1>
@@ -711,25 +719,42 @@ String userImgErr = "/img/user_logo.png";
 	 <script>
 	 var cnt = 0;
 	//간트 결과 체크박스 이벤트
-	function GRchecked(element, count){
+	function GRchecked(element1, element2, count){
+		var element = element1 + element2;
 		var temp1 = "#DoItCheck3"+element;
 		var item = $(temp1).parent();
 		var text = item.children('.DoItListItem');
 		
-		if($(temp1).attr("alt") == "0"){
+		if($(temp1).attr("data-check") == "0"){
 			text.css({
 				"color": "#D9D9D9",
 				"text-decoration" : "line-through"
 			});
 			cnt++;
-			$(temp1).attr("alt" , "1");
+			$.ajax({
+				url : "/schedule/${groupId}/check",
+				type : "get",
+				data : ({
+					big_todo : element1,
+					small_todo : element2
+				})
+			})
+			$(temp1).attr("data-check" , "1");
 		}else{
 			text.css({
 				"color": "black",
 				"text-decoration" : "None"
 			});
 			cnt--;
-			$(temp1).attr("alt",  "0");
+			$.ajax({
+				url : "/schedule/${groupId}/check2",
+				type : "get",
+				data : ({
+					big_todo : element1,
+					small_todo : element2
+				})
+			})
+			$(temp1).attr("data-check",  "0");
 		}
 		var result = (cnt/count)*100;
 		result = result.toFixed(1);
@@ -754,20 +779,29 @@ String userImgErr = "/img/user_logo.png";
 	}
 
 	<%
-	Date DoItStartDate = new Date();
-	Date DoItEndDate = new Date();
-	Calendar doItCal = Calendar.getInstance();
-	Calendar doItCal2 = Calendar.getInstance();
-	doItCal.setTime(DoItStartDate);
-	doItCal2.setTime(DoItEndDate);
-	doItCal2.add(Calendar.DATE, 7);
+	Date[] DoItStartDate = new Date[DoItCnt];
+	Date[] DoItEndDate = new Date[DoItCnt];
+	Calendar[] doItCal = new Calendar[DoItCnt];
+	Calendar[] doItCal2 = new Calendar[DoItCnt];
+
+	for (int i = 0; i < DoItCnt; i++){
+		DoItStartDate[i] = new Date();
+		DoItEndDate[i] = new Date();
+		doItCal[i] = Calendar.getInstance();
+		doItCal2[i] = Calendar.getInstance();
+		doItCal[i].setTime(DoItStartDate[i]);
+		doItCal2[i].setTime(DoItEndDate[i]);
+		doItCal2[i].add(Calendar.DATE, 7);
+	}
 	
-	if ((Date)request.getAttribute("DoItStartDate") != null 
-			&& (Date)request.getAttribute("DoItEndDate") != null ){
-		DoItStartDate = (Date)request.getAttribute("DoItStartDate") ;
-		DoItEndDate = (Date)request.getAttribute("DoItEndDate");
-		doItCal.setTime(DoItStartDate);
-		doItCal2.setTime(DoItEndDate);
+	if ((Date[])request.getAttribute("DoItStartDate") != null 
+			&& (Date[])request.getAttribute("DoItEndDate") != null ){
+		DoItStartDate = (Date[])request.getAttribute("DoItStartDate") ;
+		DoItEndDate = (Date[])request.getAttribute("DoItEndDate");
+		for (int i = 0; i < DoItCnt; i++){
+			doItCal[i].setTime(DoItStartDate[i]);
+			doItCal2[i].setTime(DoItEndDate[i]);
+		}
 	}
 	%>
 
@@ -785,17 +819,19 @@ String userImgErr = "/img/user_logo.png";
 	var valueDur = [];
 	var valuePC = [];
 	<%
-	
-	
-  	for (int t = 0; t < DoIt.size(); t++){
+	int[] checkList = new int [DoItCnt];
+	if (request.getAttribute("checkList")!=null)
+		checkList = (int[])request.getAttribute("checkList");
+
+  	for (int t = 0; t < DoItCnt; t++){
   	%>
   		valueName.push('<%=DoIt.get(t)%>');
 
-	    valueSDate.push(new Date(<%=doItCal.get(Calendar.YEAR) %>,<%=doItCal.get(Calendar.MONTH)-1 %>, <%=doItCal.get(Calendar.DATE) %>));
-	    valueEDate.push(new Date(<%=doItCal2.get(Calendar.YEAR) %>,<%=doItCal2.get(Calendar.MONTH)-1 %>, <%=doItCal2.get(Calendar.DATE) %>));
+	    valueSDate.push(new Date(<%=doItCal[t].get(Calendar.YEAR) %>,<%=doItCal[t].get(Calendar.MONTH) %>, <%=doItCal[t].get(Calendar.DATE) %>));
+	    valueEDate.push(new Date(<%=doItCal2[t].get(Calendar.YEAR) %>,<%=doItCal2[t].get(Calendar.MONTH) %>, <%=doItCal2[t].get(Calendar.DATE) %>));
 	    
 	    valueDur.push(null);
-	    valuePC.push(0);
+	    valuePC.push(<%=checkList[t]%>);
 	<%}
 	%>
 	function drawChart() {
@@ -894,6 +930,51 @@ String userImgErr = "/img/user_logo.png";
 
 	<% int DoItMax = (int)request.getAttribute("DoItMax");%>
 	var max = <%= DoItMax%>;
+	<% 
+	 int [] smallDoItMax = (int[])request.getAttribute("smallDoItMax");
+	 //System.out.println(smallDoItMax[0]);
+	 %>
+		var smallMax = [];
+		<% for (int i = 0; i < smallDoItMax.length; i++){ %>
+			smallMax[<%=i%>] = <%=smallDoItMax[i]%>;
+		<%}%>
+	
+	var IndexInt = 0;
+	var Element;
+	//할일 팝업을 열기
+	function DpopOpen(indexint, element, childs){
+		var list = $("#DoItListChild");
+		IndexInt = indexint;
+		Element = element;
+		//temp의 child
+		var child = [];
+		child = childs.split(",");
+		child[0] = child[0].replace("[", "");
+		child[child.length-1] = child[child.length-1].replace("]", "");
+		
+		
+		var modalPop = $('.DoIt_modal');
+		var modalBg = $('.DoIt_modal_bg');
+		
+		$(".modalDoItName").text(element);
+		
+		for (var i = 0; i < child.length; i++){
+			list.append('<li><div class = "DoItListItem" style = "width : 98%; " >&nbsp;'+child[i]+'</div></li>');
+			$("#DoItListChild").children().eq(i).children().append('<button type = "button" class = "deleteBtn" onclick="deleteBtn2('+i+')">✕</button>');
+		}
+		
+		$(modalPop).show();
+		$(modalBg).show();
+	}
+	//할일 팝업 닫기
+	function DpopClose(){
+		var list = $("#DoItListChild *");
+		var modalPop = $('.DoIt_modal');
+		var modalBg = $('.DoIt_modal_bg');
+		$(modalPop).hide();
+		$(modalBg).hide();	
+		list.remove();
+	}
 	
 	$(document).ready(function () {
 		
@@ -933,7 +1014,7 @@ String userImgErr = "/img/user_logo.png";
 			 alert("값을 입력하세요");
 		 }
 		 else{
-			 console.log(max);
+
 			 $.ajax({
 					url : "/schedule/<%= groupId%>/InsertGantt",
 					type : "get",
@@ -943,8 +1024,6 @@ String userImgErr = "/img/user_logo.png";
 						small_todo : 0,
 						big_todo_content : $("#GanttEditValueBox .newValue").val(),
 						small_todo_content : "하위 메뉴",
-						start_date : "<%= DoItStartDate%>",
-						end_date : "<%= DoItEndDate%>",
 						check_do : 0
 					},
 					success : function(data){
@@ -960,51 +1039,103 @@ String userImgErr = "/img/user_logo.png";
 					},
 					complete : function(){
 						$("#GanttEditValueBox .newValue").val(null);
-						
 					}
 				})  
 			 } 
 		})	
-		
-		//모달 창 ajax
-		$("#GanttEditValueBox .newValueBtn").on("click", function(){
-		 if ($("#GanttEditValueBox .newValue").val() == ""){
+			
+		//모달 창 입력 ajax
+		$("#DoItChildDate .newValueBtn").click(function(){
+			var list = $("#DoItListChild");
+		 if ($("#DoItChildDate .newValue").val() == ""){
 			 alert("값을 입력하세요");
 		 }
 		 else{
-			 console.log(max);
+				
+			 console.log(smallMax[IndexInt]);
 			 $.ajax({
-					url : "/schedule/<%= groupId%>/InsertGantt",
+					url : "/schedule/<%= groupId%>/InsertGantt2",
 					type : "get",
 					data : {
 						group_id : "<%= 	groupId%>",
-						big_todo : ++max,
-						small_todo : 0,
-						big_todo_content : $("#GanttEditValueBox .newValue").val(),
-						small_todo_content : "하위 메뉴",
-						start_date : "<%= DoItStartDate%>",
-						end_date : "<%= DoItEndDate%>",
-						check_do : 0
+						big_todo : IndexInt,
+						small_todo : ++smallMax[IndexInt],
+						big_todo_content : Element,
+						small_todo_content : $("#DoItChildDate .newValue").val()
 					},
 					success : function(data){
-						$('#ajaxContainer').load(window.location.href + " #ajaxContainer",function(){	
-							drawChart();	//갱신 안 됨...
-						});
+						list.append('<li><div class = "DoItListItem" style = "width : 98%; " >&nbsp;'+$("#DoItChildDate .newValue").val()+'</div></li>');
+						$("#DoItListChild").children().eq(smallMax[IndexInt]).children().append('<button type = "button" class = "deleteBtn" onclick="deleteBtn2('+smallMax[IndexInt]+')">✕</button>');
 					},
 					error : function(){
 						alert("입력 중 에러가 발생했습니다.");
-						location.reload();
-						$("#meeting_date").hide();
-						$("#gantt_chart").show();
+						//location.reload();
 					},
 					complete : function(){
-						$("#GanttEditValueBox .newValue").val(null);
-						
+						$("#DoItChildDate .newValue").val(null);
+						$('#ajaxContainer').load(window.location.href + " #ajaxContainer");
+						$('#GRAjax').load(window.location.href + " #GRAjax");
 					}
 				})  
 			 } 
 		})
+		//저장 버튼
+		$("#updateDoItForm .submitBtn").click(function(){
+			changeGantt('${groupId}', IndexInt);
+			<% for (int i = 0; i < smallDoItMax.length; i++){ %>
+				smallMax[<%=i%>] = <%=smallDoItMax[i]%>;
+			<%}%>
+		});
 		
+		//체크박스 초기화
+		cnt = 0;
+		<%
+		 for (int i = 0; i < DoIt.size(); i++){
+				for (int j = 0; j < DoItDetail[i].size(); j++){
+					%>
+					var temp1 = "#DoItCheck3<%=i%><%=j%>";
+					var item = $(temp1).parent();
+					var text = item.children('.DoItListItem');
+					
+					if($("#DoItCheck3<%=i%><%=j%>").attr("data-check") == "0"){
+						text.css({
+							"color": "black",
+							"text-decoration" : "None"
+						});
+						$("#DoItCheck3<%=i%><%=j%>").attr("checked", false);
+					}else{
+						$(text).css({
+							"color": "#D9D9D9",
+							"text-decoration" : "line-through"
+						});
+						cnt++;
+						$("#DoItCheck3<%=i%><%=j%>").attr("checked", true);
+					}
+					
+					var result = (cnt/<%=count%>)*100;
+					result = result.toFixed(1);
+					$("#percentage").text(result);
+					
+					var fight = "천리 길도 한 걸음부터!";
+
+					if (0 < result && result < 20){
+						fight = "차근차근 쌓아가보아요";
+					}else if (20<= result && result < 40){
+						fight = "잘하고 있어요! 이대로만 해봐요";
+					}else if (40<= result && result < 60){
+						fight = "목표에 점점 가까워지고 있어요";
+					}else if (60<= result && result < 80){
+						fight = "노력은 배신하지 않는다고 해요";
+					}else if (80<= result && result < 100){
+						fight = "거의 다 왔어요! 조금만 더 힘내요";
+					}else if (100 == result){
+						fight = "훌륭해요! 뛰어난 성과를 자랑해봐요";
+					}
+					$("#fighting").text(fight);
+					<%
+				}
+			}
+		%>
 		//Dday 초기화 화면 숨기기
 		if (<%=(int)request.getAttribute("DdayTrue")%> == 1){
 			$("#Dday").show();
@@ -1017,7 +1148,7 @@ String userImgErr = "/img/user_logo.png";
 		for (var i = 0; i < <%=slideMax*42*7%>; i++){
 			if($(".totalCol").eq(i).attr("data-count") == -1){
 				$(".totalCol").eq(i).css("background", "#E9E9E9");
-				console.log("색 바꿈");
+
 			}else{
 				var resultColor = k*$(".totalCol").eq(i).attr("data-count");
 				$(".totalCol").eq(i).css("background", "rgba(242, 82, 135, "+ resultColor +")");		
@@ -1166,16 +1297,18 @@ String userImgErr = "/img/user_logo.png";
 						<div id = "updateDoItForm">
 							<div style = "display : flex;">
 								<div id = "DoItChildDate" style = "margin : 10px">
-			  						<h2 style = "display : inline"> Task 시작일 : <br><input type = "date" name = "startDate"/><br><br>
-			  							Task 종료일 : <br><input type = "date" name = "EndDate"/></h2> <br>
-			  						<input type = "text" placeholder = "  새 작업 추가하기" name = "newValue"/>
+			  						<h2 style = "display : inline"> Task 시작일 : <br><input type = "date" class = "startDate"/><br><br>
+			  							Task 종료일 : <br><input type = "date" class = "endDate"/></h2> <br>
+			  						<input type = "text" placeholder = "  새 작업 추가하기" class = "newValue"/>
 			  						<button class = "newValueBtn" style = "width : 40px; height : 40px; font-size : 25px;">+</button>
 			  					</div>
 			  					<div id = "DoItChildList">
-			  						<div class = "DoItListChild" >
-			  							<ul id = "DoItListChild">
+			  						<div id = "DoItChildListAjax">
+			  							<div class = "DoItListChild" >
+			  								<ul id = "DoItListChild">
 			  								
-			  							</ul>
+			  								</ul>
+			  							</div>
 			  						</div>
 			  					</div>
 			  				</div>

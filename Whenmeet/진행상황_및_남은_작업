@@ -17,14 +17,6 @@ create table group_gantt_table(
 
 [7/20 진행 예정]
 
-하위메뉴 추가 기능
-
-- ajax로 구현
-- 이미 테이블이 존재할 경우: drop temp table
-- create temp table
-- insert (소속DoIt / type(date/doit(소) / data(varchar) / seq(null 가능))
-
-----------------------
 하위메뉴 모달 동작
 
 저장을 누름 > 

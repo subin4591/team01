@@ -301,6 +301,12 @@
 		where group_id = #{group_id}
 	]]>
 	</select>
+	<select id = "selectSmallDoItMax" resultType = "int" parameterType = "HashMap">
+	<![CDATA[
+		select max(small_todo) from group_gantt_table
+		where group_id = #{group_id} and big_todo = #{big_todo};
+	]]>
+	</select>
 	<insert id = "insertGroupGanttInit" parameterType = "HashMap">
 		<![CDATA[
 			insert into group_gantt_table
@@ -362,6 +368,9 @@
 	]]>
 	<if test = "big_todo2 != null">
 		and big_todo = #{big_todo2}
+	</if>
+	<if test = "small_todo2 != null">
+		and small_todo = #{small_todo2}
 	</if>
 	</update>
 	<delete id = "deleteGroupGanttAll"  parameterType = "String">

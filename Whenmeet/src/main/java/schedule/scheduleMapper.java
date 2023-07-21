@@ -58,6 +58,7 @@ public interface scheduleMapper {
 	List<GroupGanttDTO> selectDistinctGanttToDo(String group_id) throws Exception;
 	List<GroupGanttDTO> selectGroupGanttToDo(HashMap<String, Object> map) throws Exception;
 	int selectDoItMax(String group_id) throws Exception;
+	int selectSmallDoItMax(HashMap<String, Object> map) throws Exception;
 	void insertGroupGanttInit(HashMap<String, Object> map) throws Exception;
 	void insertGroupGantt(HashMap<String, Object> map) throws Exception;
 	void updateGroupGantt(HashMap<String, Object> map) throws Exception;
