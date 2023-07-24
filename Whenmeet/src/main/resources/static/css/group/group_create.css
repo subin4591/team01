@@ -109,28 +109,6 @@ a:hover {
 	margin-bottom: 10px;
 	padding: 0 10px;
 }
-/*
-.sub_host_radio {
-	width: 25px;
-    height: 25px;
-
-    appearance: none;
-    border: max(2px, 0.1em) solid #F25287;
-    border-radius: 50%;
-    transition: border 0.5s ease-in-out;
-}
-.sub_host_radio:checked {
-    border: 0.5em solid #F25287;
-}
-.sub_host_radio:focus-visible {
-    outline-offset: max(2px, 0.1em);
-    outline: max(2px, 0.1em) dotted #F25287;
-}
-.sub_host_radio:hover {
-    box-shadow: 0 0 0 max(2px, 0.2em) #DB9F9F;
-    cursor: pointer;
-}
-*/
 .sub_chk_list {
 	display: flex;
 	flex-direction: row;
