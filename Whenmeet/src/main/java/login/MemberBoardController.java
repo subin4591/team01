@@ -74,7 +74,7 @@ public ModelAndView signupForm(MemberDTO dto) {
 	//1. 회원가 form data 받기 
 	//2. 서비스 로직 구현 
 	 // 프로필 사진을 받지 않으므로 profile_url은 빈 문자열로 설정
-    dto.setProfile_url("");
+	dto.setProfile_url("/img/user_logo.png");
 
 	service.insertMember(dto);	
 	ModelAndView mv = new ModelAndView();
@@ -142,11 +142,37 @@ public String userUpdate() {
 }
 
 // 회원 정보 수정 
-@RequestMapping("/updateMember")
-public ModelAndView updateMember(MemberDTO dto) {
+@PostMapping("/updateMember")
+public ModelAndView updateMember(MemberDTO dto, @RequestParam("profile") MultipartFile file) {
     System.out.println("=======================수정 이동==================");
     System.out.println("파라미터유저 : " + dto.toString());
-    dto.setProfile_url("");
+
+    // 업로드된 프로필 사진이 있다면 파일을 저장하고 경로를 DB에 저장
+    if (!file.isEmpty()) {
+        try {
+            String uploadDir = "/Users/chaesuwon/kdt/upload/"; // 파일을 저장할 경로 설정
+            
+            // 파일명에 유저 아이디와 현재 시간 등을 조합하여 유일한 파일명 생성
+            String fileName = dto.getUser_id() + "_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            
+            // 파일을 지정된 경로에 저장
+            File uploadedFile = new File(uploadDir + fileName);
+            file.transferTo(uploadedFile);
+
+            // 프로필 사진의 경로를 DB에 저장
+            dto.setProfile_url(uploadedFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 프로필 사진을 업로드하지 않으면 기존의 프로필 이미지 경로를 유지
+    else {
+        MemberDTO originalDto = service.oneMember(dto.getUser_id());
+        dto.setProfile_url(originalDto.getProfile_url());
+    }
+
+    // 회원 정보 업데이트
     service.updateMember(dto);
 
     ModelAndView mv = new ModelAndView();
