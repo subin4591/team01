@@ -330,6 +330,15 @@
 	background-color: #F25287;
 	border-color: #F25287;
 }
+#stop_btn:hover,
+#make_group_btn:hover {
+	box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+	transition: 0.5s;
+}
+#stop_btn:active,
+#make_group_btn:active {
+	transform: scale(0.9);
+}
 
 /* popup */
 #hidden_popup {

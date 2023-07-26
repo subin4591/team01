@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import dto.GroupCreateDTO;
 import dto.GroupDTO;
 import dto.GroupUserDTO;
+import dto.MeetingPagingDTO;
 import dto.UserDTO;
 
 @Mapper
@@ -33,6 +34,10 @@ public interface GroupDAO {
 	
 	// 그룹 정보
 	public GroupDTO groupInfo(String group_id);
+	
+	// 유저가 가입한 그룹 목록
+	public List<GroupDTO> groupList(MeetingPagingDTO dto);
+	public int groupListCount(MeetingPagingDTO dto);
 	
 	
 	/// Group insert
