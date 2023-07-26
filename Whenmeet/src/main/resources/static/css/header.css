@@ -43,6 +43,7 @@ header {
 }
 .login_btn {
 	position: absolute;
+	cursor: pointer;
 	top: 15px;
 	right: 20px;
 	width: 126px;

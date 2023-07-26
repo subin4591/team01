@@ -44,6 +44,21 @@ a:hover {
 	border: 2px solid;
 	border-radius: 10px;
 }
+#mycon_btn:active,
+#myapp_btn:active, 
+#write_btn:active,
+#write_form_btn *:active, 
+#contents_btn_left *:active,
+#contents_btn_right *:active,
+#change_form_btn *:active,
+#popup_btn *:active,
+#app_submit:active,
+#my_app_submit:active,
+#my_app_cancel:active,
+#man_ok_btn:active,
+#man_re_btn:active {
+	transform: scale(0.9);
+}
 #mycon_btn,
 #myapp_btn,
 #change_form_cancel_btn,
@@ -56,6 +71,17 @@ a:hover {
 	color: #F25287;
 	background-color: #F9F3F3;
 	border-color: #F25287;
+}
+#mycon_btn:hover,
+#myapp_btn:hover,
+#change_form_cancel_btn:hover,
+#write_form_cancel_btn:hover,
+#contents_list_btn:hover,
+#contents_change_btn:hover,
+#popup_cancel:hover,
+#my_app_cancel:hover {
+	box-shadow: inset 0 2px 5px rgba(242, 82, 135, 0.4);
+	transition: 0.5s;
 }
 #write_btn,
 #change_form_change_btn,
@@ -70,4 +96,16 @@ a:hover {
 	color: white;
 	background-color: #F25287;
 	border-color: #F25287;	
+}
+#write_btn:hover,
+#change_form_change_btn:hover,
+#write_form_write_btn:hover,
+#app_submit:hover,
+#contents_delete_btn:hover, 
+#popup_confirm:hover,
+#my_app_submit:hover,
+#man_ok_btn:hover,
+#man_re_btn:hover {
+	box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+	transition: 0.5s;
 }
