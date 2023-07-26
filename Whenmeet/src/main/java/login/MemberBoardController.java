@@ -143,12 +143,15 @@ public String userUpdate() {
 
 // 회원 정보 수정 
 @PostMapping("/updateMember")
-public ModelAndView updateMember(MemberDTO dto, @RequestParam("profile") MultipartFile file) {
+public ModelAndView updateMember(MemberDTO dto, HttpSession session, @RequestParam("profile") MultipartFile file) {
     System.out.println("=======================수정 이동==================");
     System.out.println("파라미터유저 : " + dto.toString());
 
-    // 업로드된 프로필 사진이 있다면 파일을 저장하고 경로를 DB에 저장
-    if (!file.isEmpty()) {
+    // 프로필 사진을 업로드하지 않은 경우 기존의 프로필 사진 경로를 유지
+    if (file.isEmpty()) {
+        MemberDTO originalDto = service.oneMember(dto.getUser_id());
+        dto.setProfile_url(originalDto.getProfile_url());
+    } else {
         try {
             String uploadDir = "/Users/chaesuwon/kdt/upload/"; // 파일을 저장할 경로 설정
             
@@ -164,12 +167,6 @@ public ModelAndView updateMember(MemberDTO dto, @RequestParam("profile") Multipa
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    // 프로필 사진을 업로드하지 않으면 기존의 프로필 이미지 경로를 유지
-    else {
-        MemberDTO originalDto = service.oneMember(dto.getUser_id());
-        dto.setProfile_url(originalDto.getProfile_url());
     }
 
     // 회원 정보 업데이트
