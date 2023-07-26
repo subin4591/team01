@@ -5,10 +5,40 @@
 function IamHost(){
 	$("#SubHostForm").show();
 	$("#Dday_area .editDate").show();
+	$("#delete_btn").text("그룹 관리");
+	$("#delete_btn").hover(	function(){
+		$(this).css({"background-color": "white", "color" : "black",  "border": "3px solid #f25287"});
+	}, function(){
+		$(this).css({"background-color": "#f25287", "color" : "white"});
+	})
+	$("#ganttInitBtn").show();
+	$("#ganttResultEditBtn").show();
+	$("#ganttCreateBtn").show();
+	$("#ganttCreate").children().eq(1).hide();
+	
+	//그룹카드 관련
+	$("#group_detail_left").children().eq(1).children('span').text("방장");
 }
 //부방장의 관리
 function IamSubHost(){
 	$("#Dday_area .editDate").show();
+	$("#ganttInitBtn").show();
+	$("#ganttResultEditBtn").show();
+	$("#ganttCreateBtn").show();
+	$("#ganttCreate").children().eq(2).hide();
+	
+	//그룹카드 관련
+	$("#group_detail_left").children().eq(1).children('span').text("부방장");
+}
+//그룹 탈퇴
+function deleteGroupUser(){
+	var result = confirm("정말로 탈퇴하시겠습니까?");
+	if (result){
+		return true;
+	}
+	else{
+		return false;
+	}
 }
 //슬라이드 테이블
 var slidecount = 1;
@@ -66,28 +96,6 @@ function DdayError(){
 
 }
 
-//리스트 삭제하기
-function deleteBtn(element){
-	var temp = $("#DoItContainer");
-	temp = temp.children();
-	temp = temp.children().eq(element);
-	var result = confirm("하위 항목이 모두 사라집니다. 정말로 삭제하시겠습니까?");
-	if(result){
-		temp.remove();
-	}else{
-		return false;
-	}	
-}
-function deleteBtn2(element){
-	var temp = $("#DoItListChild");
-	temp = temp.children().eq(element);
-	var result = confirm("정말로 삭제하시겠습니까?");
-	if(result){
-		temp.remove();
-	}else{
-		return false;
-	}	
-}
 //간트차트 수정화면 자식리스트 열기
 function openDoItList(element){
 	var var1 = "#DoItCheck" + element;
@@ -125,6 +133,7 @@ function getDayOfWeek(string){
     return dayOfWeek;
 
 }
+// 날짜가 올바른지 체크하기
 function changeWeek(today){
 	var result1 = $("#firstDate").val();
 	var result2 = $("#EndDate").val();
@@ -161,7 +170,45 @@ function changeWeek(today){
 		WpopClose();
 	}
 }
+//날짜가 올바른지 체크하기
+function changeGantt(groupId, indexint){
+	var result1 = $("#DoItChildDate .startDate").val();
+	var result2 = $("#DoItChildDate .endDate").val();
 
+	   console.log(result1);
+	    console.log(result2);
+	
+	if (result1 == "" || result2 == ""){
+		alert("기간을 입력해주세요.");
+		return false;
+	}
+	
+	var results1 = result1.split("-");
+	var results2 = result2.split("-");
+	var temp1 = results1[0]+results1[1]+results1[2];
+	var temp2 = results2[0]+results2[1]+results2[2];
+	temp1 *= 1;
+	temp2 *= 1;
+
+	if (temp1 > temp2){
+		alert("올바른 기간을 입력해주세요.");
+		return false;
+	} 
+	else{
+		$.ajax({
+			url : "/schedule/"+groupId+"/InsertGantt3",
+			type : "get",
+			data : {
+				index : indexint,
+				big_todo_start : result1,
+				big_todo_end : result2
+			},
+			complete: function(){
+				DpopClose();	
+			}
+		})
+	}
+}
 function tbDateChange(start, end){	// 입력 : 2000/00/00 (월)
 	var start = start.split(" ")[0];
 	var end = end.split(" ")[0];
@@ -239,18 +286,21 @@ function  ScheduleSaveBtnClick(slideMax){
 var ispressed = false;
 var colorfill = true;
 function tbColorChange(element){
-	if( $(element).attr("data-color") != "1"){
+	if( $(element).attr("data-color") == "0"){
 		$(element).css({
 			"background" : "rgba(242, 82, 135, 1)"
 		});
 		$(element).attr("data-color", "1");
-			}
-		else if ($(element).attr("data-color") == "1"){
-			$(element).css({
+	}
+	else if ($(element).attr("data-color") == "1"){
+		$(element).css({
 			"background" : "rgba(0,0,0,0)"
 		});
 		$(element).attr("data-color", "0");
-		}
+	}
+	else{
+		
+	}
 }
 //유저 팝업을 열기
 function popOpen(id, name, address, phone, email, profile, host, subhost){
@@ -310,36 +360,6 @@ function WpopClose(){
 	$(modalPop).hide();
 	$(modalBg).hide();
 }
-//할일 팝업을 열기
-function DpopOpen(element, childs){
-	var list = $("#DoItListChild");
-	var child = [];
-	child = childs.split(",");
-	child[0] = child[0].replace("[", "");
-	child[child.length-1] = child[child.length-1].replace("]", "");
-	
-	var modalPop = $('.DoIt_modal');
-	var modalBg = $('.DoIt_modal_bg');
-	
-	$(".modalDoItName").text(element);
-	
-		
-	for (var i = 0; i < child.length; i++){
-		list.append('<li><div class = "DoItListItem" style = "width : 98%; " >&nbsp;'+child[i]+'</div></li>');
-		$("#DoItListChild").children().eq(i).children().append('<button type = "button" class = "deleteBtn" onclick="deleteBtn2('+i+')">✕</button>');
-	}
-	$(modalPop).show();
-	$(modalBg).show();
-}
-//할일 팝업 닫기
-function DpopClose(){
-	var list = $("#DoItListChild *");
-	var modalPop = $('.DoIt_modal');
-	var modalBg = $('.DoIt_modal_bg');
-	$(modalPop).hide();
-	$(modalBg).hide();	
-	list.remove();
-}
 
 //로딩창 종료하기
 function loadingClose(){
@@ -349,7 +369,7 @@ function loadingClose(){
 
 
 $(document).ready(function () {
-	
+
 	//테이블 드래그 관련
 	$(".tdCol").mousedown(function(){
 		console.log("mousedown" + $(this).attr("id"));

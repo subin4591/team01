@@ -11,6 +11,75 @@
 	<script src="/js/jquery-3.6.4.min.js"></script>
 	<script>
 		$(document).ready(function() {
+			// 그룹 개설일, 종료일
+			$("#ifrt_left p").text("${ group_info.group_create_time }".substring(0, 10));
+			$("#ifrt_right input").val("${ group_info.project_end_time }".substring(0, 10));
+			
+			// 방장 위임
+			$("#host_submit").on("click", function() {
+				if ($(".host_radio:checked").length == 0) {
+					alert("방장을 선택하십시오.");
+				}	// if end
+				else {
+					let formData = $("#host_form").serialize();
+					$.ajax({
+						url: "/group/change/host",
+						data: formData,
+						type: "post",
+						dataType: "json",
+						success: function(data) {
+							alert(data.host + "님이 새 방장이 되었습니다.");
+							location.href = "/";
+						}	// success end
+					});	// ajax end
+				}	// else end
+			});	// 방장 위임 end
+			
+			// 부방장 설정
+			$("#sub_submit").on("click", function() {
+				let formData = $("#sub_form").serialize();
+				$.ajax({
+					url: "/group/change/subHost",
+					data: formData,
+					type: "post",
+					dataType: "json",
+					success: function(data) {
+						alert("부방장이 '" + data.origin_sub + "'에서 '" + data.change_sub + "'으로 바뀌었습니다.");
+						location.reload();
+					}	// success end
+				});	// ajax end
+			});	// 부방장 설정 end
+			
+			// 멤버 탈퇴
+			$("#out_submit").on("click", function() {
+				let formData = $("#out_form").serialize();
+				$.ajax({
+					url: "/group/change/member",
+					data: formData,
+					type: "post",
+					dataType: "json",
+					success: function(data) {
+						alert(data.cnt + "명의 멤버를 탈퇴시켰습니다.");
+						location.reload();
+					}	// success end
+				});	// ajax end
+			});	// 멤버 탈퇴 end
+			
+			// 그룹 정보 수정
+			$("#info_submit").on("click", function() {
+				let formData = $("#info_form").serialize();
+				$.ajax({
+					url: "/group/change/info",
+					data: formData,
+					type: "post",
+					dataType: "json",
+					success: function(data) {
+						alert("그룹 정보 수정이 완료되었습니다.");
+						location.reload();
+					}	// success end
+				});	// ajax end
+			});	// 멤버 탈퇴 end
+			
 			// 글자수 제한
 			$("#group_name").on("keyup", function() {
 				let text_len = $(this).val().length;
@@ -69,7 +138,7 @@
 			<div class="profile_img">
 				<img alt="profile_img" src="${ host_info.profile_url }">
 			</div>
-			<h1><span>${ host_info.name }</span><span>님의 그룹수정</span></h1>
+			<h1><span>${ group_info.group_name }</span><span> 그룹 관리</span></h1>
 		</div>
 		<div id="change_forms">
 			<div id="group_user_form">
@@ -86,8 +155,7 @@
 										<img alt="profile_img" src="${ user.profile_url }">
 									</div>
 									<label for="ra_${ user.user_id }"><h2>${ user.name }</h2></label>
-									<input id="ra_${ user.user_id }" class="host_radio" type="radio" name="sub_host_id" value="${ user.user_id }">
-									<input type="hidden" name="user_list[]" value="${ user.user_id }">
+									<input id="ra_${ user.user_id }" class="host_radio" type="radio" name="host_id" value="${ user.user_id }">
 								</li>
 							</c:forEach>
 							
@@ -97,8 +165,7 @@
 										<img alt="profile_img" src="${ user.profile_url }">
 									</div>
 									<label for="ra_${ user.user_id }"><h2>${ user.name }</h2></label>
-									<input id="ra_${ user.user_id }" class="host_radio" type="radio" name="sub_host_id" value="${ user.user_id }">
-									<input type="hidden" name="user_list[]" value="${ user.user_id }">
+									<input id="ra_${ user.user_id }" class="host_radio" type="radio" name="host_id" value="${ user.user_id }">
 								</li>
 							</c:forEach>
 						</ul>
@@ -118,10 +185,9 @@
 									<div class="profile_img">
 										<img alt="profile_img" src="${ user.profile_url }">
 									</div>
-									<h2>${ user.name }</h2>
 									<div class="sub_chk_list">
-										<input id="sub_${ user.user_id }" class="sub_checkboxs" type="checkbox" name="sub_host_id" value="${ user.user_id }" checked>
-										<label for="sub_${ user.user_id }"></label>
+										<input id="sub_${ user.user_id }" class="sub_checkboxs sub_chk" type="checkbox" name="sub_host_id" value="${ user.user_id }" checked>
+										<label for="sub_${ user.user_id }"><h2>${ user.name }</h2><span></span></label>
 									</div>
 									<input type="hidden" name="user_list[]" value="${ user.user_id }">
 								</li>
@@ -132,12 +198,10 @@
 									<div class="profile_img">
 										<img alt="profile_img" src="${ user.profile_url }">
 									</div>
-									<h2>${ user.name }</h2>
 									<div class="sub_chk_list">
-										<input id="sub_${ user.user_id }" class="sub_checkboxs" type="checkbox" name="sub_host_id" value="${ user.user_id }">
-										<label for="sub_${ user.user_id }"></label>
+										<input id="sub_${ user.user_id }" class="sub_checkboxs sub_chk" type="checkbox" name="sub_host_id" value="${ user.user_id }">
+										<label for="sub_${ user.user_id }"><h2>${ user.name }</h2><span></span></label>
 									</div>
-									<input type="hidden" name="user_list[]" value="${ user.user_id }">
 								</li>
 							</c:forEach>
 						</ul>
@@ -157,12 +221,10 @@
 									<div class="profile_img">
 										<img alt="profile_img" src="${ user.profile_url }">
 									</div>
-									<h2>${ user.name }</h2>
 									<div class="sub_chk_list">
-										<input id="out_${ user.user_id }" class="sub_checkboxs" type="checkbox" name="sub_host_id" value="${ user.user_id }">
-										<label for="out_${ user.user_id }"></label>
+										<input id="out_${ user.user_id }" class="sub_checkboxs mem_chk" type="checkbox" name="user_list" value="${ user.user_id }">
+										<label for="out_${ user.user_id }"><h2>${ user.name }</h2><span></span></label>
 									</div>
-									<input type="hidden" name="user_list[]" value="${ user.user_id }">
 								</li>
 							</c:forEach>
 							
@@ -171,12 +233,10 @@
 									<div class="profile_img">
 										<img alt="profile_img" src="${ user.profile_url }">
 									</div>
-									<h2>${ user.name }</h2>
 									<div class="sub_chk_list">
-										<input id="out_${ user.user_id }" class="sub_checkboxs" type="checkbox" name="sub_host_id" value="${ user.user_id }">
-										<label for="out_${ user.user_id }"></label>
+										<input id="out_${ user.user_id }" class="sub_checkboxs mem_chk" type="checkbox" name="user_list" value="${ user.user_id }">
+										<label for="out_${ user.user_id }"><h2>${ user.name }</h2><span></span></label>
 									</div>
-									<input type="hidden" name="user_list[]" value="${ user.user_id }">
 								</li>
 							</c:forEach>
 						</ul>
@@ -190,28 +250,34 @@
 					<h2>그룹 정보</h2>
 				</div>
 				<form id="info_form">
+					<input type="hidden" name="group_id" value="${ group_info.group_id }">
 					<div id="info_form_left">
 						<input id="group_name" type="text" name="group_name" placeholder="그룹 이름" value="${ group_info.group_name }">
-						<h3>개설자 : ${ host_info.name }</h3>
+						<h3>방장 : ${ host_info.name }</h3>
 						<div id="info_imgs">
-							<img src="/img/액자.png">
-							<img src="${ host_info.profile_url }">
+							<img id="info_frame" src="/img/액자.png">
+							<div id="host_profile_img">
+								<img src="${ host_info.profile_url }">							
+							</div>
 						</div>
 					</div>
 					<div id="info_form_right">
 						<div id="info_form_right_top">
 							<div id="ifrt_left">
 								<h2>개설일<span>|</span></h2>
-								<p>${ group_info.group_create_time }</p>
+								<p></p>
 							</div>
 							<div id="ifrt_right">
 								<h2>종료일<span>|</span></h2>
-								<input type="date" name="project_end_time">
+								<input id="info_date" type="date" name="project_end_time">
 							</div>
 						</div>
 						<div id="info_form_right_bottom">
 							<h2>그룹 설명<span>|</span></h2>
 							<textarea name="group_description" rows="4" cols="20" placeholder="그룹 설명을 입력하세요.">${ group_info.group_description }</textarea>
+						</div>
+						<div id="info_form_right_btn">
+							<input class="chn_btn" id="info_submit" type="button" value="정보 수정">
 						</div>
 					</div>
 				</form>
