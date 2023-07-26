@@ -5,7 +5,6 @@ body {
     align-items: center;
     min-height: 100vh; /* 최소 높이를 100vh로 설정하여 헤더와 푸터 사이의 공간을 확보 */
     font-family: Arial, sans-serif;
-    padding: 20px;
     background-color: #fff; /* 하얀색 배경색 */
 }
 

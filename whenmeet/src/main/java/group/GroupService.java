@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import dto.GroupCreateDTO;
 import dto.GroupDTO;
 import dto.GroupUserDTO;
+import dto.MeetingPagingDTO;
 import dto.UserDTO;
 
 @Service("groupservice")
@@ -46,6 +47,14 @@ public class GroupService {
 	// 그룹 정보
 	public GroupDTO groupInfo(String group_id) {
 		return dao.groupInfo(group_id);
+	}
+	
+	// 유저가 가입한 그룹 목록
+	public List<GroupDTO> groupList(MeetingPagingDTO dto) {
+		return dao.groupList(dto);
+	}
+	public int groupListCount(MeetingPagingDTO dto) {
+		return dao.groupListCount(dto);
 	}
 	
 	

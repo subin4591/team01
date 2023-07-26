@@ -675,10 +675,15 @@
 				</div>
 				
 				<c:choose>
-					<c:when test="${ session_id == dto.user_id }">
+					<c:when test="${ session_id == dto.user_id && total_cnt == 0}">
 						<div id="contents_btn_right">
 							<input id="contents_change_btn" type="button" value="수정" onclick="location.href='/meeting/change?seq=${ dto.seq }'">
 							<input id="contents_delete_btn" type="button" value="삭제">
+						</div>				
+					</c:when>
+					<c:when test="${ session_id == dto.user_id && total_cnt != 0}">
+						<div id="contents_btn_right">
+							<input id="contents_change_btn" type="button" value="수정" onclick="location.href='/meeting/change?seq=${ dto.seq }'">
 						</div>				
 					</c:when>
 				</c:choose>
