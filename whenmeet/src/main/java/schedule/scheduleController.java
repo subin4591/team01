@@ -97,6 +97,8 @@ public class scheduleController {
 				ggmap.put("group_id", groupId);
 				int count = 0;
 				for (int i = 0; i < DoItCnt; i++) {
+					DoItStartDate [i] = new Date();
+					DoItEndDate[i] = new Date();
 					ggmap.put("big_todo", i);
 					for (int j = 0; j < scheduleService.selectGroupGanttToDo(ggmap).size(); j++ ) {
 					count += scheduleService.selectGroupGanttToDo(ggmap).get(j).getCheck_do();	
