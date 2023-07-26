@@ -7,7 +7,7 @@
 	<meta charset="UTF-8">
 	<link rel="icon" href="/img/icon.svg">
 	<title>그룹생성 | 언제만나</title>
-	<link href="/css/group/group_create.css" rel=stylesheet>
+	<link href="/css/group/group_invitation.css" rel=stylesheet>
 	<script src="/js/jquery-3.6.4.min.js"></script>
 	<script>
 		$(document).ready(function() {
@@ -28,6 +28,75 @@
 	                $(this).val($(this).val().slice(0, text_max-10));
 	            }
 			});
+			
+			// 그룹원 ID 검색
+			$("#id_search_submit_btn").on("click", function() {
+				let id = $("#id_input").val();
+				if (id == "") {
+					alert("ID를 입력하세요.");
+				}	// if end
+				else {
+					$.ajax({
+						url: "/group/invitation/IDSearch",
+						data: {id: id},
+						type: "post",
+						dataType: "json",
+						success: function(data) {
+							if (data.name == "null") {
+								$("#sr_none").show();
+								$("#sr_result").hide();
+								
+								$("#sr_none h2").text("ID가 존재하지 않습니다.");
+								$("#id_input").val("");
+							}
+							else {
+								$("#sr_none").hide();
+								$("#sr_result").show();
+								
+								$("#sr_result").html(`
+											<div class="profile_img">
+												<img alt="profile_img" src=\${ data.profile_url }>
+											</div>
+											<h2>\${ data.name }</h2>
+											<input type="hidden" id="result_user_id" value=\${ data.user_id }>
+											<input type="hidden" id="result_name" value=\${ data.name }>
+											<input type="hidden" id="result_profile_url" value=\${ data.profile_url }>
+											<input type="button" id="id_input_btn" value="추가">	
+										`);
+								$("#id_input").val("");
+							}
+						}	// success end
+					});	// ajax end
+				}	// else end
+			});	// 그룹원 ID 검색 end
+			
+			// 그룹원 추가
+			$(document).on("click", "#id_input_btn", function() {
+				let id = $("#result_user_id").val();
+				let name = $("#result_name").val();
+				let url = $("#result_profile_url").val();
+				
+				if ("${ host_info.user_id }" == id) {
+					alert("본인은 추가할 수 없습니다.");
+				}
+				else if ($(`input[name="user_list[]"][value=\${ id }]`).length > 0) {
+					alert("이미 추가된 회원입니다.");
+				}
+				else {
+					$("#user_from_ul ul").append(`
+							<li>
+								<div class="profile_img">
+									<img alt="profile_img" src=\${ url }>
+								</div>
+								<div class="sub_chk_list">
+									<input id="chk_\${ id }" class="sub_checkboxs" type="checkbox" name="sub_host_id" value=\${ id }>
+									<label for="chk_\${ id }"><h2>\${ name }</h2><span></span></label>
+								</div>
+								<input type="hidden" name="user_list[]" value=\${ id }>
+							</li>
+							`);
+				}
+			});	// 그룹원 추가 end
 			
 			// submit event
 			$("#group_submit").on("click", function() {
@@ -80,6 +149,23 @@
 			</div>
 			<h1><span>${ host_info.name }</span><span>님의 그룹생성</span></h1>
 		</div>
+		<form id="invitation_form">
+			<div id="invitation_form_title">
+				<h2>그룹원 ID 검색</h2>
+			</div>
+			<div id="search_bottom">
+				<div id="search_id">
+					<input type="text" id="id_input" name="id_input" placeholder="ID를 입력하세요.">
+	            	<img id="id_search_submit_btn" src="/img/search.svg" alt="search_submit_btn">
+				</div>
+				<div id="search_result">
+					<div id="sr_none">
+						<h2>ID 검색 결과</h2>
+					</div>
+					<div id="sr_result" style="display: none;"></div>
+				</div>			
+			</div>
+		</form>
 		<form id="create_forms" action="/group/create/result" method="post">
 			<input type="hidden" name="host_id" value="${ host_info.user_id }">
 			<div id="group_user_form">
@@ -87,20 +173,7 @@
 					<h2>부방장</h2>
 				</div>
 				<div id="user_from_ul">
-					<ul>
-						<c:forEach items="${ user_info }" var="user">
-							<li>
-								<div class="profile_img">
-									<img alt="profile_img" src="${ user.profile_url }">
-								</div>
-								<div class="sub_chk_list">
-									<input id="chk_${ user.user_id }" class="sub_checkboxs" type="checkbox" name="sub_host_id" value="${ user.user_id }">
-									<label for="chk_${ user.user_id }"><h2>${ user.name }</h2><span></span></label>
-								</div>
-								<input type="hidden" name="user_list[]" value="${ user.user_id }">
-							</li>
-						</c:forEach>
-					</ul>
+					<ul></ul>
 				</div>
 			</div>
 			<div id="group_info_form">
@@ -139,7 +212,6 @@
 		</form>
 		<input id="group_submit" type="button" value="그룹 만들기">
 	</div>
-	
 	
 	<!-- footer -->
 	<%@ include file="../footer.jsp" %>

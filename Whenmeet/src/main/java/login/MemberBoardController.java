@@ -3,6 +3,7 @@ package login;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.io.File;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -38,6 +39,7 @@ public class MemberBoardController {
         // login_login.jsp로 이동
         return "/login/login_login";
     }
+
 @GetMapping("/boardlogin")
 public String loginform() {
     return "/login/login_login";
@@ -74,7 +76,7 @@ public ModelAndView signupForm(MemberDTO dto) {
 	//1. 회원가 form data 받기 
 	//2. 서비스 로직 구현 
 	 // 프로필 사진을 받지 않으므로 profile_url은 빈 문자열로 설정
-    dto.setProfile_url("");
+	dto.setProfile_url("/img/user_logo.png");
 
 	service.insertMember(dto);	
 	ModelAndView mv = new ModelAndView();
@@ -87,17 +89,21 @@ public ModelAndView signupForm(MemberDTO dto) {
 public ModelAndView login(String user_id, String pw, HttpSession session) {
     System.out.println("--------로그인----------");
     System.out.println("파라미터유저아이디 : " + user_id + " " + pw);
+
+    // 1. 사용자 정보 확인
     MemberDTO dto = new MemberDTO();
     dto.setUser_id(user_id);
     dto.setPw(pw);
 
-    MemberDTO dtore = service.loginMember(dto);
+    // 로그인 정보와 프로필 사진을 함께 가져옴
+    MemberDTO dtore = service.infoMember(user_id);
 
     ModelAndView mv = new ModelAndView();
-    if (dtore != null && !dtore.getUser_id().equals("") && !dtore.getPw().equals("")) {
-        // 로그인 성공 시 세션에 loggedIn과 session_id 저장
+    if (dtore != null && dtore.getPw().equals(pw)) {
+        // 로그인 성공 시 세션에 loggedIn과 session_id, session_url 저장
         session.setAttribute("loggedIn", true);
         session.setAttribute("session_id", user_id);
+        session.setAttribute("session_url", dtore.getProfile_url());
         mv.setViewName("redirect:/"); // 로그인 성공 시 "/" 주소로 리다이렉트
     } else {
         // 로그인 실패 시 에러 메시지 설정
@@ -131,6 +137,8 @@ public ModelAndView myinfoForm(HttpSession session) {
     MemberDTO dto = service.infoMember(session_id.toString());
     ModelAndView mv = new ModelAndView();
     mv.addObject("dto", dto);
+    mv.addObject("session_url", dto.getProfile_url()); // 프로필 사진 파일 경로를 뷰로 전달
+    System.out.println(dto.getProfile_url());
     mv.setViewName("login/login_info");
     return mv;
 }
@@ -142,16 +150,44 @@ public String userUpdate() {
 }
 
 // 회원 정보 수정 
-@RequestMapping("/updateMember")
-public ModelAndView updateMember(MemberDTO dto) {
-    System.out.println("=======================수정 이동==================");
-    System.out.println("파라미터유저 : " + dto.toString());
-    dto.setProfile_url("");
+@PostMapping("/updateMember")
+public ModelAndView updateMember(MemberDTO dto, HttpSession session, @RequestParam("profile") MultipartFile file) {
+    ModelAndView mv = new ModelAndView();
+
+    if (file.isEmpty()) {
+        // 파일을 업로드하지 않은 경우 기존의 프로필 사진 경로를 유지
+        MemberDTO originalDto = service.infoMember((String) session.getAttribute("session_id"));
+        dto.setProfile_url(originalDto.getProfile_url());
+    } else {
+        try {
+            // 파일을 업로드한 경우 기존의 코드와 동일하게 처리
+            String uploadPath = "프로필_사진_업로드_경로"; // 업로드 경로 설정
+            String originalFilename = file.getOriginalFilename();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String savedFilename = UUID.randomUUID() + extension;
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+            File uploadedFile = new File(uploadPath, savedFilename);
+            file.transferTo(uploadedFile);
+            dto.setProfile_url(uploadedFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 기존 코드... (비밀번호 변경, 이름 변경 등의 로직)
+
+    // 회원 정보 업데이트
     service.updateMember(dto);
 
-    ModelAndView mv = new ModelAndView();
-    mv.addObject("message", "사용자 정보가 성공적으로 수정되었습니다."); // 성공 메시지를 추가합니다
-    mv.setViewName("/login/update_success");
+    // 업데이트된 프로필 사진 URL을 세션에 저장
+    session.setAttribute("session_url", dto.getProfile_url());
+
+    // 정보 수정 후 마이페이지로 리다이렉트
+    mv.setViewName("redirect:/mypage");
+
     return mv;
 }
 

@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import dto.GroupCreateDTO;
 import dto.GroupDTO;
 import dto.GroupUserDTO;
+import dto.MeetingPagingDTO;
 import dto.UserDTO;
 import jakarta.servlet.http.HttpSession;
 
@@ -26,6 +27,41 @@ public class GroupController {
 	@Autowired
 	@Qualifier("groupservice")
 	GroupService service;
+	
+	int divNum = 10;
+	
+	@RequestMapping("/group/invitation")
+	public ModelAndView groupInvitaion(HttpSession session) {
+		// ModelAndView 생성
+		ModelAndView mv = new ModelAndView();
+		
+		// session_id
+		String session_id = (String)session.getAttribute("session_id");
+		
+		if (session_id == null) {
+			mv.setViewName("schedule/scheduleError");
+		}
+		else {
+			// 방장 정보 생성
+			UserDTO host_info = service.groupHostInfo(session_id);
+			
+			mv.addObject("host_info", host_info);
+			mv.setViewName("group/group_invitation");			
+		}
+		
+		return mv;
+	}
+	
+	@RequestMapping("/group/invitation/IDSearch")
+	@ResponseBody
+	public UserDTO groupInvitationIDSearch(String id) {
+		UserDTO user = service.groupHostInfo(id);
+		if (user == null) {
+			user = new UserDTO();
+			user.setName("null");
+		}
+		return user;
+	}
 	
 	@GetMapping(value = {"/group/create", "/group/create/result"})
 	public String groupCreateGet() {
@@ -129,15 +165,20 @@ public class GroupController {
 		List<UserDTO> user_info;
 		dto.setUser_list(user_list);
 		
-		if (user_list.size() != 0) {
-			// group_user_table insert
-			for(int i = 0; i < user_list.size(); i++) {
-				gu.setUser_id(user_list.get(i));
-				service.insertGroupUser(gu);
+		if (user_list != null) {
+			if (user_list.size() != 0) {
+				// group_user_table insert
+				for(int i = 0; i < user_list.size(); i++) {
+					gu.setUser_id(user_list.get(i));
+					service.insertGroupUser(gu);
+				}
+				
+				// 유저 정보 생성
+				user_info = service.groupUserInfo(user_list);
 			}
-			
-			// 유저 정보 생성
-			user_info = service.groupUserInfo(user_list);
+			else {
+				user_info = null;
+			}
 		}
 		else {
 			user_info = null;
@@ -316,5 +357,33 @@ public class GroupController {
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("result", "성공");
 		return map;
+	}
+	
+	@RequestMapping("/group/list")
+	public ModelAndView groupList(HttpSession session) {
+		ModelAndView mv = new ModelAndView();
+		String id = (String)session.getAttribute("session_id");
+		
+		if (id != null) {
+			UserDTO user = service.groupHostInfo(id);
+			
+			MeetingPagingDTO dto = new MeetingPagingDTO();
+			dto.setUser_id(id);
+			dto.setSort_type("all");
+			dto.calcNum(1, divNum);
+			
+			List<GroupDTO> group = service.groupList(dto);
+			int cnt = service.groupListCount(dto);
+			
+			mv.addObject("group", group);
+			mv.addObject("cnt", cnt);
+			mv.addObject("div", divNum);
+			mv.addObject("user", user);
+			mv.setViewName("group/group_list");
+		}
+		else {
+			mv.setViewName("schedule/scheduleError");	
+		}
+		return mv;
 	}
 }

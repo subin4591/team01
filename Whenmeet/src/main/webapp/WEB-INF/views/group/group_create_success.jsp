@@ -12,7 +12,7 @@
 	<script>
 		$(document).ready(function() {
 			alert("그룹 생성이 완료되었습니다.");
-			
+
 			// 개설일
 			let today = new Date();
 			let year = today.getFullYear();
@@ -80,7 +80,7 @@
 				</div>
 				<div id="info_form">
 					<div id="info_form_left">
-						<h2 id="group_name">${ group_dto.group_name }</h2>
+						<input type="text" id="group_name" value="${ group_dto.group_name }" readonly>
 						<h3>개설자 : ${ host_info.name }</h3>
 						<div id="info_imgs">
 							<img id="info_frame" src="/img/액자.png">
@@ -102,7 +102,7 @@
 						</div>
 						<div id="info_form_right_bottom">
 							<h2>그룹 설명<span>|</span></h2>
-							<p id="ifr_p">${ group_dto.group_description }</p>
+							<textarea rows="4" cols="20" readonly>${ group_dto.group_description }</textarea>
 						</div>
 					</div>
 				</div>
