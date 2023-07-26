@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias type="dto.MeetingDTO" alias="meetingdto"/>
+		<typeAlias type="dto.MeetingPagingDTO" alias="meetingpagingdto"/>
+		<typeAlias type="dto.UserDTO" alias="userdto"/>
+		<typeAlias type="dto.ApplicantDTO" alias="applicantdto"/>
+		<typeAlias type="dto.WriterModeDTO" alias="writermodedto"/>
+		<typeAlias type="dto.SearchPagingDTO" alias="searchpagingdto"/>
+		<typeAlias type="dto.GroupCreateDTO" alias="groupcreatedto"/>
+		<typeAlias type="dto.GroupDTO" alias="groupdto"/>
+		<typeAlias type="dto.GroupUserDTO" alias="groupuserdto"/>
+		<typeAlias type="dto.MainDTO" alias="maindto"/>
+		<typeAlias type="dto.ChatDTO" alias="chatdto"/>
+<<<<<<< HEAD:whenmeet/src/main/resources/mybatis/mybatis-config.xml
+		<typeAlias type="dto.ScheduleDTO" alias="scheduledto"/>
+=======
+		<typeAlias type="login.MemberDTO" alias="memberdto"/>
+>>>>>>> 4dc652dbd6b47f5af879476ffe35081a09daacf2:Whenmeet/src/main/resources/mybatis/mybatis-config.xml
+	</typeAliases>
+</configuration>
