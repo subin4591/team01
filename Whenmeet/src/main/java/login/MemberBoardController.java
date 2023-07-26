@@ -152,44 +152,47 @@ public String userUpdate() {
 // 회원 정보 수정 
 @PostMapping("/updateMember")
 public ModelAndView updateMember(MemberDTO dto, HttpSession session, @RequestParam("profile") MultipartFile file) {
-    ModelAndView mv = new ModelAndView();
+    System.out.println("=======================수정 이동==================");
+    System.out.println("파라미터유저 : " + dto.toString());
 
+    // 프로필 사진을 업로드하지 않은 경우 기존의 프로필 사진 경로를 유지
     if (file.isEmpty()) {
-        // 파일을 업로드하지 않은 경우 기존의 프로필 사진 경로를 유지
         MemberDTO originalDto = service.infoMember((String) session.getAttribute("session_id"));
         dto.setProfile_url(originalDto.getProfile_url());
     } else {
         try {
-            // 파일을 업로드한 경우 기존의 코드와 동일하게 처리
-            String uploadPath = "프로필_사진_업로드_경로"; // 업로드 경로 설정
-            String originalFilename = file.getOriginalFilename();
-            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            String savedFilename = UUID.randomUUID() + extension;
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
-            File uploadedFile = new File(uploadPath, savedFilename);
+            String uploadDir = "/Users/chaesuwon/kdt/upload/"; // 파일을 저장할 경로 설정
+
+            // 파일명에 유저 아이디와 현재 시간 등을 조합하여 유일한 파일명 생성
+            String fileName = dto.getUser_id() + "_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+
+            // 파일을 지정된 경로에 저장
+            File uploadedFile = new File(uploadDir + fileName);
             file.transferTo(uploadedFile);
+
+            // 프로필 사진의 경로를 DTO에 설정
             dto.setProfile_url(uploadedFile.getAbsolutePath());
+
+            // 세션에도 새로운 프로필 사진 경로를 반영
+            session.setAttribute("session_url", dto.getProfile_url());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // 기존 코드... (비밀번호 변경, 이름 변경 등의 로직)
-
     // 회원 정보 업데이트
     service.updateMember(dto);
 
-    // 업데이트된 프로필 사진 URL을 세션에 저장
-    session.setAttribute("session_url", dto.getProfile_url());
+    ModelAndView mv = new ModelAndView();
+    mv.addObject("message", "사용자 정보가 성공적으로 수정되었습니다. 다시 로그인 해주세요."); // 성공 메시지를 추가합니다.
 
-    // 정보 수정 후 마이페이지로 리다이렉트
-    mv.setViewName("redirect:/mypage");
+    // 세션을 강제로 만료시킵니다.
+    session.invalidate();
 
+    mv.setViewName("redirect:/login"); // 로그인 페이지로 리다이렉트합니다.
     return mv;
 }
+
 
 // 회원 탈퇴
 @GetMapping("/withdraw")
