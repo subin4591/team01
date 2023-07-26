@@ -23,6 +23,23 @@ SET final_location = #{address} WHERE group_id = #{group_id};
 <select id="getLocation" resultType="String">
 	select final_location from group_table group_id = #{group_id};
 </select>
+<insert id="scheduleAdd">
+	insert into schedule_table values(#{user_id},#{start},#{end},#{title},#{address},#{memo});
+</insert>
+<select id="getSchedule" resultType="scheduledto">
+	select * from schedule_table where user_id = #{user_id};
+</select>
+<select id="getScheduleOne" resultType="scheduledto">
+	select * from schedule_table where user_id = #{user_id} and title = #{title} and startTime = #{start} and endTime = #{end};
+</select>
+<delete id="scheduleDelete">
+	delete from schedule_table where user_id = #{user_id} and title = #{title} and startTime = #{start} and endTime = #{end};
+</delete>
+<update id="scheduleChange">
+UPDATE schedule_table
+SET title = #{title},startTime = #{start}, endTime = #{end}, address = #{address}, memo = #{memo}
+WHERE user_id = #{user_id} and title = #{p_title} and startTime = #{p_start} and endTime = #{p_end};
+</update>
 </mapper>
 
 

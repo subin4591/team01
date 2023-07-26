@@ -526,15 +526,13 @@ String userImgErr = "/img/user_logo.png";
 				<div style = "position : relative; top : -3px; background : #F25287; width : 100%; height: 50px;">
 					<h1 style = "position : relative; font-size : 28px; margin : 3px; top : 3px; text-align : center; color : white;">일정표 날짜 변경</h1>
 				</div>
-				<div class = "week_modal_content">
-				
+				<div class = "week_modal_content">	
 					<form action = "/schedule/${groupId}/tableUpdate" method = "post" id = "updateWeekForm" onsubmit = "return changeWeek('<%= today %>');" >
 						<span>기간 시작일 : <input type = "date" name = "start" id = "firstDate" ></span>
 						<span>기간 종료일 : <input type = "date"  name = "end" id = "EndDate" /></span>
 						<input type = "text" style = "display : None" name = "data" id = "updateTableData" value = ""/>
 						<input type = "submit" value = "저장"  class = "submitBtn"/>
 					</form>
-					
 				</div>		
   			</div>
             		
