@@ -38,6 +38,7 @@ public class MemberBoardController {
         // login_login.jsp로 이동
         return "/login/login_login";
     }
+
 @GetMapping("/boardlogin")
 public String loginform() {
     return "/login/login_login";
@@ -131,6 +132,8 @@ public ModelAndView myinfoForm(HttpSession session) {
     MemberDTO dto = service.infoMember(session_id.toString());
     ModelAndView mv = new ModelAndView();
     mv.addObject("dto", dto);
+    mv.addObject("session_url", dto.getProfile_url()); // 프로필 사진 파일 경로를 뷰로 전달
+    System.out.println(dto.getProfile_url());
     mv.setViewName("login/login_info");
     return mv;
 }
@@ -149,7 +152,7 @@ public ModelAndView updateMember(MemberDTO dto, HttpSession session, @RequestPar
 
     // 프로필 사진을 업로드하지 않은 경우 기존의 프로필 사진 경로를 유지
     if (file.isEmpty()) {
-        MemberDTO originalDto = service.oneMember(dto.getUser_id());
+        MemberDTO originalDto = service.infoMember((String) session.getAttribute("session_id"));
         dto.setProfile_url(originalDto.getProfile_url());
     } else {
         try {
@@ -173,10 +176,15 @@ public ModelAndView updateMember(MemberDTO dto, HttpSession session, @RequestPar
     service.updateMember(dto);
 
     ModelAndView mv = new ModelAndView();
-    mv.addObject("message", "사용자 정보가 성공적으로 수정되었습니다."); // 성공 메시지를 추가합니다
-    mv.setViewName("/login/update_success");
+    mv.addObject("message", "사용자 정보가 성공적으로 수정되었습니다. 다시 로그인 해주세요."); // 성공 메시지를 추가합니다.
+
+    // 세션을 강제로 만료시킵니다.
+    session.invalidate();
+
+    mv.setViewName("redirect:/login"); // 로그인 페이지로 리다이렉트합니다.
     return mv;
 }
+
 
 // 회원 탈퇴
 @GetMapping("/withdraw")
