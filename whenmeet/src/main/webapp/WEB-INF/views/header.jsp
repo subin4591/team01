@@ -65,9 +65,7 @@
         <c:choose>
             <c:when test="${session_id != null}">
                 <a href="/myinfo">
-                	<div id="user_profile">
-                		<img src="${session_url}" alt="user_profile" onerror="this.src='/img/user_logo.png';">
-                	</div>
+                    <img id="user_profile" src="${session_url}" alt="user_profile" onerror="this.src='/img/user_logo.png';">
                 </a>
                 <!-- 로그아웃 버튼에 클릭 이벤트 추가 -->
                 <button id="logout_btn" class="login_btn">LOGOUT</button>
