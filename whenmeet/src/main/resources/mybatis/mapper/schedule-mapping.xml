@@ -317,8 +317,8 @@
 				default,
 				default,
 				default,
-				null,
-				null
+				default,
+				default
 			);
 		]]>
 	</insert>
@@ -332,8 +332,8 @@
 				#{big_todo_content},
 				#{small_todo_content},
 				#{check_do},
-				#{big_todo_start},
-				#{big_todo_end}
+				default,
+				default
 			);
 		]]>
 	</insert>

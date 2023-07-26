@@ -194,7 +194,7 @@ String userImgErr = "/img/user_logo.png";
 				<%@ include file="schedule_chat.jsp"%>
 			</div>
       <div id="review_btn">
-        <form action = "/schedule/deleteGroupUser" method ="GET" onsubmit="return deleteGroupUser()">
+        <form action = "/schedule/deleteGroupUser" method ="GET"  onsubmit="return deleteGroupUser()">
         	<input type = "text" style = "display:None" name = "groupId" value = "${groupId}"/>
         	<input type = "text" style = "display:None" name = "userId" value = "${userId}"/>
         	<button type="submit" id="delete_btn">그룹 탈퇴</button>
@@ -524,13 +524,15 @@ String userImgErr = "/img/user_logo.png";
 				<div style = "position : relative; top : -3px; background : #F25287; width : 100%; height: 50px;">
 					<h1 style = "position : relative; font-size : 28px; margin : 3px; top : 3px; text-align : center; color : white;">일정표 날짜 변경</h1>
 				</div>
-				<div class = "week_modal_content">	
+				<div class = "week_modal_content">
+				
 					<form action = "/schedule/${groupId}/tableUpdate" method = "post" id = "updateWeekForm" onsubmit = "return changeWeek('<%= today %>');" >
 						<span>기간 시작일 : <input type = "date" name = "start" id = "firstDate" ></span>
 						<span>기간 종료일 : <input type = "date"  name = "end" id = "EndDate" /></span>
 						<input type = "text" style = "display : None" name = "data" id = "updateTableData" value = ""/>
 						<input type = "submit" value = "저장"  class = "submitBtn"/>
 					</form>
+					
 				</div>		
   			</div>
             		
@@ -790,6 +792,11 @@ String userImgErr = "/img/user_logo.png";
 		doItCal[i].setTime(DoItStartDate[i]);
 		doItCal2[i].setTime(DoItEndDate[i]);
 		doItCal2[i].add(Calendar.DATE, 7);
+		doItCal[i].add(Calendar.MONTH, 1);
+		doItCal2[i].add(Calendar.MONTH, 1);
+		
+		System.out.println(doItCal[i].getTime());
+		System.out.println(doItCal2[i].getTime());
 	}
 	
 	if ((Date[])request.getAttribute("DoItStartDate") != null 
@@ -978,7 +985,7 @@ String userImgErr = "/img/user_logo.png";
 		
 		//방장인가 부방장인가?				
 		<% if ( HostId[0].equals(userId)) { %>
-			IamHost();
+			IamHost('${groupId}');
 		<% }
 		
 		//부방장
