@@ -95,6 +95,10 @@
 								<input type="hidden" name="user_list[]" value=\${ id }>
 							</li>
 							`);
+					
+					$("#sr_none h2").text("ID 검색 결과");
+					$("#sr_none").show();
+					$("#sr_result").hide();
 				}
 			});	// 그룹원 추가 end
 			
