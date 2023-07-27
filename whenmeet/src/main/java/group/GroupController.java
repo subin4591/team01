@@ -376,8 +376,8 @@ public class GroupController {
 			int cnt = service.groupListCount(dto);
 			
 			mv.addObject("group", group);
-			mv.addObject("cnt", cnt);
-			mv.addObject("div", divNum);
+			mv.addObject("total_cnt", cnt);
+			mv.addObject("div_num", divNum);
 			mv.addObject("user", user);
 			mv.setViewName("group/group_list");
 		}
@@ -385,5 +385,38 @@ public class GroupController {
 			mv.setViewName("schedule/scheduleError");	
 		}
 		return mv;
+	}
+	
+	@RequestMapping("/group/list/sort")
+	@ResponseBody
+	public HashMap<String, Object> groupListSort(String sort, HttpSession session) {
+		String id = (String)session.getAttribute("session_id");
+		
+		MeetingPagingDTO dto = new MeetingPagingDTO();
+		dto.setUser_id(id);
+		dto.setSort_type(sort);
+		dto.calcNum(1, divNum);
+		
+		List<GroupDTO> group = service.groupList(dto);
+		int cnt = service.groupListCount(dto);
+		
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("total_cnt", cnt);
+		map.put("group", group);
+		
+		return map;
+	}
+	
+	@RequestMapping("/group/list/page")
+	@ResponseBody
+	public List<GroupDTO> groupListPage(String sort, int page, HttpSession session) {
+		String id = (String)session.getAttribute("session_id");
+		
+		MeetingPagingDTO dto = new MeetingPagingDTO();
+		dto.setUser_id(id);
+		dto.setSort_type(sort);
+		dto.calcNum(page, divNum);
+		
+		return service.groupList(dto);
 	}
 }
