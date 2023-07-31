@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/login_info.css">
 </head>
 <body>
-    <%@ include file="../header.jsp" %>
+    <%@ include file="header.jsp" %>
     <article>
         <h2>내 정보</h2>
         <form id="profileForm" method="post" enctype="multipart/form-data">
