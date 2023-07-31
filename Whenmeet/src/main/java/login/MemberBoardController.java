@@ -91,11 +91,6 @@ public ModelAndView login(String user_id, String pw, HttpSession session) {
     System.out.println("파라미터유저아이디 : " + user_id + " " + pw);
 
     // 1. 사용자 정보 확인
-    MemberDTO dto = new MemberDTO();
-    dto.setUser_id(user_id);
-    dto.setPw(pw);
-
-    // 로그인 정보와 프로필 사진을 함께 가져옴
     MemberDTO dtore = service.infoMember(user_id);
 
     ModelAndView mv = new ModelAndView();
@@ -170,18 +165,28 @@ public ModelAndView updateMember(MemberDTO dto, HttpSession session, @RequestPar
             File uploadedFile = new File(uploadDir + fileName);
             file.transferTo(uploadedFile);
 
+            
+            String file_url = "/upload/"+uploadedFile.getName();
             // 프로필 사진의 경로를 DTO에 설정
-            dto.setProfile_url(uploadedFile.getAbsolutePath());
+            dto.setProfile_url(file_url);
+            
+            //
+            System.out.println("지금 : " + uploadedFile.getName());
 
+         // 회원 정보 업데이트
+            service.updateMember(dto);
+            // "/upload/111_1690507054139_01.jpeg"
             // 세션에도 새로운 프로필 사진 경로를 반영
-            session.setAttribute("session_url", dto.getProfile_url());
+          
+//            session.setAttribute("session_url", file_url);
+            System.out.println("이거는 : " + file_url);
+            System.out.println(dto.getProfile_url());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // 회원 정보 업데이트
-    service.updateMember(dto);
+    
 
     ModelAndView mv = new ModelAndView();
     mv.addObject("message", "사용자 정보가 성공적으로 수정되었습니다. 다시 로그인 해주세요."); // 성공 메시지를 추가합니다.
@@ -194,40 +199,22 @@ public ModelAndView updateMember(MemberDTO dto, HttpSession session, @RequestPar
 }
 
 
-// 회원 탈퇴
-@GetMapping("/withdraw")
-public ModelAndView withdrawForm(HttpSession session) {
-    ModelAndView mv = new ModelAndView();
-    String userId = (String) session.getAttribute("sessionid");
-    if (userId == null) {
-        mv.setViewName("/login");
-    } else {
-        mv.setViewName("/login/withdraw");
-    }
-    return mv;
-}
-
-// 회원 탈퇴 처리
-@PostMapping("/withdraw")
-public ModelAndView withdraw(HttpSession session) {
-    ModelAndView mv = new ModelAndView();
-    String userId = (String) session.getAttribute("sessionid");
-    if (userId == null) {
-        mv.setViewName("/login");
-    } else {
-        service.deleteMember(userId);
-        session.invalidate(); // 세션 만료
-        mv.addObject("message", "회원 탈퇴가 완료되었습니다.");
-        mv.setViewName("/login");
-    }
-    return mv;
-}
-
 @RequestMapping(value = "/deleteMember")
-public String deleteMember(String user_id) {
+public String deleteMember(String user_id, HttpSession session) {
 	System.out.println("-----del-----");
 	System.out.println(user_id);
     service.deleteMember(user_id);
+    ModelAndView mv = new ModelAndView();
+    String userId = (String) session.getAttribute("session_id");
+    if (userId == null) {
+//        mv.setViewName("/login");
+    } else {
+        service.deleteMember(userId);
+        session.removeAttribute("session_id"); // 세션에서 session_id 삭제
+        session.invalidate(); // 세션 만료
+//        mv.addObject("message", "회원 탈퇴가 완료되었습니다.");
+//        mv.setViewName("/login");
+    }
     return "redirect:/"; // 회원 탈퇴 후 메인 페이지로 이동하도록 설정
 }
 
