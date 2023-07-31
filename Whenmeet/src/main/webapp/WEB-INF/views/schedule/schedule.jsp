@@ -24,7 +24,7 @@ String userImgErr = "/img/user_logo.png";
 <c:when test = "${session_id == null }">
 	<script>
 	alert("로그인이 필요한 페이지입니다.");
-	location.href = "/meeting/test";		//나중에 로그인 페이지로 수정
+	location.href = "/login";
 	</script>
 </c:when>
 <c:otherwise>
@@ -225,7 +225,7 @@ String userImgErr = "/img/user_logo.png";
           		<%
           		
           			
-          			int slideMax = 1;	//슬라이드 개수
+          			int slideMax = 0;	//슬라이드 개수
          			if (request.getAttribute("tableListCnt") != null){
               			slideMax = (int)request.getAttribute("tableListCnt");
               		}
@@ -238,6 +238,21 @@ String userImgErr = "/img/user_logo.png";
          			String[] tableListStart = {format.format(tempDate)};
          			String[] tableListLast = {format.format(tempCal.getTime())};
 	
+          		%>
+          		<%
+          		if (slideMax == 0){ %>
+          			
+          			<div>
+					<script>
+					 $( document ).ready(function(){
+						 $("#ScheduleEditBtn").hide();
+					 })
+					</script>
+          			<h1 style = "position : relative; top : 300px; text-align : center;"> 
+          			데이터가 없습니다. </h1>
+          			</div>
+          		<%
+          		}
           		%>
 
 			<!-- 수정 화면 (처음엔 숨겨짐) -->
@@ -619,7 +634,9 @@ String userImgErr = "/img/user_logo.png";
 			  							</div>
 			  							<div>
 			  								<ul class = "DoItListChild" id = "DoItListChild<%=i%>" style = "display : None; ">
-			  									<% for (int j = 0; j < DoItDetail[i].size(); j++){ %>
+			  									<%
+			  									System.out.println("상세 메뉴 갯수 : " + DoItDetail[i].size());
+			  									for (int j = 0; j < DoItDetail[i].size(); j++){ %>
 			  									<li>
 			  										<div class = "DoItListItem" >
 			  											&nbsp;&nbsp;<%=DoItDetail[i].get(j) %>
@@ -932,6 +949,117 @@ String userImgErr = "/img/user_logo.png";
 	      chart1.draw(data, options2);
 	      chart2.draw(data, options);
 	  }
+	
+	function drawChart2(list) {
+
+	      var data = new google.visualization.DataTable();
+	      data.addColumn('string', 'Task ID');
+	      data.addColumn('string', 'Task Name');
+	      data.addColumn('date', 'Start Date');
+	      data.addColumn('date', 'End Date');
+	      data.addColumn('number', 'Duration');
+	      data.addColumn('number', 'Percent Complete');
+	      data.addColumn('string', 'Dependencies'); 
+	      
+	      for (var i = 0; i < list.length; i ++){
+	    	  
+	    	  var total = 0;
+	    	  	for(var j = 0; j < list[i].length; j++){
+	    		 	total += list[i][j][2];
+	    	  	}
+	    	  	var PC = (total/list[i].length);
+	    	  	
+	   			for(var j = 0; j < list[i].length; j++){
+	   				
+	   				var list1 = list[i][j][3].split("-");
+	   				var list2 = list[i][j][4].split("-");
+	   				
+	   				var date1 = new Date(list1[0], list1[1]-1, list1[2]);
+	   				var date2 = new Date(list2[0], list2[1]-1, list2[2]);
+	   		      
+			  		var index = i+"";
+			  		
+	      			data.addRow([
+	        			index, list[i][j][0], date1, date2,
+	      				null, PC, null
+					]);
+	   			}
+			}
+
+		let today = new Date();
+	  	var rowHeight = 50;
+
+	      var options = {
+			width : 800,
+			height: data.getNumberOfRows() * rowHeight+rowHeight,      
+			gantt: {
+				barHeight: 40,
+				trackHeight: 50,
+				defaultStartDate: '<%=DoItStartDate%>',
+				defaultEndDate: '<%=DoItEndDate%>',
+				
+				innerGridHorizLine:{
+					stroke : "#F9F3F3"
+				},
+				innerGridDarkTrack: {
+					fill: "#F9F3F3"
+				},
+				
+				labelStyle: {
+					fontSize : 22
+				},
+				
+				palette: [{
+					"color" : "#FF86AE",
+					"dark" : "#F25287",
+					"light" : "#FFB4CD"
+				}]		
+	        },
+	        
+	        hAxis:{
+	        	format: 'yy-MM-dd'
+	        	}
+
+	      };
+	      
+	      var options2 = {
+	  			width : 700,
+	  			height: data.getNumberOfRows() * rowHeight+rowHeight,      
+	  			gantt: {
+	  				barHeight: 40,
+	  				trackHeight: 50,
+	  				defaultStartDate: today,
+	  				
+	  				innerGridHorizLine:{
+	  					stroke : "#F9F3F3"
+	  				},
+	  				innerGridDarkTrack: {
+	  					fill: "#F9F3F3"
+	  				},
+	  				
+	  				labelStyle: {
+	  					fontSize : 22
+	  				},
+	  				
+	  				palette: [{
+	  					"color" : "#FF86AE",
+	  					"dark" : "#F25287",
+	  					"light" : "#FFB4CD"
+	  				}]		
+	  	        },
+	  	        
+	  	        hAxis:{
+	  	        	format: 'yy-MM-dd'
+	  	        	}
+
+	  	      };
+
+	      var chart1 = new google.visualization.Gantt(document.getElementById('chart_div1'));
+	      var chart2 = new google.visualization.Gantt(document.getElementById('chart_div2'));
+	
+	      chart1.draw(data, options2);
+	      chart2.draw(data, options);
+	  }
 
 	<% int DoItMax = (int)request.getAttribute("DoItMax");%>
 	var max = <%= DoItMax%>;
@@ -1008,8 +1136,17 @@ String userImgErr = "/img/user_logo.png";
 			$.ajax({
 				url : "/schedule/<%= groupId%>/CreateGantt",
 				type : "get",
-				complete : function(){
-					location.reload();	//새고해야 제대로 떠서 일단 새고시킴...
+				data : {
+					
+				},
+				success : function(data){
+					 drawChart2(data);
+					 $('#GRAjax').load(window.location.href + " #GRAjax");
+					 $("#ganttCreate").hide();
+					 $("#ganttResult").show();
+				},
+				error : function(){
+					alert("error");
 				}
 			})
 		})	
