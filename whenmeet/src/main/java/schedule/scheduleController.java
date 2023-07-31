@@ -41,6 +41,7 @@ public class scheduleController {
 				if(scheduleService.selectGroupGanttCnt(groupId) >= 1) {
 					request.setAttribute("groupGanttCnt", groupGanttCnt);	
 					
+
 					//큰 doit 넣기
 					DoItCnt = scheduleService.selectDistinctGanttToDo(groupId).size();
 					for (int i = 0; i < DoItCnt; i++) {				
@@ -51,20 +52,24 @@ public class scheduleController {
 					request.setAttribute("DoItIndex", DoItIndex);	
 					request.setAttribute("DoIt", DoIt);	
 					
+
 					List<String>[] DoItDetail = new ArrayList[DoIt.size()];		
 					HashMap<String, Object> DoItData =new HashMap<String, Object>();
 					DoItData.put("group_id", groupId);
 					DoItData.put("big_todo", 0);
-					smallDoItCnt = scheduleService.selectGroupGanttToDo(DoItData).size();
 					
 					for (int i = 0; i < DoItCnt; i++) {
+
 						DoItDetail[i] = new ArrayList<String>();
 						DoItData.put("big_todo", i);
-						
+						smallDoItCnt = scheduleService.selectGroupGanttToDo(DoItData).size();
+						System.out.println("i : " + i);
 						for (int j = 0; j < smallDoItCnt; j++) {
+							System.out.println("j : " + j);
 							DoItDetail[i].add(scheduleService.selectGroupGanttToDo(DoItData).get(j).getSmall_todo_content());
 						}
 					}
+					
 					request.setAttribute("smallDoItCnt", smallDoItCnt);	
 					request.setAttribute("DoItDetail", DoItDetail);	
 				}else {
@@ -371,7 +376,7 @@ public class scheduleController {
 		List<MeetingScheduleDTO> tableList = new ArrayList<MeetingScheduleDTO>();
 		map.put("group_id", groupId);
 		map.put("showView", 1);
-		int tableListCnt = 1;	
+		int tableListCnt = 0;	
 		tableList= scheduleService.selectMeetingScheduleAllShow(map);
 		if (scheduleService.selectMeetingScheduleAllShowCnt(map) >0) {
 			tableListCnt = scheduleService.selectMeetingScheduleAllShowCnt(map);
@@ -404,6 +409,7 @@ public class scheduleController {
 			endDate 
 			= scheduleService.selectMeetingScheduleDate(groupId).getSet_date2();
 		}
+		
 		request.setAttribute("startDate", startDate);
 		request.setAttribute("endDate", endDate);
 		Calendar realDateCal = Calendar.getInstance();
@@ -433,6 +439,15 @@ public class scheduleController {
 		int[][] ThusdayList = new int[seqs.length][42]; 
 		int[][] FridayList = new int[seqs.length][42]; 
 		int[][] SaturdayList = new int[seqs.length][42]; 
+		
+		int[][][] DayLists = new int [7][][];
+		DayLists[0] = SundayList;
+		DayLists[1] = MondayList;
+		DayLists[2] = TuesdayList;
+		DayLists[3] = WednesdayList;
+		DayLists[4] = ThusdayList;
+		DayLists[5] = FridayList;
+		DayLists[6] = SaturdayList;
 
 			/*group_id / seq / count 가 일치할 때, sun~sat에 1인 값의 총 개수 합
 			이 배열의 크기는 group_id/seq/count의 개수만큼 존재한다.*/
@@ -465,45 +480,29 @@ public class scheduleController {
 						usmap.put("sat", 1);
 						SaturdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
 						usmap.put("sat", 0);
-						if (i == 0) {
-							if(realDay1 == 0)
-								continue;
-							if(0< realDay1)
-								SundayList[i][j] = -1;
-							if(1< realDay1)
-								MondayList[i][j] = -1;
-							if(2< realDay1)
-								TuesdayList[i][j] = -1;
-							if(3< realDay1)
-								WednesdayList[i][j] = -1;
-							if(4< realDay1)
-								ThusdayList[i][j] = -1;
-							if(5< realDay1)
-								FridayList[i][j] = -1;
-						}else if (i == seqs.length-1) {
-							if(realDay2 == 6)
-								continue;
-							if(6> realDay2)
-								SaturdayList[i][j] = -1;
-							if(5> realDay2)
-								FridayList[i][j] = -1;
-							if(4> realDay2)
-								ThusdayList[i][j] = -1;
-							if(3> realDay2)
-								WednesdayList[i][j] = -1;
-							if(2> realDay2)
-								ThusdayList[i][j] = -1;
-							if( 1>realDay2)
-								MondayList[i][j] = -1;
+						// i == 0인 경우와 i == seqs.length-1 인 경우 처리
+						if (i == 0 && i == seqs.length-1) {
+							for (int day = 0; day <= realDay1-1; day++) 
+								DayLists[day][i][j] = -1;
+							for (int day = realDay2+1; day <= 6; day++) 
+								DayLists[day][i][j] = -1;
+						}
+						else if (i == 0) {
+							for (int day = realDay1-1; day >=0; day--)
+								DayLists[day][i][j] = -1;
+							}
+						else if (i == seqs.length-1) {
+							for (int day = realDay2+1; day <=6; day++) 
+								DayLists[day][i][j] = -1;
 						}
 					}else {
-						SundayList[i][j] = -1;
-						MondayList[i][j] = -1;
-						TuesdayList[i][j] = -1;
-						WednesdayList[i][j] = -1;
-						ThusdayList[i][j] = -1;
-						FridayList[i][j] = -1;
-						SaturdayList[i][j] = -1;
+						SundayList[i][j] = 0;
+						MondayList[i][j] = 0;
+						TuesdayList[i][j] = 0;
+						WednesdayList[i][j] = 0;
+						ThusdayList[i][j] = 0;
+						FridayList[i][j] = 0;
+						SaturdayList[i][j] = 0;
 					}
 				}
 			}
@@ -526,12 +525,21 @@ public class scheduleController {
 		int[][] ThusdayList2 = new int[seqs.length][42]; 
 		int[][] FridayList2 = new int[seqs.length][42]; 
 		int[][] SaturdayList2 = new int[seqs.length][42]; 
+		int[][][] DayLists2 = new int [7][][];
+		
+		DayLists2[0] = SundayList2;
+		DayLists2[1] = MondayList2;
+		DayLists2[2] = TuesdayList2;
+		DayLists2[3] = WednesdayList2;
+		DayLists2[4] = ThusdayList2;
+		DayLists2[5] = FridayList2;
+		DayLists2[6] = SaturdayList2;
 			/*group_id / seq / count 가 일치할 때, sun~sat에 1인 값
 			이 배열의 크기는 group_id/seq/count의 개수만큼 존재한다.*/
 			for (int i = 0; i < seqs.length; i++) {
 				usdto.setSeq(seqs[i]);
 				for (int j = 0; j < 42; j++) {
-					usdto.setCnt(j);
+					usdto.setCnt(j);	
 					if (scheduleService.selectUserScheduleCnt(usdto) > 0) {
 						SundayList2[i][j] = scheduleService.selectUserSchedule(usdto).getSun();
 						MondayList2[i][j] = scheduleService.selectUserSchedule(usdto).getMon();
@@ -540,45 +548,22 @@ public class scheduleController {
 						ThusdayList2[i][j] = scheduleService.selectUserSchedule(usdto).getThu();
 						FridayList2[i][j] = scheduleService.selectUserSchedule(usdto).getFri();
 						SaturdayList2[i][j] = scheduleService.selectUserSchedule(usdto).getSat();
-						if (i == 0) {
-							if(realDay1 == 0)
-								continue;
-							if(0< realDay1)
-								SundayList2[i][j] = -1;
-							if(1< realDay1)
-								MondayList2[i][j] = -1;
-							if(2< realDay1)
-								TuesdayList2[i][j] = -1;
-							if(3< realDay1)
-								WednesdayList2[i][j] = -1;
-							if(4< realDay1)
-								FridayList2[i][j] = -1;
-							if(5< realDay1)
-								SaturdayList2[i][j] = -1;
-						}else if (i == seqs.length-1) {
-							if(realDay2 == 6)
-								continue;
-							if(6> realDay2)
-								SaturdayList2[i][j] = -1;
-							if(5> realDay2)
-								FridayList2[i][j] = -1;
-							if(4> realDay2)
-								ThusdayList2[i][j] = -1;
-							if(3> realDay2)
-								WednesdayList2[i][j] = -1;
-							if(2> realDay2)
-								ThusdayList2[i][j] = -1;
-							if( 1>realDay2)
-								MondayList2[i][j] = -1;
-						}
 					}else {
-						SundayList2[i][j] = -1;
-						MondayList2[i][j] = -1;
-						TuesdayList2[i][j] = -1;
-						WednesdayList2[i][j] = -1;
-						ThusdayList2[i][j] = -1;
-						FridayList2[i][j] = -1;
-						SaturdayList2[i][j] = -1;
+						SundayList2[i][j] = 0;
+						MondayList2[i][j] = 0;
+						TuesdayList2[i][j] = 0;
+						WednesdayList2[i][j] = 0;
+						ThusdayList2[i][j] = 0;
+						FridayList2[i][j] = 0;
+						SaturdayList2[i][j] = 0;
+					}
+				}
+			}
+			for (int i = 0; i < DayLists.length; i++) {
+				for (int j = 0; j < DayLists[i].length; j++) {
+					for (int k = 0; k < DayLists[i][j].length; k++) {
+						if (DayLists[i][j][k] ==-1)
+							DayLists2[i][j][k] = -1;
 					}
 				}
 			}
@@ -877,8 +862,9 @@ public class scheduleController {
 		return "redirect:";
 	}
 	
+	@ResponseBody
 	@RequestMapping("/schedule/{groupId}/CreateGantt")
-	public void CreateGantt(@PathVariable("groupId") String groupId, HttpServletRequest request, Model model) throws Exception {
+	public String[][][] CreateGantt(@PathVariable("groupId") String groupId, HttpServletRequest request, Model model) throws Exception {
 		
 		if (scheduleService.selectGroupGanttCnt(groupId) == 0) {
 		
@@ -890,6 +876,41 @@ public class scheduleController {
 		scheduleService.insertGroupGanttInit(map);
 		ganttSetting(groupId, request, model);
 		}
+		
+		String[][][] ganttList = new String[scheduleService.selectDoItMax(groupId)+1][scheduleService.selectGroupGantt(groupId).size()][5];
+		GroupGanttDTO ganttDTO = new GroupGanttDTO();
+		
+		for ( int i = 0; i < scheduleService.selectGroupGantt(groupId).size(); i++ ){
+			System.out.println("----------------------------");
+			System.out.println(scheduleService.selectGroupGantt(groupId).get(i).getBig_todo());
+			System.out.println(scheduleService.selectGroupGantt(groupId).get(i).getSmall_todo());
+			System.out.println(scheduleService.selectGroupGantt(groupId).get(i).getBig_todo_content());
+			System.out.println(scheduleService.selectGroupGantt(groupId).get(i).getSmall_todo_content());
+			System.out.println(scheduleService.selectGroupGantt(groupId).get(i).getCheck_do());
+			System.out.println(scheduleService.selectGroupGantt(groupId).get(i).getBig_todo_start());
+			System.out.println(scheduleService.selectGroupGantt(groupId).get(i).getBig_todo_end());
+			
+			ganttDTO.setGroup_id(groupId);
+			ganttDTO.setBig_todo(scheduleService.selectGroupGantt(groupId).get(i).getBig_todo());
+			ganttDTO.setSmall_todo(scheduleService.selectGroupGantt(groupId).get(i).getSmall_todo());
+			ganttDTO.setBig_todo_content(scheduleService.selectGroupGantt(groupId).get(i).getBig_todo_content());
+			ganttDTO.setSmall_todo_content(scheduleService.selectGroupGantt(groupId).get(i).getSmall_todo_content());
+			ganttDTO.setCheck_do(scheduleService.selectGroupGantt(groupId).get(i).getCheck_do());
+			ganttDTO.setBig_todo_start(scheduleService.selectGroupGantt(groupId).get(i).getBig_todo_start());
+			ganttDTO.setBig_todo_end(scheduleService.selectGroupGantt(groupId).get(i).getBig_todo_end());
+			
+			Date date1 = ganttDTO.getBig_todo_start();
+			Date date2 = ganttDTO.getBig_todo_end();
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			
+			ganttList[ganttDTO.getBig_todo()][ganttDTO.getSmall_todo()][0] = ganttDTO.getBig_todo_content();
+			ganttList[ganttDTO.getBig_todo()][ganttDTO.getSmall_todo()][1] = ganttDTO.getSmall_todo_content();
+			ganttList[ganttDTO.getBig_todo()][ganttDTO.getSmall_todo()][2] = ganttDTO.getCheck_do()+"";
+			ganttList[ganttDTO.getBig_todo()][ganttDTO.getSmall_todo()][3] = format.format(date1);
+			ganttList[ganttDTO.getBig_todo()][ganttDTO.getSmall_todo()][4] = format.format(date2);
+		}
+		
+		return ganttList;	
 	}
 	@ResponseBody
 	@RequestMapping("/schedule/{groupId}/InsertGantt")
