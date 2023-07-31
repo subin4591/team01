@@ -4,13 +4,20 @@
 <link href="/css/header.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
+$(document).ready(function() {
+    // 유저 아이콘
+    <%-- 세션에 session_id가 null이 아닌 경우 (로그인된 상태) --%>
+    <c:if test="${session_id != null}">
+        $("#user_profile").show();
+        $("#logout_btn").show();
+    </c:if>
+    <c:if test="${session_id == null}">
+        $("#user_profile").hide();
+        $("#logout_btn").hide();
+    </c:if>
+</script>
+<script>
     $(document).ready(function() {
-        // 유저 아이콘
-        if (${ session_id != null }) {
-            $("#user_profile").show();
-        } else {
-            $("#user_profile").hide();
-        }
         
         // 검색창 Toggle
         $("#pop_search").hide();
@@ -43,7 +50,6 @@
         $.post("/boardlogout", function(data) {
             // 로그아웃이 성공적으로 처리되었을 때 실행되는 부분
             // 서버에서 성공 여부를 반환하면 여기에서 처리 가능
-            // 예시로 로그아웃 후 페이지 리로드로 구현하겠습니다.
             alert("로그아웃 되었습니다.");
             location.reload();
         });
@@ -57,7 +63,6 @@
         }
     });
 </script>
-
 <header>
     <div id="main_header">
         <a href="/"><img id="main_logo" src="/img/logo.svg" alt="main_logo"></a>
@@ -67,6 +72,7 @@
                 <a href="/myinfo">
                 	<div id="user_profile">
                 		<img src="${session_url}" alt="user_profile" onerror="this.src='/img/user_logo.png';">
+                		<span>${session_id} | ${session_url}</span>
                 	</div>
                 </a>
                 <!-- 로그아웃 버튼에 클릭 이벤트 추가 -->
@@ -84,4 +90,3 @@
         </form>
     </div>
 </header>
-

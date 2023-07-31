@@ -199,8 +199,7 @@
 	<![CDATA[
 		select count(*)
 		from user_schedule_table as A, meeting_schedule_table as B
-		where A.group_id = #{group_id} and A.group_id = B.group_id and 
-		A.seq = B.seq 
+		where A.group_id = #{group_id} and A.group_id = B.group_id
 		and B.showView = 1;
 	]]>
 	</select>
