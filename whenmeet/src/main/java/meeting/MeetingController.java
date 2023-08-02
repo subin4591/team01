@@ -79,8 +79,15 @@ public class MeetingController {
 		UserDTO user_dto = service.userInfo(user_id);
 		
 		ModelAndView mv = new ModelAndView();
-		mv.addObject("user_dto", user_dto);
-		mv.setViewName("meeting/meeting_write");
+		
+		if (user_id != null) {
+			mv.addObject("user_dto", user_dto);
+			mv.setViewName("meeting/meeting_write");			
+		}
+		else {
+			mv.setViewName("group/group_do_login");
+		}
+		
 		return mv;
 	}
 	
@@ -359,23 +366,28 @@ public class MeetingController {
 		UserDTO user_dto = service.userInfo(user_id);
 		mv.addObject("user_dto", user_dto);
 		
-		// 게시글 목록 생성
-		List<MeetingDTO> meeting_list;
-		int total_cnt = 0;
-		if (category.equals("notfinish") || category.equals("yetfinish") || category.equals("finish")) {
-			meeting_list = etcService.getMeetingList(category, "open", 1, user_id);
-			total_cnt = etcService.getMeetingCount(category, "open", user_id);
+		if (user_id != null) {
+			// 게시글 목록 생성
+			List<MeetingDTO> meeting_list;
+			int total_cnt = 0;
+			if (category.equals("notfinish") || category.equals("yetfinish") || category.equals("finish")) {
+				meeting_list = etcService.getMeetingList(category, "open", 1, user_id);
+				total_cnt = etcService.getMeetingCount(category, "open", user_id);
+			}
+			else {
+				meeting_list = etcService.getMeetingList(category, "time", 1, user_id);
+				total_cnt = etcService.getMeetingCount(category, "time", user_id);
+			}
+			
+			mv.addObject("category", category);
+			mv.addObject("total_cnt", total_cnt);
+			mv.addObject("div_num", div_num);
+			mv.addObject("meeting_list", meeting_list);
+			mv.setViewName("meeting/meeting_my");			
 		}
 		else {
-			meeting_list = etcService.getMeetingList(category, "time", 1, user_id);
-			total_cnt = etcService.getMeetingCount(category, "time", user_id);
+			mv.setViewName("group/group_do_login");
 		}
-		
-		mv.addObject("category", category);
-		mv.addObject("total_cnt", total_cnt);
-		mv.addObject("div_num", div_num);
-		mv.addObject("meeting_list", meeting_list);
-		mv.setViewName("meeting/meeting_my");
 		
 		return mv;
 	}
@@ -411,37 +423,42 @@ public class MeetingController {
 		UserDTO user_dto = service.userInfo(user_id);
 		mv.addObject("user_dto", user_dto);
 		
-		// 게시글 목록 생성
-		ArrayList<Integer> seq_list;
-		List<MeetingDTO> meeting_list;
-		int total_cnt = 0;
-		
-		if (category.equals("result")) {
-			MeetingPagingDTO page_dto = new MeetingPagingDTO();
-			page_dto.setUser_id(user_id);
-			page_dto.setSort_type("승인");
+		if (user_id != null) {
+			// 게시글 목록 생성
+			ArrayList<Integer> seq_list;
+			List<MeetingDTO> meeting_list;
+			int total_cnt = 0;
 			
-			seq_list = new ArrayList<>(service.userAppSeqListResult(page_dto));
-			
-			if (seq_list.size() != 0) {
-				meeting_list = etcService.getMeetingList("all", "time", 1, seq_list);
+			if (category.equals("result")) {
+				MeetingPagingDTO page_dto = new MeetingPagingDTO();
+				page_dto.setUser_id(user_id);
+				page_dto.setSort_type("승인");
+				
+				seq_list = new ArrayList<>(service.userAppSeqListResult(page_dto));
+				
+				if (seq_list.size() != 0) {
+					meeting_list = etcService.getMeetingList("all", "time", 1, seq_list);
+				}
+				else {
+					meeting_list = null;
+				}
+				total_cnt = seq_list.size();
 			}
 			else {
-				meeting_list = null;
+				seq_list = new ArrayList<>(service.userAppSeqList(user_id));
+				meeting_list = etcService.getMeetingList(category, "time", 1, seq_list);
+				total_cnt = etcService.getMeetingCount(category, seq_list);
 			}
-			total_cnt = seq_list.size();
+			
+			mv.addObject("category", category);
+			mv.addObject("total_cnt", total_cnt);
+			mv.addObject("div_num", div_num);
+			mv.addObject("meeting_list", meeting_list);
+			mv.setViewName("meeting/meeting_myapp");
 		}
 		else {
-			seq_list = new ArrayList<>(service.userAppSeqList(user_id));
-			meeting_list = etcService.getMeetingList(category, "time", 1, seq_list);
-			total_cnt = etcService.getMeetingCount(category, seq_list);
+			mv.setViewName("group/group_do_login");
 		}
-		
-		mv.addObject("category", category);
-		mv.addObject("total_cnt", total_cnt);
-		mv.addObject("div_num", div_num);
-		mv.addObject("meeting_list", meeting_list);
-		mv.setViewName("meeting/meeting_myapp");
 		
 		return mv;
 	}

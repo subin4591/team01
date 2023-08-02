@@ -11,12 +11,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import dto.GroupCreateDTO;
 import dto.GroupDTO;
+import dto.GroupInvitationDTO;
 import dto.GroupUserDTO;
 import dto.MeetingPagingDTO;
 import dto.UserDTO;
@@ -39,7 +41,7 @@ public class GroupController {
 		String session_id = (String)session.getAttribute("session_id");
 		
 		if (session_id == null) {
-			mv.setViewName("schedule/scheduleError");
+			mv.setViewName("group/group_do_login");
 		}
 		else {
 			// 방장 정보 생성
@@ -200,53 +202,59 @@ public class GroupController {
 		HashMap<String, String> map = new HashMap<>();
 		map.put("group_id", groupId);
 		map.put("host", "host");
-		String host = service.groupWhoHost(map).get(0);
+		List<String> hostList = service.groupWhoHost(map);
+		String host = "";
+		String viewName = "schedule/scheduleError";
 		
 		// ModelAndView 생성
 		ModelAndView mv = new ModelAndView();
-		if (session.getAttribute("session_id") != null) {
-			if (session.getAttribute("session_id").equals(host)) {
-				// 방장 정보
-				UserDTO host_info = service.groupHostInfo(host);
-				
-				// 부방장 정보
-				map.put("host", "sub_host");
-				ArrayList<String> sub_list = new ArrayList<>(service.groupWhoHost(map));
-				List<UserDTO> sub_info;
-				if (sub_list.size() != 0) {
-					sub_info = service.groupUserInfo(sub_list);
+		
+		// 그룹아이디가 존재하는지
+		if (hostList.size() != 0) {
+			host = hostList.get(0);
+			
+			// 로그인이 되어있는지
+			if (session.getAttribute("session_id") != null) {
+				// 로그인 된 아이디가 그룹의 방장인지
+				if (session.getAttribute("session_id").equals(host)) {
+					// 방장 정보
+					UserDTO host_info = service.groupHostInfo(host);
+					
+					// 부방장 정보
+					map.put("host", "sub_host");
+					ArrayList<String> sub_list = new ArrayList<>(service.groupWhoHost(map));
+					List<UserDTO> sub_info;
+					if (sub_list.size() != 0) {
+						sub_info = service.groupUserInfo(sub_list);
+					}
+					else {
+						sub_info = null;
+					}
+					
+					// 멤버 정보
+					map.put("host", "member");
+					ArrayList<String> mem_list = new ArrayList<>(service.groupWhoHost(map));
+					List<UserDTO> mem_info;
+					if (mem_list.size() != 0) {
+						mem_info = service.groupUserInfo(mem_list);
+					}
+					else {
+						mem_info = null;
+					}
+					
+					// 그룹 정보
+					GroupDTO group_info = service.groupInfo(groupId);
+					
+					mv.addObject("host_info", host_info);
+					mv.addObject("sub_info", sub_info);
+					mv.addObject("mem_info", mem_info);
+					mv.addObject("group_info", group_info);
+					viewName = "group/group_change";
 				}
-				else {
-					sub_info = null;
-				}
-				
-				// 멤버 정보
-				map.put("host", "member");
-				ArrayList<String> mem_list = new ArrayList<>(service.groupWhoHost(map));
-				List<UserDTO> mem_info;
-				if (mem_list.size() != 0) {
-					mem_info = service.groupUserInfo(mem_list);
-				}
-				else {
-					mem_info = null;
-				}
-				
-				// 그룹 정보
-				GroupDTO group_info = service.groupInfo(groupId);
-				
-				mv.addObject("host_info", host_info);
-				mv.addObject("sub_info", sub_info);
-				mv.addObject("mem_info", mem_info);
-				mv.addObject("group_info", group_info);
-				mv.setViewName("group/group_change");
-			}
-			else {
-				mv.setViewName("schedule/scheduleError");
 			}
 		}
-		else {
-			mv.setViewName("schedule/scheduleError");
-		}
+		
+		mv.setViewName(viewName);
 		
 		return mv;
 	}
@@ -382,7 +390,7 @@ public class GroupController {
 			mv.setViewName("group/group_list");
 		}
 		else {
-			mv.setViewName("schedule/scheduleError");	
+			mv.setViewName("group/group_do_login");
 		}
 		return mv;
 	}
@@ -418,5 +426,121 @@ public class GroupController {
 		dto.calcNum(page, divNum);
 		
 		return service.groupList(dto);
+	}
+	
+	@RequestMapping("/group/schedule/invitation/{groupId}")
+	public ModelAndView groupScheduleInvitation(@PathVariable("groupId") String groupId, HttpSession session) {
+		ModelAndView mv = new ModelAndView();
+		String id = (String)session.getAttribute("session_id");
+		
+		// 로그인 여부
+		if (id != null) {
+			// 그룹아이디 존재 여부
+			if (service.findGroupID(groupId) != 0) {
+				// HashMap 생성
+				HashMap<String, String> map = new HashMap<>();
+				map.put("group_id", groupId);
+				
+				// 방장 아이디 목록
+				map.put("host", "host");
+				List<String> hostId = service.groupWhoHost(map);
+				
+				// 부방장 아이디 목록
+				map.put("host", "sub_host");
+				List<String> subHostId = service.groupWhoHost(map);
+				
+				// 멤버 아이디 목록
+				map.put("host", "member");
+				List<String> memberId = service.groupWhoHost(map);
+				
+				// 그룹 멤버 확인
+				String isIn = "notMember";
+				
+				// 방장 혹은 부방장
+				if (hostId.contains(id) || subHostId.contains(id)) {
+					isIn = "host";
+				}
+				// 멤버
+				else if (memberId.contains(id)) {
+					isIn = "member";
+				}
+				
+				// 그룹 정보 생성
+				GroupDTO group = service.groupInfo(groupId);
+				
+				// 방장 정보 생성
+				UserDTO hostInfo = service.groupHostInfo(hostId.get(0));
+				
+				// 그룹 신청 목록
+				List<GroupInvitationDTO> sign = service.groupSignList(groupId);
+				
+				mv.addObject("isIn", isIn);
+				mv.addObject("group", group);
+				mv.addObject("hostInfo", hostInfo);
+				mv.addObject("group_id", groupId);
+				mv.addObject("sign", sign);
+				mv.setViewName("group/group_schedule_invitation");
+			}
+			// 그룹아이디 없음
+			else {
+				mv.setViewName("schedule/scheduleError");
+			}
+		}
+		else {
+			// 미로그인
+			mv.setViewName("group/group_do_login");
+		}
+		
+		return mv;
+	}
+	
+	@RequestMapping("/group/schedule/invitation/IDSearch")
+	@ResponseBody
+	public HashMap<String, Object> groupScehduleInvitationIDSearch(String group_id, String id) {
+		// 그룹 멤버 확인
+		HashMap<String, String> map = new HashMap<>();
+		map.put("group_id", group_id);
+		map.put("user_id", id);
+		UserDTO user = null;
+		String result = "notFind";
+		
+		// 그룹에 없으면
+		if (service.findGroupMember(map) == 0) {
+			// 그룹 신청 중복 확인
+			if (service.groupSignAlready(map) > 0) {
+				result = "already";
+			}
+			if (result.equals("notFind")) {
+				result = "find";
+				user = service.groupHostInfo(id);				
+			}
+		}
+		
+		// 결과
+		HashMap<String, Object> data = new HashMap<>();
+		data.put("result", result);
+		data.put("user", user);
+		
+		return data;
+	}
+	
+	@RequestMapping("/group/schedule/invitation/signUp")
+	@ResponseBody
+	public String groupScheduleInvitationSignUP(String group_id, String id) {
+		HashMap<String, String> map = new HashMap<>();
+		map.put("group_id", group_id);
+		map.put("user_id", id);
+		
+		String result = "success";
+		
+		// 그룹 신청 중복 확인
+		if (service.groupSignAlready(map) > 0) {
+			result = "already";
+		}
+		else {
+			service.insertGroupInvitation(map);			
+		}
+		
+		return "{\"result\": \"" + result + "\"}";
 	}
 }

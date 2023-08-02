@@ -77,6 +77,27 @@
 		</choose>
 	</select>
 	
+	<!-- 그룹 멤버 확인 -->
+	<select id="findGroupMember" parameterType="hashmap" resultType="int">
+		select count(*) from `group_user_table`
+		where group_id = #{group_id} and user_id = #{user_id}
+	</select>
+	
+	<!-- 그룹 신청 목록 -->
+	<select id="groupSignList" parameterType="String" resultType="groupinvitaiondto">
+		select g.user_id user_id, invitation_time, name, profile_url
+		from `group_invitation_table` g
+		join `user_table` u on g.user_id = u.user_id
+		where group_id = #{group_id}
+		order by invitation_time asc
+	</select>
+	
+	<!-- 그룹 신청 중복 확인 -->
+	<select id="groupSignAlready" parameterType="hashmap" resultType="int">
+		select count(*) from `group_invitation_table`
+		where group_id = #{group_id} and user_id = #{user_id}
+	</select>
+	
 	<!-- Group insert -->
 	<!-- 그룹 생성 -->
 	<insert id="insertGroup" parameterType="groupdto">
@@ -86,6 +107,12 @@
 	<insert id="insertGroupUser" parameterType="groupuserdto">
 		insert into `group_user_table` (group_id, user_id, host, sub_host, set_schedule)
 		values (#{group_id}, #{user_id}, #{host}, #{sub_host}, 0)
+	</insert>
+	
+	<!-- 그룹 신청 -->
+	<insert id="insertGroupInvitation" parameterType="hashmap">
+		insert into `group_invitation_table` (group_id, user_id, invitation_time)
+		values (#{group_id}, #{user_id}, now())
 	</insert>
 	
 	<!-- Group update -->

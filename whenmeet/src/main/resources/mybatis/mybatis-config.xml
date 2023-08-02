@@ -12,6 +12,7 @@
 		<typeAlias type="dto.GroupCreateDTO" alias="groupcreatedto"/>
 		<typeAlias type="dto.GroupDTO" alias="groupdto"/>
 		<typeAlias type="dto.GroupUserDTO" alias="groupuserdto"/>
+		<typeAlias type="dto.GroupInvitationDTO" alias="groupinvitaiondto"/>
 		<typeAlias type="dto.MainDTO" alias="maindto"/>
 		<typeAlias type="dto.ChatDTO" alias="chatdto"/>
 		<typeAlias type="dto.ScheduleDTO" alias="scheduledto"/>

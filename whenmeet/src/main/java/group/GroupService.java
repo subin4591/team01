@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import dto.GroupCreateDTO;
 import dto.GroupDTO;
+import dto.GroupInvitationDTO;
 import dto.GroupUserDTO;
 import dto.MeetingPagingDTO;
 import dto.UserDTO;
@@ -57,6 +58,21 @@ public class GroupService {
 		return dao.groupListCount(dto);
 	}
 	
+	// 그룹 멤버 확인
+	public int findGroupMember(HashMap<String, String> map) {
+		return dao.findGroupMember(map);
+	}
+	
+	// 그룹 신청 목록
+	public List<GroupInvitationDTO> groupSignList(String group_id) {
+		return dao.groupSignList(group_id);
+	}
+	
+	// 그룹 신청 중복 확인
+	public int groupSignAlready(HashMap<String, String> map) {
+		return dao.groupSignAlready(map);
+	}
+	
 	
 	/// Group insert
 	// 그룹 생성
@@ -65,6 +81,11 @@ public class GroupService {
 	}
 	public void insertGroupUser(GroupUserDTO dto) {
 		dao.insertGroupUser(dto);
+	}
+	
+	// 그룹 신청
+	public void insertGroupInvitation(HashMap<String, String> map) {
+		dao.insertGroupInvitation(map);
 	}
 	
 	
