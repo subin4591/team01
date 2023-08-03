@@ -84,7 +84,128 @@ function slideTable(max, LR){
 		$(".total_table_right").css("color", "#F25287")
 	}
 }
+//간트차트
+function drawChart2(data) {
+	// index : int로 된 big_todo 배열
+	// Name : String으로 된 big_todo_content 배열
+	// SDate : Y- M - D 로 이루어진 날짜 배열. split 필요
+	// EDate : 위와 동일
+	// PC : double로 된 배열
+	var Index = data[0];
+	var Name = data[1];
+	var SDate = data[2];
+	var EDate = data[3];
+	var PC = data[4];
+	
 
+	var total = Index.length;
+	
+	var valueIndex = [];
+	var valueName = [];
+	var valueSDate = [];
+	var valueEDate = [];
+	var valuePC = [];
+	
+		for (var t = 0; t < total; t++){
+
+  			valueIndex.push(Index[t] + "");
+  			valueName.push(Name[t] + "");
+
+  		 	valueSDate.push(new Date(SDate[t].split('-')[0]*1, SDate[t].split('-')[1]*1-1, SDate[t].split('-')[2]*1));
+ 	   	 	valueEDate.push(new Date(EDate[t].split('-')[0]*1, EDate[t].split('-')[1]*1-1, EDate[t].split('-')[2]*1));
+ 	    
+	    	valueDur.push(null);
+	    	valuePC.push(PC[t]*1);
+		}
+	      var data = new google.visualization.DataTable();
+	      data.addColumn('string', 'Task ID');
+	      data.addColumn('string', 'Task Name');
+	      data.addColumn('date', 'Start Date');
+	      data.addColumn('date', 'End Date');
+	      data.addColumn('number', 'Duration');
+	      data.addColumn('number', 'Percent Complete');
+	      data.addColumn('string', 'Dependencies'); 
+	      
+	      for (var i = 0; i < total; i ++){
+	      	data.addRow([
+	      		valueIndex.at(i), valueName.at(i), valueSDate.at(i), valueEDate.at(i),
+	      		null, valuePC.at(i), null
+				]);
+			}
+
+		let today = new Date();
+	  	var rowHeight = 50;
+
+	      var options = {
+			width : 800,
+			height: data.getNumberOfRows() * rowHeight+rowHeight,      
+			gantt: {
+				barHeight: 40,
+				trackHeight: 50,
+				
+				
+				innerGridHorizLine:{
+					stroke : "#F9F3F3"
+				},
+				innerGridDarkTrack: {
+					fill: "#F9F3F3"
+				},
+				
+				labelStyle: {
+					fontSize : 22
+				},
+				
+				palette: [{
+					"color" : "#FF86AE",
+					"dark" : "#F25287",
+					"light" : "#FFB4CD"
+				}]		
+	        },
+	        
+	        hAxis:{
+	        	format: 'yy-MM-dd'
+	        	}
+
+	      };
+	      
+	      var options2 = {
+	  			width : 700,
+	  			height: data.getNumberOfRows() * rowHeight+rowHeight,      
+	  			gantt: {
+	  				barHeight: 40,
+	  				trackHeight: 50,
+	  				defaultStartDate: today,
+	  				
+	  				innerGridHorizLine:{
+	  					stroke : "#F9F3F3"
+	  				},
+	  				innerGridDarkTrack: {
+	  					fill: "#F9F3F3"
+	  				},
+	  				
+	  				labelStyle: {
+	  					fontSize : 22
+	  				},
+	  				
+	  				palette: [{
+	  					"color" : "#FF86AE",
+	  					"dark" : "#F25287",
+	  					"light" : "#FFB4CD"
+	  				}]		
+	  	        },
+	  	        
+	  	        hAxis:{
+	  	        	format: 'yy-MM-dd'
+	  	        	}
+
+	  	      };
+
+	      var chart1 = new google.visualization.Gantt(document.getElementById('chart_div1'));
+	      var chart2 = new google.visualization.Gantt(document.getElementById('chart_div2'));
+	
+	      chart1.draw(data, options2);
+	      chart2.draw(data, options);
+	  }
 //d-day 에러 체크하기
 function DdayError(){
 	var date = $("#finalDate").val();
@@ -511,12 +632,10 @@ $(".editDate").click(function(){
 $("#endEditDate").click(function(){
 	$("#Dday_edit").hide();
 	if ($("#Dday").children("span").eq(1).text() == "*"){
-		console.log("DdayInit");
 		$("#DdayInit").show();
 	}else{
 		$("#DdayInit").hide();
 		$("#Dday").show();
-		console.log("Dday");
 	}
 })
 

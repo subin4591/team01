@@ -25,6 +25,7 @@ String userImgErr = "/img/user_logo.png";
 	<script>
 	alert("로그인이 필요한 페이지입니다.");
 	location.href = "/login";
+	
 	</script>
 </c:when>
 <c:otherwise>
@@ -197,6 +198,7 @@ String userImgErr = "/img/user_logo.png";
         <form action = "/schedule/deleteGroupUser" method ="GET"  onsubmit="return deleteGroupUser()">
         	<input type = "text" style = "display:None" name = "groupId" value = "${groupId}"/>
         	<input type = "text" style = "display:None" name = "userId" value = "${userId}"/>
+        	<button type="button" class = "btns" id = "invite_btn" onclick = "location.href = '/group/schedule/invitation/${groupId}'">그룹 초대</button>
         	<button type="submit" id="delete_btn">그룹 탈퇴</button>
         </form>
       </div>
@@ -676,7 +678,6 @@ String userImgErr = "/img/user_logo.png";
 			  				<div id="chart_div1" ></div>
 			  		</div>
 			  		<div id = "GFESubmitBtn" >
-						<button id = "ganttFirstEditCancelBtn">취소</button>
 						<button id = "ganttFirstEditSaveBtn" type = "submit">저장</button>				
 			  		</div>
 			  	</div>
@@ -747,7 +748,7 @@ String userImgErr = "/img/user_logo.png";
 	  	
 	 <script>
 	 var cnt = 0;
-	//간트 결과 체크박스 이벤트
+	//간트 결과 체크박스 이벤트 row / column / 총 개수
 	function GRchecked(element1, element2, count){
 		var element = element1 + element2;
 		var temp1 = "#DoItCheck3"+element;
@@ -766,7 +767,10 @@ String userImgErr = "/img/user_logo.png";
 				data : ({
 					big_todo : element1,
 					small_todo : element2
-				})
+				}),
+				success : function(data){
+					drawChart2(data);
+				}
 			})
 			$(temp1).attr("data-check" , "1");
 		}else{
@@ -781,7 +785,10 @@ String userImgErr = "/img/user_logo.png";
 				data : ({
 					big_todo : element1,
 					small_todo : element2
-				})
+				}),
+				success : function(data){
+					drawChart2(data);
+				}
 			})
 			$(temp1).attr("data-check",  "0");
 		}
@@ -965,116 +972,6 @@ String userImgErr = "/img/user_logo.png";
 	      chart2.draw(data, options);
 	  }
 	
-	function drawChart2(list) {
-
-	      var data = new google.visualization.DataTable();
-	      data.addColumn('string', 'Task ID');
-	      data.addColumn('string', 'Task Name');
-	      data.addColumn('date', 'Start Date');
-	      data.addColumn('date', 'End Date');
-	      data.addColumn('number', 'Duration');
-	      data.addColumn('number', 'Percent Complete');
-	      data.addColumn('string', 'Dependencies'); 
-	      
-	      for (var i = 0; i < list.length; i ++){
-	    	  
-	    	  var total = 0;
-	    	  	for(var j = 0; j < list[i].length; j++){
-	    		 	total += list[i][j][2];
-	    	  	}
-	    	  	var PC = (total/list[i].length);
-	    	  	
-	   			for(var j = 0; j < list[i].length; j++){
-	   				
-	   				var list1 = list[i][j][3].split("-");
-	   				var list2 = list[i][j][4].split("-");
-	   				
-	   				var date1 = new Date(list1[0], list1[1]-1, list1[2]);
-	   				var date2 = new Date(list2[0], list2[1]-1, list2[2]);
-	   		      
-			  		var index = i+"";
-			  		
-	      			data.addRow([
-	        			index, list[i][j][0], date1, date2,
-	      				null, PC, null
-					]);
-	   			}
-			}
-
-		let today = new Date();
-	  	var rowHeight = 50;
-
-	      var options = {
-			width : 800,
-			height: data.getNumberOfRows() * rowHeight+rowHeight,      
-			gantt: {
-				barHeight: 40,
-				trackHeight: 50,
-				
-				
-				innerGridHorizLine:{
-					stroke : "#F9F3F3"
-				},
-				innerGridDarkTrack: {
-					fill: "#F9F3F3"
-				},
-				
-				labelStyle: {
-					fontSize : 22
-				},
-				
-				palette: [{
-					"color" : "#FF86AE",
-					"dark" : "#F25287",
-					"light" : "#FFB4CD"
-				}]		
-	        },
-	        
-	        hAxis:{
-	        	format: 'yy-MM-dd'
-	        	}
-
-	      };
-	      
-	      var options2 = {
-	  			width : 700,
-	  			height: data.getNumberOfRows() * rowHeight+rowHeight,      
-	  			gantt: {
-	  				barHeight: 40,
-	  				trackHeight: 50,
-	  				defaultStartDate: today,
-	  				
-	  				innerGridHorizLine:{
-	  					stroke : "#F9F3F3"
-	  				},
-	  				innerGridDarkTrack: {
-	  					fill: "#F9F3F3"
-	  				},
-	  				
-	  				labelStyle: {
-	  					fontSize : 22
-	  				},
-	  				
-	  				palette: [{
-	  					"color" : "#FF86AE",
-	  					"dark" : "#F25287",
-	  					"light" : "#FFB4CD"
-	  				}]		
-	  	        },
-	  	        
-	  	        hAxis:{
-	  	        	format: 'yy-MM-dd'
-	  	        	}
-
-	  	      };
-
-	      var chart1 = new google.visualization.Gantt(document.getElementById('chart_div1'));
-	      var chart2 = new google.visualization.Gantt(document.getElementById('chart_div2'));
-	
-	      chart1.draw(data, options2);
-	      chart2.draw(data, options);
-	  }
-	
 	var IndexInt = 0;
 	var Element;
 	//할일 팝업을 열기
@@ -1096,7 +993,7 @@ String userImgErr = "/img/user_logo.png";
 		
 		for (var i = 0; i < child.length; i++){
 			list.append('<li><div class = "DoItListItem" style = "width : 98%; " >&nbsp;'+child[i]+'</div></li>');
-			$("#DoItListChild").children().eq(i).children().append('<button type = "button" class = "deleteBtn" onclick="deleteBtn2('+IndexInt+', '+i+', \'${groupId}\')">✕</button>');
+			$("#DoItListChild").children().eq(i).children().append('<button type = "button" class = "deleteBtn" onclick="deleteBtn2('+child.length + ',' +IndexInt+', '+i+', \'${groupId}\')">✕</button>');
 		}
 		
 		$(modalPop).show();
@@ -1133,10 +1030,9 @@ String userImgErr = "/img/user_logo.png";
 		//로드
 		$(".loader").css("display", "None");
 
-		
 		//ajax
-		var createData;
-		 $("#ganttCreateBtn").on("click", function(){
+		
+		$("#ganttCreateBtn").on("click", function(){
 			$.ajax({
 				url : "/schedule/<%= groupId%>/CreateGantt",
 				type : "get",
@@ -1175,7 +1071,7 @@ String userImgErr = "/img/user_logo.png";
 					},
 					success : function(data){
 						$('#ajaxContainer').load(window.location.href + " #ajaxContainer",function(){	
-							drawChart2(data);	
+							drawChart2(data);
 						});
 					},
 					error : function(){
@@ -1220,17 +1116,11 @@ String userImgErr = "/img/user_logo.png";
 							big_todo_end : result2
 						},
 						success : function(data){
-							console.log(result1);
-							console.log(result2);
 							
-							<% for (int i = 0; i < smallDoItMax.length; i++){ %>
-								smallMax[<%=i%>] = <%=smallDoItMax[i]%>;
-							<%}%>
 							list.append('<li><div class = "DoItListItem" style = "width : 98%; " >&nbsp;'+$("#DoItChildDate .newValue").val()+'</div></li>');
 							$("#DoItListChild").children().eq(smallMax[IndexInt]).children().append('<button type = "button" class = "deleteBtn" onclick="deleteBtn2('+smallMax[IndexInt]+')">✕</button>');
-							$('#ajaxContainer').load(window.location.href + " #ajaxContainer",function(){	
-								drawChart();	
-							});
+							$('#ajaxContainer').load(window.location.href + " #ajaxContainer");
+							drawChart2(data);
 						},
 						error : function(){
 							alert("입력 중 에러가 발생했습니다.");
@@ -1252,7 +1142,14 @@ String userImgErr = "/img/user_logo.png";
 				smallMax[<%=i%>] = <%=smallDoItMax[i]%>;
 			<%}%>
 			$('#ajaxContainer').load(window.location.href + " #ajaxContainer",function(){	
-				drawChart();	
+				$.ajax({
+					url : "/schedule/${groupId}/loadGantt",
+					type : "get",
+					data : {},
+					success : function(data){
+						drawChart2(data);
+					}
+				})
 				DpopClose();	
 			});
 		});
@@ -1355,31 +1252,34 @@ String userImgErr = "/img/user_logo.png";
 			}
 		
 	 	/* 간트 차트 */	
-
-	  	$("#ganttFirstEditCancelBtn").click(function(){
-	  		drawChart();
-	  		if ( <%=DoItCnt%> >0){
-	  			drawChart();
-				$("#ganttCreate").hide();
-				$("#ganttFirstEdit").hide();
-				$("#ganttResult").show();
-			}else{
-				$("#ganttCreate").show();
-				$("#ganttFirstEdit").hide();	
-			}
-		})	
+		
 	  	$("#ganttFirstEditSaveBtn").click(function(){
-	  		drawChart();
+	  		$.ajax({
+				url : "/schedule/${groupId}/loadGantt",
+				type : "get",
+				data : {},
+				success : function(data){
+					$('#GRAjax').load(window.location.href + " #GRAjax");
+					drawChart2(data);
+				}
+			})
 			$("#ganttResult").show();
 			$("#ganttFirstEdit").hide();
 		})	
 		$("#ganttResultEditBtn").click(function(){
 			
-			$('#ajaxContainer').load(window.location.href + " #ajaxContainer",function(){	
-				if (drawChart() != null)
-					drawChart();
-				else drawChart2(createData);
-			});
+			$('#ajaxContainer').load(window.location.href + " #ajaxContainer");
+			if (drawChart() != null) drawChart();
+			else{
+				$.ajax({
+					url : "/schedule/${groupId}/loadGantt",
+					type : "get",
+					data : {},
+					success : function(data){
+						drawChart2(data);
+					}
+				})
+			}
 			$("#ganttFirstEdit").show();
 			$("#ganttFirstEdit").css({
 				"display" : "flex"
@@ -1415,14 +1315,21 @@ String userImgErr = "/img/user_logo.png";
 				return false;
 			}else{
 				$.ajax({
-					url : "/schedule/" + groupId + "/deleteGanttDoIt",
+					url : "/schedule/${groupId}/deleteGanttDoIt",
 					type : "get",
 					data : {big_todo : element},
-					complete : function(){
+					complete : function(data){
 						$('#ajaxContainer').load(window.location.href + " #ajaxContainer",function(){	
-							drawChart();	
 							max--;
 						});
+						$.ajax({
+							url : "/schedule/${groupId}/loadGantt",
+							type : "get",
+							data : {},
+							success : function(data){
+								drawChart2(data);
+							}
+						})
 					}
 				})
 			}
@@ -1432,12 +1339,12 @@ String userImgErr = "/img/user_logo.png";
 	}
 	
 	//작은 리스트 삭제하기
-	function deleteBtn2(element, cnt, groupId){
+	function deleteBtn2(total, element, cnt, groupId){
 		console.log(element);
-			//if(cnt <=1){
+			if(total <=1){
 				//alert("항목이 하나 이상 존재해야 합니다.");
 				//return false;
-			//}else{
+			}else{
 				$.ajax({
 					url : "/schedule/" + groupId + "/deleteGanttDoIt2",
 					type : "get",
@@ -1449,11 +1356,18 @@ String userImgErr = "/img/user_logo.png";
 						$('#ajaxContainer').load(window.location.href + " #ajaxContainer",function(){	
 							smallMax[element]--;
 						});
-						
+						$.ajax({
+							url : "/schedule/${groupId}/loadGantt",
+							type : "get",
+							data : {},
+							success : function(data){
+								drawChart2(data);
+							}
+						})
 						 $("#DoItListChild").children().eq(cnt).remove();
 					}
 				})
-			//}
+			}
 	}
 	
 	</script>

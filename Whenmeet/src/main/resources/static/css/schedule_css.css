@@ -264,12 +264,15 @@ body{
   font-size: 20px;
   font-weight: 900;
 }
-
+#invite_btn{
+	position : relative;
+	bottom : -130px;
+}
 #delete_btn {
 	position : relative;
   	width: 130px;
  	height: 50px;
-	bottom : -170px;
+	bottom : -150px;
 	
   border-radius: 30px;
   border: 3px solid #f25287;

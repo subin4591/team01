@@ -28,6 +28,65 @@ public class scheduleController {
 	@Autowired
 	private scheduleService scheduleService;
 	
+	//간트차트 화면 ajax 통신을 위한 함수
+	private String[][] ganttAjax(String groupId) throws Exception{
+		// 큰 할일 갯수
+		int DoItCnt = scheduleService.selectDistinctGanttToDo(groupId).size(); 
+		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		
+		//할 일 당 소항목 최대 index
+		int [] smallDoItMax =  new int[DoItCnt];
+
+		HashMap<String, Object> smallmap = new HashMap();
+			smallmap.put("group_id", groupId);
+			for (int i = 0; i < DoItCnt; i++) {
+					smallmap.put("big_todo", i);
+					smallDoItMax[i] = scheduleService.selectSmallDoItMax(smallmap);
+			}		
+		
+		//checkList
+		HashMap<String, Object> ggmap = new HashMap<String, Object>();
+		double [] checkList = new double[DoItCnt];
+		ggmap.put("group_id", groupId);
+		int count = 0;	// 큰 일정 하나 당 체크 총합
+		
+		for (int i = 0; i < DoItCnt; i++) {
+			ggmap.put("big_todo", i);
+			
+			for (int j = 0; j < smallDoItMax[i]+1; j++ ) {
+				count += scheduleService.selectGroupGanttToDo(ggmap).get(j).getCheck_do();
+				int temp = scheduleService.selectGroupGanttToDo(ggmap).get(j).getCheck_do();	// 지금 항목 체크 여부
+			}
+			
+		double result = 0;
+		if (count != 0) result = (count/(double)(smallDoItMax[i]+1))*100;
+			checkList[i] = result;
+			count = 0;
+		}
+		
+		// [0][] index : int로 된 big_todo 배열
+		// [1][] Name : String으로 된 big_todo_content 배열
+		// [2][] SDate : yyyy-MM-dd 배열
+		// [3][] EDate : 위와 동일
+		// [4][] PC : double로 된 배열
+		String[][] data = new String[5][DoItCnt];
+		
+		for(int i =0; i < DoItCnt; i++) {
+			// index
+			data[0][i] = scheduleService.selectDistinctGanttToDo(groupId).get(i).getBig_todo()+"";
+			// Name
+			data[1][i] = scheduleService.selectDistinctGanttToDo(groupId).get(i).getBig_todo_content();
+			//SDate, EDate
+			data[2][i] = format.format(scheduleService.selectDistinctGanttToDo(groupId).get(i).getBig_todo_start());
+			data[3][i] = format.format(scheduleService.selectDistinctGanttToDo(groupId).get(i).getBig_todo_end());
+			//PC
+			data[4][i] = checkList[i]+"";
+		}
+
+		return data;
+	}
+	
 	private void ganttSetting(String groupId, HttpServletRequest request, Model model) throws Exception {
 		//간트차트 화면
 				int groupGanttCnt = scheduleService.selectGroupGanttCnt(groupId);
@@ -881,7 +940,7 @@ public class scheduleController {
 	
 	@ResponseBody
 	@RequestMapping("/schedule/{groupId}/CreateGantt")
-	public String[][][] CreateGantt(@PathVariable("groupId") String groupId, HttpServletRequest request, Model model) throws Exception {
+	public String[][] CreateGantt(@PathVariable("groupId") String groupId, HttpServletRequest request, Model model) throws Exception {
 		
 		if (scheduleService.selectGroupGanttCnt(groupId) == 0) {
 		
@@ -894,36 +953,13 @@ public class scheduleController {
 		ganttSetting(groupId, request, model);
 		}
 		
-		String[][][] ganttList = new String[scheduleService.selectDoItMax(groupId)+1][scheduleService.selectGroupGantt(groupId).size()][5];
-		GroupGanttDTO ganttDTO = new GroupGanttDTO();
+		String[][] data = ganttAjax(groupId);
 		
-		for ( int i = 0; i < scheduleService.selectGroupGantt(groupId).size(); i++ ){
-			
-			ganttDTO.setGroup_id(groupId);
-			ganttDTO.setBig_todo(scheduleService.selectGroupGantt(groupId).get(i).getBig_todo());
-			ganttDTO.setSmall_todo(scheduleService.selectGroupGantt(groupId).get(i).getSmall_todo());
-			ganttDTO.setBig_todo_content(scheduleService.selectGroupGantt(groupId).get(i).getBig_todo_content());
-			ganttDTO.setSmall_todo_content(scheduleService.selectGroupGantt(groupId).get(i).getSmall_todo_content());
-			ganttDTO.setCheck_do(scheduleService.selectGroupGantt(groupId).get(i).getCheck_do());
-			ganttDTO.setBig_todo_start(scheduleService.selectGroupGantt(groupId).get(i).getBig_todo_start());
-			ganttDTO.setBig_todo_end(scheduleService.selectGroupGantt(groupId).get(i).getBig_todo_end());
-			
-			Date date1 = ganttDTO.getBig_todo_start();
-			Date date2 = ganttDTO.getBig_todo_end();
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			
-			ganttList[ganttDTO.getBig_todo()][ganttDTO.getSmall_todo()][0] = ganttDTO.getBig_todo_content();
-			ganttList[ganttDTO.getBig_todo()][ganttDTO.getSmall_todo()][1] = ganttDTO.getSmall_todo_content();
-			ganttList[ganttDTO.getBig_todo()][ganttDTO.getSmall_todo()][2] = ganttDTO.getCheck_do()+"";
-			ganttList[ganttDTO.getBig_todo()][ganttDTO.getSmall_todo()][3] = format.format(date1);
-			ganttList[ganttDTO.getBig_todo()][ganttDTO.getSmall_todo()][4] = format.format(date2);
-		}
-		
-		return ganttList;	
+		return data;	
 	}
 	@ResponseBody
 	@RequestMapping("/schedule/{groupId}/InsertGantt")
-	public String InsertGantt(@PathVariable("groupId") String groupId,
+	public String[][] InsertGantt(@PathVariable("groupId") String groupId,
 			@RequestParam HashMap<String, Object> map) throws Exception{
 				
 		int big_todo= Integer.parseInt(map.get("big_todo").toString());
@@ -941,12 +977,15 @@ public class scheduleController {
 		
 		scheduleService.insertGroupGantt(map);
 		
-		String data = "success";
+		String[][] data;
+		
+		data = ganttAjax(groupId);
+		
 		return data;
 	}	
 	@ResponseBody
 	@RequestMapping("/schedule/{groupId}/InsertGantt2")
-	public String InsertGantt2(@PathVariable("groupId") String groupId,
+	public String[][] InsertGantt2(@PathVariable("groupId") String groupId,
 			@RequestParam HashMap<String, Object> map,
 			HttpServletRequest request) throws Exception{
 		
@@ -970,7 +1009,8 @@ public class scheduleController {
 
 		scheduleService.insertGroupGantt(map);
 		
-		String data = "success";
+		String[][] data = ganttAjax(groupId);
+		
 		return data;
 	}	
 	@ResponseBody
@@ -1050,9 +1090,10 @@ public class scheduleController {
 
 		out.flush();
 	}	
-	@RequestMapping("/schedule/{groupId}/deleteGanttDoIt")
+	
 	@ResponseBody
-	public String deleteGanttDoIt(@PathVariable("groupId") String groupId,
+	@RequestMapping("/schedule/{groupId}/deleteGanttDoIt")
+	public String[][] deleteGanttDoIt(@PathVariable("groupId") String groupId,
 			@RequestParam("big_todo") int big_todo) throws Exception{
 		
 		HashMap <String, Object> map = new HashMap();
@@ -1073,13 +1114,13 @@ public class scheduleController {
 			}
 		}
 		
-		String data = "success";
+		String[][] data = ganttAjax(groupId);
 		return data;
 	}
 	
-	@RequestMapping("/schedule/{groupId}/deleteGanttDoIt2")
 	@ResponseBody
-	public String deleteGanttDoIt2(@PathVariable("groupId") String groupId,
+	@RequestMapping("/schedule/{groupId}/deleteGanttDoIt2")
+	public String[][] deleteGanttDoIt2(@PathVariable("groupId") String groupId,
 			@RequestParam("big_todo") int big_todo,
 			@RequestParam("small_todo") int small_todo) throws Exception{
 		
@@ -1103,14 +1144,17 @@ public class scheduleController {
 			}
 		}
 		
-		String data = "success";
+		String[][] data = ganttAjax(groupId);
 		return data;
 	}
 	
+	@ResponseBody
 	@RequestMapping("/schedule/{groupId}/check")
-	public void check(@PathVariable("groupId") String groupId,
+	public String[][] check(@PathVariable("groupId") String groupId,
 			@RequestParam("big_todo") String big_todo,
 			@RequestParam("small_todo") String small_todo) throws Exception{
+		
+		// check 0->1을 업데이트 
 		
 		HashMap <String, Object> map = new HashMap();
 		
@@ -1123,10 +1167,14 @@ public class scheduleController {
 		map.put("check_do", 1);
 		
 		scheduleService.updateGroupGantt(map);
+		
+		String[][] data = ganttAjax(groupId);
+		return data;
 	}
 	
+	@ResponseBody
 	@RequestMapping("/schedule/{groupId}/check2")
-	public void check2(@PathVariable("groupId") String groupId,
+	public String[][] check2(@PathVariable("groupId") String groupId,
 			@RequestParam("big_todo") String big_todo,
 			@RequestParam("small_todo") String small_todo) throws Exception{
 		
@@ -1141,6 +1189,17 @@ public class scheduleController {
 		map.put("check_do", 0);
 		
 		scheduleService.updateGroupGantt(map);
+		
+		String[][] data = ganttAjax(groupId);
+		return data;
+	}
+	
+	//그냥 데이터만 불러오기
+	@ResponseBody
+	@RequestMapping("/schedule/{groupId}/loadGantt")
+	public String[][] loadGantt(@PathVariable("groupId") String groupId) throws Exception{		
+		String[][] data = ganttAjax(groupId);
+		return data;
 	}
 }
 
