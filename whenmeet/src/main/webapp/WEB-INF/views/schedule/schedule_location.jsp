@@ -27,17 +27,25 @@
 <div id ="result_wrap">
 <div id="result"></div>
 <div id="distance"></div>
+<c:if test="${location == null}">
+<div id="null_text""><h1>위치를 설정해주세요.</h1><h2>(방장만 수정 가능합니다)</h2></div>
+</c:if>
+
 <button id="confirm_btn">확정하기</button>
+
 <button id="change_btn" style="display:none;">수정하기</button>
 </div>
 <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a860b9470c235ea7b99c9c4e99ca3f14&libraries=services"></script>
 <script src="/js/schedule_location.js"></script>
+
 <script>
+
 $(document).ready(function(){
+	let isHost = 0;
 	$('#confirm_btn').on('click',function(e){
 
 		var address = $('#result h1').html();
-
+		
 		if(address == undefined){
 			alert("장소를 선택해주세요.");
 			return;
@@ -59,6 +67,23 @@ $(document).ready(function(){
 		$('#menu_wrap').hide();
 		$('#confirm_btn').hide();
 		$('#change_btn').show();
+	});
+	$.ajax({
+	      url: '/whohost', 
+	      method: 'POST', 
+	      data: {
+	        group_id: "${groupId}"
+	      },
+	      success: function(response) {
+	        if(response.host != '${session_id}'){
+	        	setTimeout(() => {
+	        		$('#change_btn').hide();
+	        	}, 600);
+	        }
+	      },
+	      error: function(xhr, status, error) {
+	        console.log(error);
+	      }
 	});
 	
 });
