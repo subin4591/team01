@@ -26,4 +26,5 @@ public interface MainDAO {
 	public void scheduleDelete(String user_id,String start,String end,String title);
 	public void scheduleChange(String title,String start,String end ,String address,String memo,
 								String user_id,String p_title,String p_start,String p_end);
+	public String whoHost(String group_id);
 }

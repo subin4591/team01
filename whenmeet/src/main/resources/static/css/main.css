@@ -11,6 +11,11 @@ body {
 	width: 100%;
     height: 500px;
 }
+.fc .fc-button-primary:not(:disabled).fc-button-active:focus,.fc .fc-button-primary:focus{
+	transition: 0.5s;
+	box-shadow: 0 0 5px rgba(0, 0, 255, 0.5);
+	
+}
 #top{
 	display: flex;
     justify-content: center;
@@ -90,8 +95,14 @@ body {
 	padding:10px;
 	text-align:center;
 }
-.group_list:last-child,.writing_list:nth-child(4),.apply_list:nth-child(4){
+.group_list:last-child,.writing_list:last-child,.apply_list:last-child{
 	border:0;				
+}
+.group_list:first-child,.writing_list:first-child,.apply_list:first-child{
+	border-bottom:2px solid #e3e5e8;
+}
+.group_list:nth-child(2),.writing_list:nth-child(2),.apply_list:nth-child(2){
+	border-bottom:2px solid #e3e5e8;
 }
 #writing{
 	background:white;
@@ -147,17 +158,17 @@ a{
 .div_header{
 	padding:10px;
 }
-.group_wrap{
+.group_wrap,.wlist_wrap,.alist_wrap{
 	height:132px;
 	overflow-y:auto;
 }
-.group_wrap::-webkit-scrollbar{
+.group_wrap::-webkit-scrollbar,.wlist_wrap::-webkit-scrollbar,.alist_wrap::-webkit-scrollbar{
 	width : 10px;
 }
-.group_wrap::-webkit-scrollbar-thumb {
+.group_wrap::-webkit-scrollbar-thumb,.wlist_wrap::-webkit-scrollbar-thumb,.alist_wrap::-webkit-scrollbar-thumb {
     background-color: #F25287;
 }
-.group_wrap::-webkit-scrollbar-track {
+.group_wrap::-webkit-scrollbar-track,.wlist_wrap::-webkit-scrollbar-track,.alist_wrap::-webkit-scrollbar-track {
     background-color: #D9D9D9;
 }
 .fc-scroller::-webkit-scrollbar{
@@ -320,15 +331,24 @@ input[type='checkbox']:checked+label:after {
     line-height: 50px;
     border: 2px solid #f25287;
     position: relative;
-    background: url(/img/캘린더_버튼.svg) no-repeat;
-    background-size: 40px 40px;
-    background-position: 140px 5px;
     background-color: #f9f3f3;
     height: 50px;
     padding-left:15px;
     width: 170px;
-    
 }
+.daytime input{
+	background: url(/img/캘린더_버튼.svg) no-repeat;
+    background-size: 40px 40px;
+    background-position: 140px 5px;
+    background-color: #f9f3f3;
+}
+.detail_time input{
+	background: url(/img/clock.png) no-repeat;
+    background-size: 45px 45px;
+    background-position: 137px 2px;
+    background-color: #f9f3f3;
+}
+
 .schedule_date input[type=time]{
 	padding-left:20px;
 	width:165px;
