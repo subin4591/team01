@@ -28,7 +28,7 @@
 			
 			// 개설일, 종료일 시간 떼기
 			$("#ifrt_left p").text($("#ifrt_left p").text().substring(0, 10));
-			$("#ifrt_right p").text($("#ifrt_left p").text().substring(0, 10));
+			$("#ifrt_right p").text($("#ifrt_right p").text().substring(0, 10));
 			
 			// 초대 링크 복사
 			$("#linkCopyBtn").on("click", function() {
