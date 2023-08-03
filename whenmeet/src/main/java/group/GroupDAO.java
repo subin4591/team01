@@ -49,6 +49,9 @@ public interface GroupDAO {
 	// 그룹 신청 중복 확인
 	public int groupSignAlready(HashMap<String, String> map);
 	
+	// 그룹 신청자수
+	public int groupSignCount(String group_id);
+	
 	
 	/// Group insert
 	// 그룹 생성
@@ -57,6 +60,9 @@ public interface GroupDAO {
 	
 	// 그룹 신청
 	public void insertGroupInvitation(HashMap<String, String> map);
+	
+	// 그룹 초대
+	public void insertGroupUserInvitation(GroupInvitationDTO dto);
 	
 	
 	/// Group update
@@ -76,4 +82,7 @@ public interface GroupDAO {
 	/// Group delete
 	// 멤버 탈퇴
 	public int deleteMember(GroupCreateDTO dto);
+	
+	// 그룹 초대 후 신청 삭제
+	public int deleteInvitaion(GroupInvitationDTO dto);
 }

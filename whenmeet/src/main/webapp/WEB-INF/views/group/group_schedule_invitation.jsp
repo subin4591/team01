@@ -19,7 +19,7 @@
 	<script src="/js/jquery-3.6.4.min.js"></script>
 	<script>
 		$(document).ready(function() {
-			let group_id = "${ group_id }";
+			let group_id = "${ group.group_id }";
 			
 			// 그룹 신청 제목
 			if ("${ isIn }" == "notMember") {
@@ -136,6 +136,46 @@
 					}	// success end
 				})	// ajax end
 			});	// 초대 그룹원 추가 end
+			
+			// 초대 승인
+			$("#yesBtn").on("click", function() {
+				if ($(".s_checkbox:checked").length == 0) {
+					alert("회원을 선택하십시오.");
+				}	// if end
+				else {
+					let formData = $("#list_form").serialize();			
+					$.ajax({
+						url: "/group/schedule/invitation/yes",
+						data: formData,
+						type: "post",
+						dataType: "json",
+						success: function(data) {
+							alert("그룹에 총 " + data.cnt + "명의 멤버를 추가했습니다.");
+							window.location.reload();
+						}	// success end
+					});	// ajax end
+				}	// else end
+			});	// 초대 승인 end
+			
+			// 초대 거절
+			$("#noBtn").on("click", function() {
+				if ($(".s_checkbox:checked").length == 0) {
+					alert("회원을 선택하십시오.");
+				}	// if end
+				else {
+					let formData = $("#list_form").serialize();			
+					$.ajax({
+						url: "/group/schedule/invitation/no",
+						data: formData,
+						type: "post",
+						dataType: "json",
+						success: function(data) {
+							alert("총 " + data.cnt + "명의 신청을 삭제했습니다.");
+							window.location.reload();
+						}	// success end
+					});	// ajax end
+				}	// else end
+			});	// 초대 거절 end
 		});
 	</script>
 </head>
@@ -206,8 +246,9 @@
 									</div>
 								</form>
 								<form id="list_form">
+									<input type="hidden" name="group_id" value="${ group.group_id }">
 									<div id="list_form_title">
-										<h2>그룹 신청 회원 목록</h2>
+										<h2>그룹 신청 회원 목록 (총 ${ signCnt }명)</h2>
 									</div>
 									<div id="list_bottom">
 										<div id="list_left">
@@ -220,7 +261,7 @@
 												<c:forEach items="${ sign }" var="s">
 													<tr>
 														<td>
-															<input id="${ s.user_id }" class="s_checkbox" type="checkbox" name="user_id" value=${ s.user_id }>
+															<input id="${ s.user_id }" class="s_checkbox" type="checkbox" name="user_list" value=${ s.user_id }>
 															<label for="${ s.user_id }" class="s_td">
 																<span></span>
 																<div class="s_info">

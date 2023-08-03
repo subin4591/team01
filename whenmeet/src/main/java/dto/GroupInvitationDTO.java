@@ -1,7 +1,10 @@
 package dto;
 
+import java.util.ArrayList;
+
 public class GroupInvitationDTO {
 	String group_id, user_id, invitation_time, name, profile_url;
+	ArrayList<String> user_list;
 
 	public String getGroup_id() {
 		return group_id;
@@ -42,4 +45,13 @@ public class GroupInvitationDTO {
 	public void setProfile_url(String profile_url) {
 		this.profile_url = profile_url;
 	}
+
+	public ArrayList<String> getUser_list() {
+		return user_list;
+	}
+
+	public void setUser_list(ArrayList<String> user_list) {
+		this.user_list = user_list;
+	}
+	
 }

@@ -474,11 +474,14 @@ public class GroupController {
 				// 그룹 신청 목록
 				List<GroupInvitationDTO> sign = service.groupSignList(groupId);
 				
+				// 그룹 신청자수
+				int signCnt = service.groupSignCount(groupId);
+				
 				mv.addObject("isIn", isIn);
 				mv.addObject("group", group);
 				mv.addObject("hostInfo", hostInfo);
-				mv.addObject("group_id", groupId);
 				mv.addObject("sign", sign);
+				mv.addObject("signCnt", signCnt);
 				mv.setViewName("group/group_schedule_invitation");
 			}
 			// 그룹아이디 없음
@@ -542,5 +545,26 @@ public class GroupController {
 		}
 		
 		return "{\"result\": \"" + result + "\"}";
+	}
+	
+	@RequestMapping("/group/schedule/invitation/yes")
+	@ResponseBody
+	public String groupScheduleInvitationYes(GroupInvitationDTO dto) {
+		// 그룹 초대
+		service.insertGroupUserInvitation(dto);
+		
+		// 신청 삭제
+		int cnt = service.deleteInvitaion(dto);
+		
+		return "{\"cnt\": \"" + cnt + "\"}";
+	}
+	
+	@RequestMapping("/group/schedule/invitation/no")
+	@ResponseBody
+	public String groupScheduleInvitationNo(GroupInvitationDTO dto) {
+		// 신청 삭제
+		int cnt = service.deleteInvitaion(dto);
+		
+		return "{\"cnt\": \"" + cnt + "\"}";
 	}
 }
