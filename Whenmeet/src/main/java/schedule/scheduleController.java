@@ -1063,10 +1063,14 @@ public class scheduleController {
 	@RequestMapping("/schedule/{groupId}/InsertGantt2")
 	public String[][] InsertGantt2(@PathVariable("groupId") String groupId,
 			@RequestParam HashMap<String, Object> map,
-			HttpServletRequest request) throws Exception{
+			HttpServletRequest request, Model model) throws Exception{
 		
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		
+		if (map.get("small_todo").equals("NaN")) {
+			map.put("small_todo", scheduleService.selectSmallDoItMax(map)+1);
+		}
+
 		int big_todo= Integer.parseInt(map.get("big_todo").toString());
 		int small_todo= Integer.parseInt(map.get("small_todo").toString());
 		String big_todo_content = map.get("big_todo_content").toString();	
@@ -1086,7 +1090,7 @@ public class scheduleController {
 		scheduleService.insertGroupGantt(map);
 		
 		String[][] data = ganttAjax(groupId);
-		
+
 		return data;
 	}	
 	@ResponseBody

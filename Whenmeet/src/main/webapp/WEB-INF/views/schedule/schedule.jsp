@@ -1001,6 +1001,7 @@ String userImgErr = "/img/user_logo.png";
 		$(modalBg).show();
 	}
 	//할일 팝업 닫기
+	var childCnt = 1;
 	function DpopClose(){
 		var list = $("#DoItListChild *");
 		var modalPop = $('.DoIt_modal');
@@ -1089,6 +1090,7 @@ String userImgErr = "/img/user_logo.png";
 		})	
 			
 		//모달 창 입력 ajax
+		
 		$("#DoItChildDate .newValueBtn").click(function(){
 			var list = $("#DoItListChild");
 			var result1;
@@ -1114,7 +1116,7 @@ String userImgErr = "/img/user_logo.png";
 							big_todo_content : Element,
 							small_todo_content : $("#DoItChildDate .newValue").val(),
 							big_todo_start : result1,
-							big_todo_end : result2
+							big_todo_end : result2,
 						},
 						success : function(data){
 							
