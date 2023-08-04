@@ -741,6 +741,7 @@ public class scheduleController {
         	hour = hour - 12;
         	time = "오후 ";
         }
+        
         String now_time = formattedTime.substring(0,6) + time + hour + formattedTime.substring(8,11);
 
 		map.put("group_id", groupId);
