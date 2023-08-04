@@ -28,6 +28,194 @@ public class scheduleController {
 	@Autowired
 	private scheduleService scheduleService;
 	
+	// 일정표 색 채우는 함수
+	private void fillSchedule(String groupId, String userId, HttpServletRequest request) throws Exception{
+		
+		//오늘 날짜와 1주일 후 날짜
+				Date today = new Date();
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+				SimpleDateFormat format2 = new SimpleDateFormat("yyyy/MM/dd");
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(today);
+				cal.add(Calendar.DATE, 6);
+				String startDate = format.format(today);
+				String endDate = format.format(cal.getTime());
+				
+		//그룹 당 설정된 날짜	
+				if(scheduleService.selectMeetingScheduleDateCnt(groupId) > 0) {
+					startDate 
+					= scheduleService.selectMeetingScheduleDate(groupId).getSet_date1();
+					endDate 
+					= scheduleService.selectMeetingScheduleDate(groupId).getSet_date2();
+				}
+				
+				request.setAttribute("startDate", startDate);
+				request.setAttribute("endDate", endDate);
+				Calendar realDateCal = Calendar.getInstance();
+				realDateCal.set(Integer.parseInt(startDate.split("-")[0]), Integer.parseInt(startDate.split("-")[1])-1, Integer.parseInt(startDate.split("-")[2]));
+				int realDay1 = realDateCal.get(Calendar.DAY_OF_WEEK) -1;
+				realDateCal.set(Integer.parseInt(endDate.split("-")[0]), Integer.parseInt(endDate.split("-")[1])-1, Integer.parseInt(endDate.split("-")[2]));
+				int realDay2 = realDateCal.get(Calendar.DAY_OF_WEEK) -1;
+				
+				//유저 별 일정 테이블 표시
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				List<MeetingScheduleDTO> msdto = new ArrayList<MeetingScheduleDTO>();
+				map.put("group_id", groupId);
+				map.put("showView", 1);
+				msdto = scheduleService.selectMeetingScheduleAllShow(map);
+				int [] seqs = new int [msdto.size()];
+				for (int i = 0; i < msdto.size(); i++) {
+					seqs[i] = msdto.get(i).getSeq();
+				}
+				
+				userScheduleDTO usdto = new userScheduleDTO();
+				usdto.setGroup_id(groupId);
+				HashMap<String, Object> usmap = new HashMap<String, Object>();		
+				//sunday의 배열 : 이중배열. [seq][cnt] = 입력된 갯수
+				int[][] SundayList = new int[seqs.length][42]; 
+				int[][] MondayList = new int[seqs.length][42]; 
+				int[][] TuesdayList = new int[seqs.length][42]; 
+				int[][] WednesdayList = new int[seqs.length][42]; 
+				int[][] ThusdayList = new int[seqs.length][42]; 
+				int[][] FridayList = new int[seqs.length][42]; 
+				int[][] SaturdayList = new int[seqs.length][42]; 
+				
+				int[][][] DayLists = new int [7][][];
+				DayLists[0] = SundayList;
+				DayLists[1] = MondayList;
+				DayLists[2] = TuesdayList;
+				DayLists[3] = WednesdayList;
+				DayLists[4] = ThusdayList;
+				DayLists[5] = FridayList;
+				DayLists[6] = SaturdayList;
+
+					/*group_id / seq / count 가 일치할 때, sun~sat에 1인 값의 총 개수 합
+					이 배열의 크기는 group_id/seq/count의 개수만큼 존재한다.*/
+					usmap.put("group_id", groupId);
+					usmap.put("sun", 0); usmap.put("mon", 0); usmap.put("tue", 0); usmap.put("wed", 0);
+					usmap.put("thu", 0); usmap.put("fri", 0); usmap.put("sat", 0);
+					for (int i = 0; i < seqs.length; i++) {
+						usmap.put("seq", seqs[i]);
+						for (int j = 0; j < 42; j++) {
+							if (scheduleService.selectUserScheduleCntAll(usdto) > 0) {
+								usmap.put("cnt", j);
+								usmap.put("sun", 1);
+								SundayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+								usmap.put("sun", 0);
+								usmap.put("mon", 1);
+								MondayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+								usmap.put("mon", 0);
+								usmap.put("tue", 1);
+								TuesdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+								usmap.put("tue", 0);
+								usmap.put("wed", 1);
+								WednesdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+								usmap.put("wed", 0);
+								usmap.put("thu", 1);
+								ThusdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+								usmap.put("thu", 0);
+								usmap.put("fri", 1);
+								FridayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+								usmap.put("fri", 0);
+								usmap.put("sat", 1);
+								SaturdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
+								usmap.put("sat", 0);
+								// i == 0인 경우와 i == seqs.length-1 인 경우 처리
+								if (i == 0 && i == seqs.length-1) {
+									for (int day = 0; day <= realDay1-1; day++) 
+										DayLists[day][i][j] = -1;
+									for (int day = realDay2+1; day <= 6; day++) 
+										DayLists[day][i][j] = -1;
+								}
+								else if (i == 0) {
+									for (int day = realDay1-1; day >=0; day--)
+										DayLists[day][i][j] = -1;
+									}
+								else if (i == seqs.length-1) {
+									for (int day = realDay2+1; day <=6; day++) 
+										DayLists[day][i][j] = -1;
+								}
+							}else {
+								SundayList[i][j] = 0;
+								MondayList[i][j] = 0;
+								TuesdayList[i][j] = 0;
+								WednesdayList[i][j] = 0;
+								ThusdayList[i][j] = 0;
+								FridayList[i][j] = 0;
+								SaturdayList[i][j] = 0;
+							}
+						}
+					}
+					request.setAttribute("SundayList", SundayList);
+					request.setAttribute("MondayList", MondayList);
+					request.setAttribute("TuesdayList", TuesdayList);
+					request.setAttribute("WednesdayList", WednesdayList);
+					request.setAttribute("ThusdayList", ThusdayList);
+					request.setAttribute("FridayList", FridayList);
+					request.setAttribute("SaturdayList", SaturdayList);
+
+				//유저 별 일정표 수정 표시 (이전에 입력했던 거 보이도록)
+				usdto.setGroup_id(groupId);
+				usdto.setUser_id(userId);
+				//sunday의 배열 : 이중배열. [seq][cnt] = 입력된 갯수
+				int[][] SundayList2 = new int[seqs.length][42]; 
+				int[][] MondayList2 = new int[seqs.length][42]; 
+				int[][] TuesdayList2 = new int[seqs.length][42]; 
+				int[][] WednesdayList2 = new int[seqs.length][42]; 
+				int[][] ThusdayList2 = new int[seqs.length][42]; 
+				int[][] FridayList2 = new int[seqs.length][42]; 
+				int[][] SaturdayList2 = new int[seqs.length][42]; 
+				int[][][] DayLists2 = new int [7][][];
+				
+				DayLists2[0] = SundayList2;
+				DayLists2[1] = MondayList2;
+				DayLists2[2] = TuesdayList2;
+				DayLists2[3] = WednesdayList2;
+				DayLists2[4] = ThusdayList2;
+				DayLists2[5] = FridayList2;
+				DayLists2[6] = SaturdayList2;
+					/*group_id / seq / count 가 일치할 때, sun~sat에 1인 값
+					이 배열의 크기는 group_id/seq/count의 개수만큼 존재한다.*/
+					for (int i = 0; i < seqs.length; i++) {
+						usdto.setSeq(seqs[i]);
+						for (int j = 0; j < 42; j++) {
+							usdto.setCnt(j);	
+							if (scheduleService.selectUserScheduleCnt(usdto) > 0) {
+								SundayList2[i][j] = scheduleService.selectUserSchedule(usdto).getSun();
+								MondayList2[i][j] = scheduleService.selectUserSchedule(usdto).getMon();
+								TuesdayList2[i][j] = scheduleService.selectUserSchedule(usdto).getTue();
+								WednesdayList2[i][j] = scheduleService.selectUserSchedule(usdto).getWed();
+								ThusdayList2[i][j] = scheduleService.selectUserSchedule(usdto).getThu();
+								FridayList2[i][j] = scheduleService.selectUserSchedule(usdto).getFri();
+								SaturdayList2[i][j] = scheduleService.selectUserSchedule(usdto).getSat();
+							}else {
+								SundayList2[i][j] = 0;
+								MondayList2[i][j] = 0;
+								TuesdayList2[i][j] = 0;
+								WednesdayList2[i][j] = 0;
+								ThusdayList2[i][j] = 0;
+								FridayList2[i][j] = 0;
+								SaturdayList2[i][j] = 0;
+							}
+						}
+					}
+					for (int i = 0; i < DayLists.length; i++) {
+						for (int j = 0; j < DayLists[i].length; j++) {
+							for (int k = 0; k < DayLists[i][j].length; k++) {
+								if (DayLists[i][j][k] ==-1)
+									DayLists2[i][j][k] = -1;
+							}
+						}
+					}
+					request.setAttribute("SundayList2", SundayList2);
+					request.setAttribute("MondayList2", MondayList2);
+					request.setAttribute("TuesdayList2", TuesdayList2);
+					request.setAttribute("WednesdayList2", WednesdayList2);
+					request.setAttribute("ThusdayList2", ThusdayList2);
+					request.setAttribute("FridayList2", FridayList2);
+					request.setAttribute("SaturdayList2", SaturdayList2);
+	}
+	
 	//간트차트 화면 ajax 통신을 위한 함수
 	private String[][] ganttAjax(String groupId) throws Exception{
 		// 큰 할일 갯수
@@ -477,195 +665,43 @@ public class scheduleController {
 			request.setAttribute("tableListStart", tableListStart);
 		}
 		request.setAttribute("tableListCnt", tableListCnt);
-		
-		//그룹 당 설정된 날짜	
-		if(scheduleService.selectMeetingScheduleDateCnt(groupId) > 0) {
-			startDate 
-			= scheduleService.selectMeetingScheduleDate(groupId).getSet_date1();
-			endDate 
-			= scheduleService.selectMeetingScheduleDate(groupId).getSet_date2();
-		}
-		
-		request.setAttribute("startDate", startDate);
-		request.setAttribute("endDate", endDate);
-		Calendar realDateCal = Calendar.getInstance();
-		realDateCal.set(Integer.parseInt(startDate.split("-")[0]), Integer.parseInt(startDate.split("-")[1])-1, Integer.parseInt(startDate.split("-")[2]));
-		int realDay1 = realDateCal.get(Calendar.DAY_OF_WEEK) -1;
-		realDateCal.set(Integer.parseInt(endDate.split("-")[0]), Integer.parseInt(endDate.split("-")[1])-1, Integer.parseInt(endDate.split("-")[2]));
-		int realDay2 = realDateCal.get(Calendar.DAY_OF_WEEK) -1;
-		
-		//유저 별 일정 테이블 표시
-		List<MeetingScheduleDTO> msdto = new ArrayList<MeetingScheduleDTO>();
-		map.put("group_id", groupId);
-		map.put("showView", 1);
-		msdto = scheduleService.selectMeetingScheduleAllShow(map);
-		int [] seqs = new int [msdto.size()];
-		for (int i = 0; i < msdto.size(); i++) {
-			seqs[i] = msdto.get(i).getSeq();
-		}
-		
-		userScheduleDTO usdto = new userScheduleDTO();
-		usdto.setGroup_id(groupId);
-		HashMap<String, Object> usmap = new HashMap<String, Object>();		
-		//sunday의 배열 : 이중배열. [seq][cnt] = 입력된 갯수
-		int[][] SundayList = new int[seqs.length][42]; 
-		int[][] MondayList = new int[seqs.length][42]; 
-		int[][] TuesdayList = new int[seqs.length][42]; 
-		int[][] WednesdayList = new int[seqs.length][42]; 
-		int[][] ThusdayList = new int[seqs.length][42]; 
-		int[][] FridayList = new int[seqs.length][42]; 
-		int[][] SaturdayList = new int[seqs.length][42]; 
-		
-		int[][][] DayLists = new int [7][][];
-		DayLists[0] = SundayList;
-		DayLists[1] = MondayList;
-		DayLists[2] = TuesdayList;
-		DayLists[3] = WednesdayList;
-		DayLists[4] = ThusdayList;
-		DayLists[5] = FridayList;
-		DayLists[6] = SaturdayList;
-
-			/*group_id / seq / count 가 일치할 때, sun~sat에 1인 값의 총 개수 합
-			이 배열의 크기는 group_id/seq/count의 개수만큼 존재한다.*/
-			usmap.put("group_id", groupId);
-			usmap.put("sun", 0); usmap.put("mon", 0); usmap.put("tue", 0); usmap.put("wed", 0);
-			usmap.put("thu", 0); usmap.put("fri", 0); usmap.put("sat", 0);
-			for (int i = 0; i < seqs.length; i++) {
-				usmap.put("seq", seqs[i]);
-				for (int j = 0; j < 42; j++) {
-					if (scheduleService.selectUserScheduleCntAll(usdto) > 0) {
-						usmap.put("cnt", j);
-						usmap.put("sun", 1);
-						SundayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
-						usmap.put("sun", 0);
-						usmap.put("mon", 1);
-						MondayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
-						usmap.put("mon", 0);
-						usmap.put("tue", 1);
-						TuesdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
-						usmap.put("tue", 0);
-						usmap.put("wed", 1);
-						WednesdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
-						usmap.put("wed", 0);
-						usmap.put("thu", 1);
-						ThusdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
-						usmap.put("thu", 0);
-						usmap.put("fri", 1);
-						FridayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
-						usmap.put("fri", 0);
-						usmap.put("sat", 1);
-						SaturdayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
-						usmap.put("sat", 0);
-						// i == 0인 경우와 i == seqs.length-1 인 경우 처리
-						if (i == 0 && i == seqs.length-1) {
-							for (int day = 0; day <= realDay1-1; day++) 
-								DayLists[day][i][j] = -1;
-							for (int day = realDay2+1; day <= 6; day++) 
-								DayLists[day][i][j] = -1;
-						}
-						else if (i == 0) {
-							for (int day = realDay1-1; day >=0; day--)
-								DayLists[day][i][j] = -1;
-							}
-						else if (i == seqs.length-1) {
-							for (int day = realDay2+1; day <=6; day++) 
-								DayLists[day][i][j] = -1;
-						}
-					}else {
-						SundayList[i][j] = 0;
-						MondayList[i][j] = 0;
-						TuesdayList[i][j] = 0;
-						WednesdayList[i][j] = 0;
-						ThusdayList[i][j] = 0;
-						FridayList[i][j] = 0;
-						SaturdayList[i][j] = 0;
-					}
-				}
-			}
-			request.setAttribute("SundayList", SundayList);
-			request.setAttribute("MondayList", MondayList);
-			request.setAttribute("TuesdayList", TuesdayList);
-			request.setAttribute("WednesdayList", WednesdayList);
-			request.setAttribute("ThusdayList", ThusdayList);
-			request.setAttribute("FridayList", FridayList);
-			request.setAttribute("SaturdayList", SaturdayList);
-
-		//유저 별 일정표 수정 표시 (이전에 입력했던 거 보이도록)
-		usdto.setGroup_id(groupId);
-		usdto.setUser_id(userId);
-		//sunday의 배열 : 이중배열. [seq][cnt] = 입력된 갯수
-		int[][] SundayList2 = new int[seqs.length][42]; 
-		int[][] MondayList2 = new int[seqs.length][42]; 
-		int[][] TuesdayList2 = new int[seqs.length][42]; 
-		int[][] WednesdayList2 = new int[seqs.length][42]; 
-		int[][] ThusdayList2 = new int[seqs.length][42]; 
-		int[][] FridayList2 = new int[seqs.length][42]; 
-		int[][] SaturdayList2 = new int[seqs.length][42]; 
-		int[][][] DayLists2 = new int [7][][];
-		
-		DayLists2[0] = SundayList2;
-		DayLists2[1] = MondayList2;
-		DayLists2[2] = TuesdayList2;
-		DayLists2[3] = WednesdayList2;
-		DayLists2[4] = ThusdayList2;
-		DayLists2[5] = FridayList2;
-		DayLists2[6] = SaturdayList2;
-			/*group_id / seq / count 가 일치할 때, sun~sat에 1인 값
-			이 배열의 크기는 group_id/seq/count의 개수만큼 존재한다.*/
-			for (int i = 0; i < seqs.length; i++) {
-				usdto.setSeq(seqs[i]);
-				for (int j = 0; j < 42; j++) {
-					usdto.setCnt(j);	
-					if (scheduleService.selectUserScheduleCnt(usdto) > 0) {
-						SundayList2[i][j] = scheduleService.selectUserSchedule(usdto).getSun();
-						MondayList2[i][j] = scheduleService.selectUserSchedule(usdto).getMon();
-						TuesdayList2[i][j] = scheduleService.selectUserSchedule(usdto).getTue();
-						WednesdayList2[i][j] = scheduleService.selectUserSchedule(usdto).getWed();
-						ThusdayList2[i][j] = scheduleService.selectUserSchedule(usdto).getThu();
-						FridayList2[i][j] = scheduleService.selectUserSchedule(usdto).getFri();
-						SaturdayList2[i][j] = scheduleService.selectUserSchedule(usdto).getSat();
-					}else {
-						SundayList2[i][j] = 0;
-						MondayList2[i][j] = 0;
-						TuesdayList2[i][j] = 0;
-						WednesdayList2[i][j] = 0;
-						ThusdayList2[i][j] = 0;
-						FridayList2[i][j] = 0;
-						SaturdayList2[i][j] = 0;
-					}
-				}
-			}
-			for (int i = 0; i < DayLists.length; i++) {
-				for (int j = 0; j < DayLists[i].length; j++) {
-					for (int k = 0; k < DayLists[i][j].length; k++) {
-						if (DayLists[i][j][k] ==-1)
-							DayLists2[i][j][k] = -1;
-					}
-				}
-			}
-			request.setAttribute("SundayList2", SundayList2);
-			request.setAttribute("MondayList2", MondayList2);
-			request.setAttribute("TuesdayList2", TuesdayList2);
-			request.setAttribute("WednesdayList2", WednesdayList2);
-			request.setAttribute("ThusdayList2", ThusdayList2);
-			request.setAttribute("FridayList2", FridayList2);
-			request.setAttribute("SaturdayList2", SaturdayList2);
+			
+		fillSchedule(groupId, userId, request);
 			
 		//D-day 표시
+		if (scheduleService.selectGroupDday(groupId) == null) {
+			HashMap<String, Object> ddayMap = new HashMap();
+			ddayMap.put("group_id", groupId);
+			scheduleService.insertGroupDday(ddayMap);
+		}
 		String final_schedule_str = scheduleService.selectGroupOne(groupId).getFinal_schedule();
-		String[] finalScheduleList;
+		String DdayStart = scheduleService.selectGroupDday(groupId).getStart_time();
+		String DdayEnd = scheduleService.selectGroupDday(groupId).getEnd_time();
+		int tempdata = scheduleService.selectGroupDday(groupId).getDday();
+		String DdayValue;
+
+		if (tempdata == 0) {
+			DdayValue = "Today";
+		}else if( tempdata < 0 ){
+			DdayValue = "+" + Math.abs(tempdata) + "";
+		}
+		else {
+			DdayValue = tempdata + "";
+		}
+	
 		if (final_schedule_str != null) {
-			finalScheduleList = final_schedule_str.split(",");
 			request.setAttribute("DdayTrue", 1);
 		}else {
-			finalScheduleList = new String[4];
-			finalScheduleList[0] = "-";
-			finalScheduleList[1] = "미정";
-			finalScheduleList[2] = "미정";
-			finalScheduleList[3] = "*";
+			final_schedule_str = "-";
+			DdayStart = "미정";
+			DdayEnd = "미정";
+			DdayValue = "*";
 			request.setAttribute("DdayTrue", 0);
 		}
-		model.addAttribute("finalScheduleList", finalScheduleList);
+		model.addAttribute("final_schedule_str", final_schedule_str);
+		model.addAttribute("DdayStart", DdayStart);
+		model.addAttribute("DdayEnd", DdayEnd);
+		model.addAttribute("DdayValue", DdayValue);
 		
 		ganttSetting(groupId, request, model);
 		
@@ -705,6 +741,7 @@ public class scheduleController {
 	
 	@RequestMapping("/schedule/{groupId}/tableUpdate")
 	public String updateTable(@PathVariable("groupId") String groupId, 
+			@RequestParam("userId") String userId,
 			@RequestParam("start") String start,
 			@RequestParam("end") String end,
 			@RequestParam("data") String data,
@@ -763,7 +800,6 @@ public class scheduleController {
 		String [] startWeekFirstList = new String[WeeksCntInt];
 		String [] startWeekLastList = new String[WeeksCntInt];
 		
-		//시트가 중복으로 저장되는 오류가 있었는데 어떤 조건에서 나는지 못찾음...
 		for (int i = 0; i < WeeksCntInt; i++) {
 			long diffDays = (date1.getTime()-date3.getTime())/(24*60*60*1000);
 			int diffDay = Long.valueOf(diffDays).intValue();
@@ -797,7 +833,46 @@ public class scheduleController {
 			}else {
 				scheduleService.insertMeetingSchedule(dto);
 			}
-		}		
+		}
+		
+		userScheduleDTO usrdto = new userScheduleDTO();
+		usrdto.setGroup_id(groupId);
+		HashMap<String, Object> map2 = new HashMap<String, Object>();
+		map2.put("group_id", groupId);
+		map2.put("showView", 1);
+		List<MeetingScheduleDTO> msdto = scheduleService.selectMeetingScheduleAllShow(map2);
+		int [] seqs = new int[msdto.size()];
+			
+				for (int i = 0; i < msdto.size(); i++) {
+					seqs[i] = msdto.get(i).getSeq();
+				}
+			
+				for (int i = 0; i < seqs.length; i++) {
+					for (int j = 0; j < 42; j++) {
+						
+						usrdto.setSeq(seqs[i]);
+						usrdto.setCnt(j);
+						usrdto.setUser_id(userId);
+						usrdto.setSun(0);
+						usrdto.setMon(0);
+						usrdto.setTue(0);
+						usrdto.setWed(0);
+						usrdto.setThu(0);
+						usrdto.setFri(0);
+						usrdto.setSat(0);
+						
+						if (scheduleService.selectUserScheduleCnt(usrdto) == 0) {
+							//insert
+							scheduleService.insertUserSchedule(usrdto);
+							map2.put("user_id", userId);
+							map2.put("group_id", groupId);
+							map2.put("set_schedule", 1);
+							scheduleService.updateGroupUserSetSchedule(map2);
+						}
+					}
+				}
+		
+		fillSchedule(groupId, userId, request);
 		
 		return "redirect:";
 	}
@@ -905,12 +980,12 @@ public class scheduleController {
 			end = "미정";
 		}
 		
-		HashMap<String, String> map = new HashMap<String, String>();
+		HashMap<String, Object> map = new HashMap<String, Object>();
 		
-		Date today = new Date();
 		Date date2 = new Date();
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy년 MM월 dd일 (E)");
+		SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
 		
 		String[] dates = date.split("-");
 		cal.setTime(date2);
@@ -918,23 +993,21 @@ public class scheduleController {
 		cal.set(Integer.parseInt(dates[0]), Integer.parseInt(dates[1])-1, Integer.parseInt(dates[2]));		
 		date2= cal.getTime();
 		
-		int dday = (int) (Math.ceil(Math.abs((date2.getTime() - today.getTime())/(1000*60*60*24) )));
-		
-		String resultDday = dday+"";
-		if (dday == 0) {
-			resultDday = "Today";
-		}
-		else if (dday < 0) {
-			resultDday = "+ " + resultDday;
-		}
-		
+		//int dday = (int) (Math.ceil(Math.abs((date2.getTime() - today.getTime())/(1000*60*60*24) )));
+		String dday =format2.format(date2);
 		String resultDate = format.format(date2);
-		resultDate += "," + start + "," + end + "," + resultDday;
 		
 		map.put("group_id", groupId);
 		map.put("final_schedule", resultDate);
 		
 		scheduleService.updateGroupSchedule(map);
+		
+		map.put("start_time", start);
+		map.put("end_time", end);
+		map.put("dday", dday);
+		
+		scheduleService.updateGroupDday(map);
+		
 		return "redirect:";
 	}
 	

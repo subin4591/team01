@@ -469,9 +469,9 @@ String userImgErr = "/img/user_logo.png";
         	<div id="Dday" style = "display : None" >
           		<a><img class = "editDate" style = "display : None" src = "/img/방장용_수정_버튼.svg" /></a>
             	<span>D-day</span>
-            	<span>${finalScheduleList[3]}</span>
-           	 	<span>${finalScheduleList[0]}</span>
-            	<span>${finalScheduleList[1]} - ${finalScheduleList[2]}</span>
+            	<span>${DdayValue}</span>
+           	 	<span>${final_schedule_str}</span>
+            	<span>${DdayStart} - ${DdayEnd}</span>
           </div>
           <div id="DdayInit" >
           	<a><img class = "editDate" style = "display : None" src = "/img/방장용_수정_버튼.svg" /></a>
@@ -557,8 +557,9 @@ String userImgErr = "/img/user_logo.png";
 					<form action = "/schedule/${groupId}/tableUpdate" method = "post" id = "updateWeekForm" onsubmit = "return changeWeek('<%= today %>');" >
 						<span>기간 시작일 : <input type = "date" name = "start" id = "firstDate" ></span>
 						<span>기간 종료일 : <input type = "date"  name = "end" id = "EndDate" /></span>
+						<input type = "text" style = "display : None" name = "userId" value = "${userId}" />
 						<input type = "text" style = "display : None" name = "data" id = "updateTableData" value = ""/>
-						<input type = "submit" value = "저장"  class = "submitBtn"/>
+						<input type = "submit" value = "저장"  class = "submitBtn" />
 					</form>
 					
 				</div>		

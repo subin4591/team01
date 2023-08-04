@@ -402,6 +402,42 @@
 	</if>
 	</delete>
 	
+	<!-- dday -->
+	<select id = "selectGroupDday" parameterType = "String" resultType = "dto.groupDdayDTO">
+		<![CDATA[
+			select * from group_dday_table 
+			where group_id = #{group_id};
+		]]>
+	</select>
+	<insert id = "insertGroupDday" parameterType = "HashMap">
+		<![CDATA[
+			insert into group_dday_table values(
+				#{group_id},
+				#{start_time},
+				#{end_time},
+				#{dday}
+			)
+		]]>
+	</insert>
+	<update id = "updateGroupDday" parameterType = "HashMap">
+		<![CDATA[
+			update group_dday_table
+			set group_id = group_id
+		]]>
+		<if test = "start_time != null">
+			,start_time = #{start_time}
+		</if>
+		<if test = "end_time != null">
+			,end_time = #{end_time}
+		</if>
+		<if test = "dday != null">
+			<![CDATA[,dday = datediff(]]>#{dday}<![CDATA[, CURDATE())]]>
+		</if>
+	<![CDATA[
+	where group_id = #{group_id}
+	]]>
+	</update>
+	
 	<!-- 위치 / 채팅 -->
 	<select id="getLocation" resultType="String" parameterType="String">
 		select final_location from group_table where group_id = #{group_id};
@@ -412,4 +448,5 @@
 	<select id="getChat" resultType="chatdto" parameterType="String">
 		select * from chat_table where group_id = #{group_id};
 	</select>
+	
 </mapper>
