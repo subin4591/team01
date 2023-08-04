@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import dto.GroupCreateDTO;
 import dto.GroupDTO;
+import dto.GroupInvitationDTO;
 import dto.GroupUserDTO;
 import dto.MeetingPagingDTO;
 import dto.UserDTO;
@@ -39,11 +40,29 @@ public interface GroupDAO {
 	public List<GroupDTO> groupList(MeetingPagingDTO dto);
 	public int groupListCount(MeetingPagingDTO dto);
 	
+	// 그룹 멤버 확인
+	public int findGroupMember(HashMap<String, String> map);
+	
+	// 그룹 신청 목록
+	public List<GroupInvitationDTO> groupSignList(String group_id);
+	
+	// 그룹 신청 중복 확인
+	public int groupSignAlready(HashMap<String, String> map);
+	
+	// 그룹 신청자수
+	public int groupSignCount(String group_id);
+	
 	
 	/// Group insert
 	// 그룹 생성
 	public void insertGroup(GroupDTO dto);
 	public void insertGroupUser(GroupUserDTO dto);
+	
+	// 그룹 신청
+	public void insertGroupInvitation(HashMap<String, String> map);
+	
+	// 그룹 초대
+	public void insertGroupUserInvitation(GroupInvitationDTO dto);
 	
 	
 	/// Group update
@@ -63,4 +82,7 @@ public interface GroupDAO {
 	/// Group delete
 	// 멤버 탈퇴
 	public int deleteMember(GroupCreateDTO dto);
+	
+	// 그룹 초대 후 신청 삭제
+	public int deleteInvitaion(GroupInvitationDTO dto);
 }
