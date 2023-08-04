@@ -1131,7 +1131,6 @@ String userImgErr = "/img/user_logo.png";
 						},
 						complete : function(){
 							$("#DoItChildDate .newValue").val(null);
-							$('#GRAjax').load(window.location.href + " #GRAjax");
 						}
 					})  
 				}
@@ -1262,7 +1261,20 @@ String userImgErr = "/img/user_logo.png";
 				type : "get",
 				data : {},
 				success : function(data){
-					$('#GRAjax').load(window.location.href + " #GRAjax");
+					$("#GRAjax").load(window.location.href +" #GRAjax", function(){
+						
+						<% for (int i = 0; i < DoItCnt; i++){
+							for (int j =0; j < smallDoItMax[i]; j++){ %>
+								var item = "#DoItCheck3"+ <%= i%> + <%= j %>;
+								if ($(item).attr("data-check") == "1"){
+									$(item).attr("checked", true);
+									var text = $(item).parent().children('.DoItListItem').children();									
+								}
+						<%
+							}
+						}
+						%>						
+					});
 					drawChart2(data);
 				}
 			})
