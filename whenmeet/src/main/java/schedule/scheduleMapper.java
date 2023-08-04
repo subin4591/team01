@@ -9,6 +9,7 @@ import dto.GroupUserDTO;
 import dto.MeetingScheduleDTO;
 import dto.MeetingScheduleDateDTO;
 import dto.UserDTO;
+import dto.groupDdayDTO;
 import dto.userScheduleDTO;
 import dto.GroupGanttDTO;
 
@@ -22,7 +23,7 @@ public interface scheduleMapper {
 	
 	List<GroupDTO> selectGroup() throws Exception;
 	GroupDTO selectGroupOne(String group_id) throws Exception;
-	void updateGroupSchedule(HashMap<String, String> map);
+	void updateGroupSchedule(HashMap<String, Object> map);
 	
 	List<GroupUserDTO> selectGroupUser() throws Exception;
 	GroupUserDTO selectGroupUserOne(HashMap<String, Object> map) throws Exception;
@@ -64,6 +65,10 @@ public interface scheduleMapper {
 	void updateGroupGantt(HashMap<String, Object> map) throws Exception;
 	void deleteGroupGanttAll(String group_id) throws Exception;
 	void deleteGroupGanttOne(HashMap<String, Object> map) throws Exception;
+	
+	groupDdayDTO selectGroupDday(String group_id) throws Exception;
+	void insertGroupDday(HashMap<String, Object> map) throws Exception;
+	void updateGroupDday(HashMap<String, Object> map) throws Exception;
 	
 	String getLocation(String group_id) throws Exception;
 	void addChat(HashMap<String, Object> map) throws Exception;

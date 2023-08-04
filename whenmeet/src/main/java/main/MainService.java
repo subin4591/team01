@@ -50,4 +50,7 @@ public class MainService {
 			String user_id,String p_title,String p_start,String p_end) {
 		dao.scheduleChange(title, start, end, address, memo, user_id, p_title, p_start, p_end);
 	}
+	public String whoHost(String group_id) {
+		return dao.whoHost(group_id);
+	}
 }

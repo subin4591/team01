@@ -17,7 +17,7 @@
 <script src='js/cal.js'></script>
 
 <link rel="icon" href="/img/icon.svg">
-<link rel="stylesheet" href="css/main.css">
+
 <link rel="stylesheet" href="css/schedule_location.css">
 
 <script>
@@ -32,24 +32,28 @@ $(document).ready(function(){
 	    if ("${session_id}" == "") {
 	      e.preventDefault();
 	      alert('로그인이 필요합니다.');
+	      location.href = "/login";
     }
 	});
 	$('#apply_more').on('click',function(e){
 	    if ("${session_id}" == "") {
 	      e.preventDefault();
 	      alert('로그인이 필요합니다.');
+	      location.href = "/login";
 	    }
 	});
 	$('#group_more').on('click',function(e){
 	    if ("${session_id}" == "") {
 	      e.preventDefault();
 	      alert('로그인이 필요합니다.');
+	      location.href = "/login";
 	    }
 	});
 	$('#add_btn').on('click',function(e){
 	    if ("${session_id}" == "") {
 	      e.preventDefault();
 	      alert('로그인이 필요합니다.');
+	      location.href = "/login";
 	    }
 	});
 });
@@ -126,7 +130,15 @@ document.addEventListener('DOMContentLoaded', function() {
         	var e = arg.event.end;
         	start = s.getFullYear() + "-" + String(s.getMonth()+1).padStart(2,'0') + "-" + String(s.getDate()).padStart(2,'0') + " " + String(s.getHours()).padStart(2, '0') +":"+ String(s.getMinutes()).padStart(2, '0');
         	end = e.getFullYear() + "-" + String(e.getMonth()+1).padStart(2,'0') + "-" + String(e.getDate()).padStart(2,'0')+ " " + String(e.getHours()).padStart(2, '0') +":" + String(e.getMinutes()).padStart(2, '0');
-
+			if(arg.event.allDay){
+				start = start.substring(0, 10);
+				end = end.substring(0,10);
+				$('#check2').prop('checked',true);
+		        $("#check2").trigger("change");
+			}else{
+				$('#check2').prop('checked',false);
+		        $("#check2").trigger("change");
+			}
         	$('#schedule_click').show();
         	$.ajax({
   		      url: '/getscheduleone', 
@@ -144,8 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
   		        $('#location2').val(rs.address);
 	        	$('#memo2').val(rs.memo);
   		        if(rs.startTime.length == 10){
-  		        	$('#check2').prop('checked',true);
-  		        	$("#check2").trigger("change");
+  		        	
   		        	$('#firstDate2').val(rs.startTime);
   		        	var myDate = new Date(rs.endTime);
   		        	
@@ -210,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 	
 </script>
-
+<link rel="stylesheet" href="css/main.css">
 </head>
 <body>
 	<%session.setAttribute("session_id", request.getAttribute("id")); %>
@@ -275,31 +286,36 @@ $(document).ready(function(){
 			date2.setDate(date2.getDate()+1);
 			end = date2.getFullYear() + "-" + String(date2.getMonth()+1).padStart(2,'0') + "-" + String(date2.getDate()).padStart(2,'0');
 		}
-			if(date1 >= date2){
-				alert("잘못된 시간입니다.");
-				return;
-			}
-		
-			 $.ajax({
-			      url: '/scheduleAdd', 
-			      method: 'POST', 
-			      data: {
-			    	title:title,
-			    	start:start,
-			    	end:end,
-			        address: address,
-			        memo:memo,
-			        user_id: "${session_id}"
-			      },
-			      success: function(response) {
-			        console.log(response);
-			      },
-			      error: function(xhr, status, error) {
-			        console.log(error);
-			      }
-			}); 
-			e.stopPropagation();
-			location.reload(true);
+		if(title == ""){
+			alert("제목을 입력하세요.");
+			return;
+		}
+		if(date1 >= date2){
+			alert("잘못된 시간입니다.");
+			return;
+		}
+		console.log(start);
+		console.log(end);
+		 $.ajax({
+		      url: '/scheduleAdd', 
+		      method: 'POST', 
+		      data: {
+		    	title:title,
+		    	start:start,
+		    	end:end,
+		        address: address,
+		        memo:memo,
+		        user_id: "${session_id}"
+		      },
+		      success: function(response) {
+		        console.log(response);
+		      },
+		      error: function(xhr, status, error) {
+		        console.log(error);
+		      }
+		}); 
+		e.stopPropagation();
+		location.reload(true);
 	  });
 	  $('.deleteBtn').on('click',function(){
 		  var title = $('#schedule_title2').val();
@@ -443,12 +459,14 @@ $(document).ready(function(){
         				<label for="check1"></label>
 					</div>
 					<div class="schedule_date">
-						<div>
+						<div class = "daytime">
 							<input type = "date" name = "start" id = "firstDate" value="<%=today %>"/>
 							<input type = "date"  name = "end" id = "endDate" value="<%=today %>" />
 						</div>
-						<input type="time" id="firstTime" value="<%=time %>"/>
-						<input type="time" id="endTime" value="<%=time %>"/>
+						<div class = "detail_time">
+							<input type="time" id="firstTime" value="<%=time %>"/>
+							<input type="time" id="endTime" value="<%=time %>"/>
+						</div>
 					</div>
 					<div class="arrow">
 						<img alt="" src="img/arrow.png">
@@ -482,12 +500,14 @@ $(document).ready(function(){
         				<label for="check2"></label>
 					</div>
 					<div class="schedule_date">
-						<div>
+						<div class = "daytime">
 							<input type = "date" name = "start" id = "firstDate2" value="<%=today %>" readonly/>
 							<input type = "date"  name = "end" id = "endDate2" value="<%=today %>" readonly />
 						</div>
-						<input type="time" id="firstTime2" value="<%=time %>" readonly/>
-						<input type="time" id="endTime2" value="<%=time %>" readonly/>
+						<div class = "detail_time">
+							<input type="time" id="firstTime2" value="<%=time %>" readonly/>
+							<input type="time" id="endTime2" value="<%=time %>" readonly/>
+						</div>
 					</div>
 					<div class="arrow">
 						<img alt="" src="img/arrow.png">
@@ -520,6 +540,7 @@ $(document).ready(function(){
 			    <div id="group">
 			    	<h1 class="text">
 			    		<span class="div_header">나의 그룹</span>
+			    		<span class="more"><a href="/group/list" id="group_more">전체보기</a></span>
 			    	</h1>
 			    	<div class="group_wrap">
 				    	<c:forEach items="${mygroup}" var="group">
@@ -532,18 +553,22 @@ $(document).ready(function(){
 			    		<span class="div_header">작성한 모집글</span>
 			    		<span class="more"><a href="meeting/my" id="write_more">전체보기</a></span>
 			    	</h1>
-			    	<c:forEach items="${mywrite}" var="write" begin="0" end="2">
-		    			<h3 class="writing_list"><a href="meeting/detailed?seq=${write.seq}">${write.title}</a></h3>
-		    		</c:forEach>
+			    	<div class="wlist_wrap">
+				    	<c:forEach items="${mywrite}" var="write">
+			    			<h3 class="writing_list"><a href="meeting/detailed?seq=${write.seq}">${write.title}</a></h3>
+			    		</c:forEach>
+		    		</div>
 			    </div>
 			    <div id="apply">
 			    	<h1 class="text">
 			    		<span class="div_header">신청한 모집글</span>
 			    		<span class="more"><a href="meeting/myapp" id="apply_more">전체보기</a></span>
 			    	</h1>
-			    	<c:forEach items="${myapplication}" var="application" begin="0" end="2">
-		    			<h3 class="apply_list"><a href="meeting/detailed?seq=${application.seq}">${application.title}</a></h3>
-		    		</c:forEach>
+			    	<div class="alist_wrap">
+				    	<c:forEach items="${myapplication}" var="application">
+			    			<h3 class="apply_list"><a href="meeting/detailed?seq=${application.seq}">${application.title}</a></h3>
+			    		</c:forEach>
+		    		</div>
 			    </div>
 			    
 			</div>

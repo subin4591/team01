@@ -76,4 +76,8 @@
 	top:25px;
 	left:25px;
 }
+#null_text,#change_btn{
+    position: relative;
+    left: 5%;	
+}
 
