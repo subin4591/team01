@@ -13,6 +13,7 @@ import dto.GroupUserDTO;
 import dto.MeetingScheduleDTO;
 import dto.MeetingScheduleDateDTO;
 import dto.UserDTO;
+import dto.groupDdayDTO;
 import dto.userScheduleDTO;
 
 @Service("scheduleService")
@@ -34,7 +35,7 @@ public class scheduleService {
 	public GroupDTO selectGroupOne(String group_id) throws Exception {
 		return scheduleMapper.selectGroupOne(group_id);
 	}
-	public void updateGroupSchedule(HashMap<String, String> map) throws Exception {
+	public void updateGroupSchedule(HashMap<String, Object> map) throws Exception {
 		scheduleMapper.updateGroupSchedule(map);
 	}
 	
@@ -149,6 +150,16 @@ public class scheduleService {
 	}
 	public void deleteGroupGanttOne(HashMap<String, Object> map) throws Exception{
 		scheduleMapper.deleteGroupGanttOne(map);
+	}
+	
+	public groupDdayDTO selectGroupDday(String group_id) throws Exception{
+		return scheduleMapper.selectGroupDday(group_id);
+	}
+	public void insertGroupDday(HashMap<String, Object> map) throws Exception{
+		scheduleMapper.insertGroupDday(map);
+	}
+	public void updateGroupDday(HashMap<String, Object> map) throws Exception{
+		scheduleMapper.updateGroupDday(map);
 	}
 
 	public String getLocation(String group_id) throws Exception{

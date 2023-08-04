@@ -65,8 +65,11 @@
 		<![CDATA[
 			update group_user_table
 			set set_schedule = #{set_schedule}
-			where group_id = #{group_id} and user_id = #{user_id}
-		]]>
+			where group_id = #{group_id}]]> 
+			<if test = "user_id != null">
+			and user_id = #{user_id}
+			</if>
+
 	</update>
 	<delete id ="deleteGroupUser"  parameterType = "hashMap">
 	<![CDATA[
@@ -283,9 +286,9 @@
 	</select>
 	<select id = "selectDistinctGanttToDo" resultType = "dto.GroupGanttDTO" parameterType = "String">
 	<![CDATA[
-		select distinct group_id, big_todo, big_todo_content, check_do, big_todo_start, big_todo_end
+		select distinct group_id, big_todo, big_todo_content, big_todo_start, big_todo_end
 		from group_gantt_table
-		where group_id = #{group_id}
+		where group_id = #{group_id} group by big_todo, big_todo_content, big_todo_start, big_todo_end
 	]]>
 	</select>
 	<select id = "selectGroupGanttToDo" resultType = "dto.GroupGanttDTO" parameterType = "HashMap">
@@ -330,9 +333,24 @@
 				#{small_todo},
 				#{big_todo_content},
 				#{small_todo_content},
-				#{check_do},
-				default,
-				default
+				#{check_do},]]>
+				<choose>
+				<when test = "big_todo_start != null">
+					#{big_todo_start},
+				</when>
+				<otherwise>
+					default,
+				</otherwise>
+			</choose>
+			<choose>
+				<when test = "big_todo_end != null">
+					#{big_todo_end}
+				</when>
+				<otherwise>
+					default
+				</otherwise>
+			</choose>
+		<![CDATA[
 			);
 		]]>
 	</insert>
@@ -387,6 +405,42 @@
 	</if>
 	</delete>
 	
+	<!-- dday -->
+	<select id = "selectGroupDday" parameterType = "String" resultType = "dto.groupDdayDTO">
+		<![CDATA[
+			select * from group_dday_table 
+			where group_id = #{group_id};
+		]]>
+	</select>
+	<insert id = "insertGroupDday" parameterType = "HashMap">
+		<![CDATA[
+			insert into group_dday_table values(
+				#{group_id},
+				#{start_time},
+				#{end_time},
+				#{dday}
+			)
+		]]>
+	</insert>
+	<update id = "updateGroupDday" parameterType = "HashMap">
+		<![CDATA[
+			update group_dday_table
+			set group_id = group_id
+		]]>
+		<if test = "start_time != null">
+			,start_time = #{start_time}
+		</if>
+		<if test = "end_time != null">
+			,end_time = #{end_time}
+		</if>
+		<if test = "dday != null">
+			<![CDATA[,dday = datediff(]]>#{dday}<![CDATA[, CURDATE())]]>
+		</if>
+	<![CDATA[
+	where group_id = #{group_id}
+	]]>
+	</update>
+	
 	<!-- 위치 / 채팅 -->
 	<select id="getLocation" resultType="String" parameterType="String">
 		select final_location from group_table where group_id = #{group_id};
@@ -397,4 +451,5 @@
 	<select id="getChat" resultType="chatdto" parameterType="String">
 		select * from chat_table where group_id = #{group_id};
 	</select>
+	
 </mapper>

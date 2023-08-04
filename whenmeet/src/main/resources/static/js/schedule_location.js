@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	
 	if('${location}' != "" && '${location}' != null){
 	setTimeout(() => {
 		$(".info:first").click();
@@ -241,6 +242,7 @@ function displayPagination(pagination) {
 // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
 // 인포윈도우에 장소명을 표시합니다
 function displayInfowindow(marker, title) {
+	
     var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
 	
     infowindow.setContent(content);
@@ -266,15 +268,14 @@ $('#meeting_location_btn').on('click',function(){
     
 });
 function calculateDistance(lat1, lon1, lat2, lon2) {
-	  const earthRadius = 6371; // Earth's radius in kilometers
+	 $('#null_text').hide();
+	  const earthRadius = 6371; 
 
-	  // Convert latitude and longitude to radians
 	  const lat1Rad = toRadians(lat1);
 	  const lon1Rad = toRadians(lon1);
 	  const lat2Rad = toRadians(lat2);
 	  const lon2Rad = toRadians(lon2);
-
-	  // Haversine formula
+		
 	  const dLat = lat2Rad - lat1Rad;
 	  const dLon = lon2Rad - lon1Rad;
 	  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
