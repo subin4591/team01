@@ -4,17 +4,18 @@
 <link href="/css/header.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
-$(document).ready(function() {
-    // 유저 아이콘
-    <%-- 세션에 session_id가 null이 아닌 경우 (로그인된 상태) --%>
-    <c:if test="${session_id != null}">
-        $("#user_profile").show();
-        $("#logout_btn").show();
-    </c:if>
-    <c:if test="${session_id == null}">
-        $("#user_profile").hide();
-        $("#logout_btn").hide();
-    </c:if>
+	$(document).ready(function() {
+	    // 유저 아이콘
+	    <%-- 세션에 session_id가 null이 아닌 경우 (로그인된 상태) --%>
+	    <c:if test="${session_id != null}">
+	        $("#user_profile").show();
+	        $("#logout_btn").show();
+	    </c:if>
+	    <c:if test="${session_id == null}">
+	        $("#user_profile").hide();
+	        $("#logout_btn").hide();
+	    </c:if>
+	});
 </script>
 <script>
     $(document).ready(function() {
