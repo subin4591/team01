@@ -65,8 +65,11 @@
 		<![CDATA[
 			update group_user_table
 			set set_schedule = #{set_schedule}
-			where group_id = #{group_id} and user_id = #{user_id}
-		]]>
+			where group_id = #{group_id}]]> 
+			<if test = "user_id != null">
+			and user_id = #{user_id}
+			</if>
+
 	</update>
 	<delete id ="deleteGroupUser"  parameterType = "hashMap">
 	<![CDATA[

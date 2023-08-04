@@ -748,9 +748,12 @@ public class scheduleController {
 			HttpServletRequest request) throws Exception {
 		
 		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("group_id", groupId);
+		map.put("set_schedule", 0);
+		scheduleService.updateGroupUserSetSchedule(map);
+		
 		map.put("set_date1", start);
 		map.put("set_date2", end);
-		map.put("group_id", groupId);
 		if(scheduleService.selectMeetingScheduleDateCnt(groupId) > 0) {
 			scheduleService.updateMeetingScheduleDate(map);
 		}else {
