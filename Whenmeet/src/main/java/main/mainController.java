@@ -64,10 +64,10 @@ public class mainController {
 	@RequestMapping("/getscheduleone")
 	@ResponseBody
 	public Map<String, ScheduleDTO> getscheduleone(String title,String start,String end,String user_id) {
-		if(start.substring(11).equals("00:00")) {
-			start = start.substring(0, 10);
-			end = end.substring(0,10);
-		}
+		/*		if(start.substring(11).equals("00:00")) {
+					start = start.substring(0, 10);
+					end = end.substring(0,10);
+				}*/
 		Map<String, ScheduleDTO> data = new HashMap();
         data.put("schedule", service.getScheduleOne(user_id, start,end , title));
 		return data;
@@ -80,5 +80,12 @@ public class mainController {
 	public void schedulechange(String title,String start,String end,String address,String memo,String user_id
 			,String p_title,String p_start,String p_end) {
 		service.scheduleChange(title, start,end , address,memo,user_id,p_title,p_start,p_end);
+	}
+	@RequestMapping("/whohost")
+	@ResponseBody
+	public Map<String, String> whoHost(String group_id) {
+		HashMap<String, String> host = new HashMap<>();
+        host.put("host", service.whoHost(group_id));
+		return host;
 	}
 }
