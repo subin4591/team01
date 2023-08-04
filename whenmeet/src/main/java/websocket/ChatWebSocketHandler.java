@@ -45,10 +45,7 @@ public class ChatWebSocketHandler implements WebSocketHandler{
 		String date = msg.substring(msg.indexOf(":")+1,msg.indexOf(";"));
 		String userId = msg.substring(msg.indexOf(";")+1);
 		UserDTO dto = service.selectUserOne(userId);
-		System.out.println(dto.getName());
-		if(date.indexOf(0) != '0') {
-			date = "0" + date;
-		}
+
 		msg = "{"
 		        + "\"id\":\"" + userId + "\","
 		        + "\"text\":\"" + text + "\","

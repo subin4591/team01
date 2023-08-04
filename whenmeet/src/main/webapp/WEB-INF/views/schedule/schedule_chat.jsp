@@ -61,7 +61,7 @@ const dateFormatter = new Intl.DateTimeFormat('ko-ko', options);
 const formattedDate = dateFormatter.format(currentDate);
 const now = formattedDate.replace("월 ","/").replace("일","");
 
-var websocket = new WebSocket("ws://localhost:8065/chatws");
+var websocket = new WebSocket("ws://118.67.129.223:8080/chatws");
 websocket.onopen = function(){
 	var t = setInterval(function(){
         if (websocket.readyState != 1) {
@@ -119,7 +119,17 @@ $(document).ready(function(){
 	          alert("에러발생");
 	        }
 	      });
-	      websocket.send($('#chatinput').val().replaceAll("\n","<br>") + ":" + now + ";" + "${session_id}"); 
+	      var res = now.split(" ");
+		  var re = res[0].split("/");
+	      var m = re[0];
+	      var d = re[1];
+	     
+	      if (d.length == 1){
+	    	  d = "0" + d;
+	      }
+		  
+	      websocket.send($('#chatinput').val().replaceAll("\n","<br>") + ":" + m + "/" + d + " " + res[1] + " " + res[2] + ";" + "${session_id}"); 
+
 	      setTimeout(function() {
 	    	  
 	    	  $("#chatinput").val(""); 
