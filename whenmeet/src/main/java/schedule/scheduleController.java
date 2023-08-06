@@ -674,6 +674,20 @@ public class scheduleController {
 			ddayMap.put("group_id", groupId);
 			scheduleService.insertGroupDday(ddayMap);
 		}
+		else if ((scheduleService.selectGroupDday(groupId).getDday()+"").equals("")) {
+			
+			HashMap<String, Object> Dmap = new HashMap<String, Object>();
+			SimpleDateFormat Dformat = new SimpleDateFormat("yyyy년 MM월 dd일 (E)");
+			Calendar Dcal = Calendar.getInstance();
+			Date Ddate = new Date();
+			String DdayStr = scheduleService.selectGroupOne(groupId).getFinal_schedule();
+			Ddate = Dformat.parse(DdayStr);
+
+			Dmap.put("dday", Ddate);
+			Dmap.put("group_id", groupId);
+			scheduleService.updateGroupDday(Dmap);
+		}
+		
 		String final_schedule_str = scheduleService.selectGroupOne(groupId).getFinal_schedule();
 		String DdayStart = scheduleService.selectGroupDday(groupId).getStart_time();
 		String DdayEnd = scheduleService.selectGroupDday(groupId).getEnd_time();
@@ -1283,4 +1297,3 @@ public class scheduleController {
 		return data;
 	}
 }
-

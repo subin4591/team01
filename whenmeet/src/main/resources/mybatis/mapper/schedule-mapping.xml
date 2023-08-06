@@ -404,8 +404,7 @@
 	and small_todo = #{small_todo}
 	</if>
 	</delete>
-	
-	<!-- dday -->
+
 	<select id = "selectGroupDday" parameterType = "String" resultType = "dto.groupDdayDTO">
 		<![CDATA[
 			select * from group_dday_table 
