@@ -286,6 +286,7 @@ $(document).ready(function(){
 	  $('.cancelBtn').on('click',function(){
 		  $('#modal_wrap').hide();
 		  $('#schedule_click').hide();
+		  $('#modal_wrap input[type=text]').val("");
 		  
 	  })
 	
@@ -370,7 +371,7 @@ $(document).ready(function(){
 		        console.log(error);
 		      }      
 	  	});
-		// location.reload();
+		location.reload();
 	});
 	$('.changeBtn').on('click',function(){
 		$('label[for="check2"]').on('click',checkBtnClick);	
@@ -446,6 +447,7 @@ $(document).ready(function(){
 	});
 	$('#modal_wrap').on('click',function(){
 		$('#modal_wrap').hide();
+		$('#modal_wrap input[type=text]').val("");
 	});
 	$('.modal_schedule').on('click',function(e){
 		e.stopPropagation();
