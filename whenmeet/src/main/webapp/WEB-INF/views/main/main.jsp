@@ -116,6 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         },
         eventClick: function(arg) {
+        	$('#fc-dom-21').hide();
         	$('#schedule_title2').attr('readonly',true);
     		$('#check2').attr('readonly',true);
     		$('#firstDate2').attr('readonly',true);
