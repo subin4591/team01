@@ -123,11 +123,13 @@ $(document).ready(function(){
 		  var re = res[0].split("/");
 	      var m = re[0];
 	      var d = re[1];
-	     
+	      if (m.length == 1){
+	    	  m = "0" + m;
+	      }
 	      if (d.length == 1){
 	    	  d = "0" + d;
 	      }
-		  
+		  console.log(m+"-"+d);
 	      websocket.send($('#chatinput').val().replaceAll("\n","<br>") + ":" + m + "/" + d + " " + res[1] + " " + res[2] + ";" + "${session_id}"); 
 
 	      setTimeout(function() {
