@@ -14,7 +14,7 @@
 	(select group_id from group_user_table where user_id = #{user_id});
 </select>
 <select id="rankList" resultType="maindto">
-	select title,seq,contents from meeting_table where end = "진행" and hidden = "공개" order by hits desc limit 0,4;
+	select title,seq,contents from meeting_table where end = "진행" and hidden = "공개" and writing_time > #{last} order by hits desc limit 0,4 
 </select>
 <update id="address">
 UPDATE group_table

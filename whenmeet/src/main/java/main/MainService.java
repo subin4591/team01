@@ -1,5 +1,6 @@
 package main;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,8 +29,8 @@ public class MainService {
 	public List<GroupDTO> myGroup(String user_id){
 		return dao.myGroup(user_id);
 	};
-	public List<MainDTO> rankList(){
-		return dao.rankList();
+	public List<MainDTO> rankList(LocalDate last){
+		return dao.rankList(last);
 	}
 	public void address(String address,String group_id) {
 		dao.address(address, group_id);

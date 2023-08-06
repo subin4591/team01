@@ -116,7 +116,13 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         },
         eventClick: function(arg) {
-        	$('[id^="fc-dom-"]').hide();
+        	$('label[for="check2"]').off('click',checkBtnClick);	
+        	$('label[for="check2"]').on('click', function(event) {
+        	    event.preventDefault();
+        	});	
+        	setTimeout(function() {
+        	    $('.fc-popover.fc-more-popover.fc-day *').hide();
+        	}, 10);
         	$('#schedule_title2').attr('readonly',true);
     		$('#check2').attr('readonly',true);
     		$('#firstDate2').attr('readonly',true);
@@ -141,6 +147,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		        $("#check2").trigger("change");
 			}
         	$('#schedule_click').show();
+        	console.log(arg.event.title + "-" + start + "-" + end);
+        	
         	$.ajax({
   		      url: '/getscheduleone', 
   		      method: 'POST',
@@ -151,11 +159,14 @@ document.addEventListener('DOMContentLoaded', function() {
   		        user_id: "${session_id}"
   		      },
   		      success: function(response) {
+  		    	 
   		    	console.log(response);
   		    	var rs = response.schedule;
+  		    	console.log(rs);
   		        $('#schedule_title2').val(rs.title);
   		        $('#location2').val(rs.address);
 	        	$('#memo2').val(rs.memo);
+	        	
   		        if(rs.startTime.length == 10){
   		        	
   		        	$('#firstDate2').val(rs.startTime);
@@ -167,9 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	  		        var day = String(myDate.getDate()).padStart(2, '0');
 	  		        var formattedDate = year + "-" + month + "-" + day;
   		        	$('#endDate2').val(formattedDate); 	
-  		        	$('label[for="check2"]').on('click', function(event) {
-  		        	    event.preventDefault();
-  		        	});	
+  		        	
   		        }else{
   		        	var startDate = rs.startTime.split(" ");
   		        	var endDate = rs.endTime.split(" ");
@@ -180,13 +189,13 @@ document.addEventListener('DOMContentLoaded', function() {
 	  		        var day = String(myDate.getDate()).padStart(2, '0');
 	  		        var formattedDate = year + "-" + month + "-" + day;
   		        	$('#firstDate2').val(startDate[0]);
-  		        	$('#endDate2').val(formattedDate);
+  		        	$('#endDate2').val(endDate[0]);
   		        	$('#firstTime2').val(startDate[1]);
   		        	$('#endTime2').val(endDate[1]);
   		        }
   		      },
   		      error: function(xhr, status, error) {
-  		        console.log(error);
+  		    	console.log("error");
   		      }
   		}); 
         	
@@ -228,6 +237,15 @@ document.addEventListener('DOMContentLoaded', function() {
 	<%session.setAttribute("session_id", request.getAttribute("id")); %>
 	<%@ include file="../header.jsp" %>
 <script>
+function checkBtnClick(){
+	if($('#check2').prop('checked')){
+		$('#check2').prop('checked',false);
+		$("#check2").trigger("change");
+	}else{
+		$('#check2').prop('checked',true);
+		$("#check2").trigger("change");
+	}
+}
 $(document).ready(function(){
 	  $("#check1").on("change", function() {
 	    // Check if the checkbox is checked
@@ -322,13 +340,16 @@ $(document).ready(function(){
 		  var title = $('#schedule_title2').val();
 		  var start = $('#firstDate2').val() + " " + $('#firstTime2').val();
 		  var myDate = new Date($('#endDate2').val());
-	      myDate.setDate(myDate.getDate() + 1);
+		  
+		  if($('#check2').prop('checked')){
+			  myDate.setDate(myDate.getDate() + 1);
+		  }
 	      var year = myDate.getFullYear();
 	      var month = String(myDate.getMonth() + 1).padStart(2, '0');
 	      var day = String(myDate.getDate()).padStart(2, '0');
 	      var formattedDate = year + "-" + month + "-" + day;
 		  var end = formattedDate + " " + $('#endTime2').val();
-		  
+		  console.log(title + "-" + start + "-" + end);
 		  if($('#check2').prop('checked') == true){
 				start = $('#firstDate2').val();
 				end = formattedDate;
@@ -349,9 +370,10 @@ $(document).ready(function(){
 		        console.log(error);
 		      }      
 	  	});
-		location.reload();
+		// location.reload();
 	});
 	$('.changeBtn').on('click',function(){
+		$('label[for="check2"]').on('click',checkBtnClick);	
 		var p_title = $('#schedule_title2').val();
 		var p_start = $('#firstDate2').val() + " " + $('#firstTime2').val();
 		var p_end = $('#endDate2').val() + " " + $('#endTime2').val();
@@ -586,9 +608,12 @@ $(document).ready(function(){
 				</c:choose>
 		    
 		    </div>
+		    <%
+		    LocalDate currentDate = LocalDate.now();
+	        LocalDate oneWeekAgo = currentDate.minusWeeks(1); %>
 		    <div id="rank">
 		    	<h1 class="text">
-		    		<span class="div_header">인기 글</span>
+		    		<span class="div_header">인기 글 <span style="font-size:17px;">(<%=oneWeekAgo %> ~ <%=currentDate %> 조회순)</span>
 		    		<span class="more"><a href="meeting" id="rank_more">전체보기</a></span>
 		    	</h1>
 			    <c:forEach items="${ranklist}" var="rank" begin="0" end="4">

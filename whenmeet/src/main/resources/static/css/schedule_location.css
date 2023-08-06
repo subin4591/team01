@@ -57,9 +57,10 @@
     font-weight: 700;
 }
 #confirm_btn:hover, #change_btn:hover,#searchBtn:hover{
-    border: 3px solid #b40347;
+    border: 3px solid #f25287;
     filter: drop-shadow(6px 5px 5px white);
-    background-color: red;
+    background-color: white;
+    color:black;
     transition: 1.5s
 }
 #searchBtn{
@@ -77,7 +78,18 @@
 	left:25px;
 }
 #null_text,#change_btn{
-    position: relative;
-    left: 5%;	
+    position: relative;	
+}
+#menu_wrap{
+	border:2px solid #D9D9D9;	
+}
+#menu_wrap::-webkit-scrollbar{
+	width : 10px;
+}
+#menu_wrap::-webkit-scrollbar-thumb{
+    background-color: #F25287;
+}
+#menu_wrap::-webkit-scrollbar-track{
+    background-color: #D9D9D9;
 }
 
