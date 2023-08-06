@@ -404,8 +404,9 @@ input[type='checkbox']:checked~#firstDate{
     padding:0;
 }
 .btn_wrap{
+	width: 655px;
     position: relative;
-    top: 10px;
+    left: -3px;
 	background-color:#f25287;
 	height:50px;
 }
