@@ -28,7 +28,7 @@ function IamSubHost(){
 	$("#ganttInitBtn").show();
 	$("#ganttResultEditBtn").show();
 	$("#ganttCreateBtn").show();
-	$("#ganttCreate").children().eq(2).hide();
+	$("#ganttCreate").children().eq(1).hide();
 	
 	//그룹카드 관련
 	$("#group_detail_left").children().eq(1).children('span').text("부방장");
