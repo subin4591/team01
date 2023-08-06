@@ -1,5 +1,6 @@
 package main;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,11 +36,14 @@ public class mainController {
 	@GetMapping("/")
 	@CrossOrigin(origins = "http://localhost:8065")
 	public ModelAndView start(HttpSession session){
+		LocalDate currentDate = LocalDate.now();
+        LocalDate oneWeekAgo = currentDate.minusWeeks(1);
+        System.out.println("One week ago: " + oneWeekAgo);
 		String user_id = (String)session.getAttribute("session_id");
 		List<GroupDTO> mygroup = service.myGroup(user_id);
 		List<MainDTO> mywrite= service.myWrite(user_id);
 		List<MainDTO> myapplication= service.myApplication(user_id);
-		List<MainDTO> ranklist= service.rankList();
+		List<MainDTO> ranklist= service.rankList(oneWeekAgo);
 		List<ScheduleDTO> schedulelist = service.getSchedule(user_id);
 		String json = new Gson().toJson(schedulelist);
 		ModelAndView mv = new ModelAndView();
