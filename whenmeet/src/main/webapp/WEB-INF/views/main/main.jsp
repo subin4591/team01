@@ -557,7 +557,7 @@ $(document).ready(function(){
   	</div>
     <div id="top">
     	<a href="group/invitation" id="add_btn"><button><h2>그룹 생성</h2></button></a>
-    	<img alt="배경이미지" src="img/back.jpg" id="back">
+    	<img alt="배경이미지" src="img/flower.jpg" id="back">
     </div>
     <div id="body">
 	    <div id="content">
