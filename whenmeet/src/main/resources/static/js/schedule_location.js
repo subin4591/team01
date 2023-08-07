@@ -268,7 +268,10 @@ $('#meeting_location_btn').on('click',function(){
     
 });
 function calculateDistance(lat1, lon1, lat2, lon2) {
-	 $('#null_text').hide();
+	 setTimeout(function(){
+		 $('#null_text').hide();
+	 },10);
+	 
 	  const earthRadius = 6371; 
 
 	  const lat1Rad = toRadians(lat1);
