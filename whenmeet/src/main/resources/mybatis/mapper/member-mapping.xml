@@ -41,6 +41,11 @@
 	<select id="emailCheck" parameterType="String" resultType="int">
     	SELECT COUNT(*) FROM user_table WHERE email = #{email}
 	</select>
+	
+	<!-- 중복 체크를 위한 SQL 쿼리 -->
+	<select id="getCountByUserId" resultType="int">
+    	SELECT COUNT(*) FROM user_table WHERE user_id = #{userId}
+	</select>
 </mapper>
 
 

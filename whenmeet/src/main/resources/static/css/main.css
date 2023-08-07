@@ -135,6 +135,7 @@ a{
     max-width: 650px;
     margin-left: 58px;
   }
+
 .rank_contents{
 	height:63px;
 	font-size:17px;
@@ -149,6 +150,10 @@ a{
 }
 .rank_list{
 	border-top:2px solid #e3e5e8;
+	text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
 }
 .rank_contents * {
 	margin:0;

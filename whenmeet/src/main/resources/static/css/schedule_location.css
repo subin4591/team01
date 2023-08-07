@@ -37,10 +37,11 @@
 #pagination .on {font-weight: bold; cursor: default;color:#777;}
 #result_wrap{
 	position:absolute;
-	left:60%;
+	left: 40%;
 	text-align: center;
     top: 50%;
     margin-left: 240px;
+    width:1000px;
     transform: translate(0, -50%);
 }
 #confirm_btn, #change_btn{

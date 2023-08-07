@@ -8,30 +8,27 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script>
 <script>
-    // 중복 체크 버튼 클릭 시 동작
-    function checkId() {
-      var user_id = $('#user_id').val();
-      $.ajax({
-        url: './idCheck',
-        type: 'post',
-        data: { user_id: user_id },
-        success: function(cnt) {
-          if (cnt == 0) {
-            $('.id_ok').css("display", "inline-block");
-            $('.id_already').css("display", "none");
-          } else {
-            $('.id_already').css("display", "inline-block");
-            $('.id_ok').css("display", "none");
-            alert("아이디를 다시 입력해주세요");
-            $('#user_id').val('');
-          }
-        },
-        error: function() {
-          alert("에러입니다");
-        }
-      });
+function checkId() {
+  var user_id = $('#user_id').val();
+  $.ajax({
+    url: './idCheck',
+    type: 'post',
+    data: { user_id: user_id },
+    success: function(cnt) {
+      if (cnt == 0) {
+        $('.id_ok').css("display", "inline-block");
+        $('.id_already').css("display", "none");
+      } else {
+        $('.id_already').css("display", "inline-block");
+        $('.id_ok').css("display", "none");
+      }
+    },
+    error: function() {
+      alert("에러입니다");
     }
-  </script>
+  });
+}
+</script>
   <script>
   // 중복 체크 버튼 클릭 시 동작
   function checkEmail() {
@@ -90,10 +87,11 @@
       <input type="text" id="address" name="address" required>
       <button type="button" id="btnSearchAddress">우편번호 검색</button>
     </div>
-    <div>
-      <label for="phone">핸드폰 :</label>
-      <input type="tel" id="phone" name="phone" required>
-    </div>
+  <div>
+    <label for="phone">핸드폰 :</label>
+    <input type="tel" id="phone" name="phone" oninput="validatePhoneNumber()" required>
+    <span id="phoneError" style="color: red; display: none;">올바른 핸드폰 번호를 입력하세요.</span>
+</div>
     <div>
   		<label for="email">이메일 :</label>
   		<input type="email" id="email" name="email" oninput="checkEmail()" required>
@@ -106,10 +104,32 @@
 </div>
 <%@ include file="footer.jsp" %>
 <script>
+function validatePhoneNumber() {
+    const phoneInput = document.getElementById("phone");
+    const phoneError = document.getElementById("phoneError");
+
+    if (phoneInput.value.length !== 11) {
+        phoneError.style.display = "inline";
+    } else {
+        phoneError.style.display = "none";
+    }
+}
+
+
   $(document).ready(function() {
     // user_id 입력란에서 입력이 발생하면 checkId() 함수가 호출됩니다.
     $('#user_id').on('input', checkId);
+
+    // email 입력란에서 입력이 발생하면 checkEmail() 함수가 호출됩니다.
+    $('#email').on('input', checkEmail);
+
+    // phone 입력란에서 입력이 발생하면 checkPhone() 함수가 호출됩니다.
+    $('#phone').on('input', checkPhone);
+
+    // 페이지 로딩 시에도 checkPhone() 함수 호출하여 초기 상태를 확인합니다.
+    checkPhone();
   });
 </script>
+
 </body>
 </html>
