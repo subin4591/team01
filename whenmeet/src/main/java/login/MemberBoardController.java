@@ -151,10 +151,7 @@ public ModelAndView updateMember(MemberDTO dto, HttpSession session, @RequestPar
     System.out.println("파라미터유저 : " + dto.toString());
 
     // 프로필 사진을 업로드하지 않은 경우 기존의 프로필 사진 경로를 유지
-    if (file.isEmpty()) {
-        MemberDTO originalDto = service.infoMember((String) session.getAttribute("session_id"));
-        dto.setProfile_url(originalDto.getProfile_url());
-    } else {
+    if (!file.isEmpty()) {
         try {
             String uploadDir = "/Users/chaesuwon/kdt/upload/"; // 파일을 저장할 경로 설정
 
@@ -165,28 +162,29 @@ public ModelAndView updateMember(MemberDTO dto, HttpSession session, @RequestPar
             File uploadedFile = new File(uploadDir + fileName);
             file.transferTo(uploadedFile);
 
-            
-            String file_url = "/upload/"+uploadedFile.getName();
+            String file_url = "/upload/" + uploadedFile.getName();
             // 프로필 사진의 경로를 DTO에 설정
             dto.setProfile_url(file_url);
-            
-            //
+
             System.out.println("지금 : " + uploadedFile.getName());
 
-         // 회원 정보 업데이트
+            // DB에 사용자 정보와 프로필 사진 업데이트
             service.updateMember(dto);
-            // "/upload/111_1690507054139_01.jpeg"
             // 세션에도 새로운 프로필 사진 경로를 반영
-          
-//            session.setAttribute("session_url", file_url);
+            session.setAttribute("session_url", file_url);
             System.out.println("이거는 : " + file_url);
             System.out.println(dto.getProfile_url());
         } catch (IOException e) {
             e.printStackTrace();
         }
+    } else {
+        // 프로필 사진을 업로드하지 않은 경우, 기존 프로필 사진 유지
+        MemberDTO originalDto = service.infoMember((String) session.getAttribute("session_id"));
+        dto.setProfile_url(originalDto.getProfile_url());
+        
+        // DB에 사용자 정보 업데이트 (프로필 사진 미포함)
+        service.updateMember(dto);
     }
-
-    
 
     ModelAndView mv = new ModelAndView();
     mv.addObject("message", "사용자 정보가 성공적으로 수정되었습니다. 다시 로그인 해주세요."); // 성공 메시지를 추가합니다.
@@ -197,7 +195,6 @@ public ModelAndView updateMember(MemberDTO dto, HttpSession session, @RequestPar
     mv.setViewName("redirect:/login"); // 로그인 페이지로 리다이렉트합니다.
     return mv;
 }
-
 
 @RequestMapping(value = "/deleteMember")
 public String deleteMember(String user_id, HttpSession session) {
