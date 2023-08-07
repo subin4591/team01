@@ -42,7 +42,6 @@
                     <td>프로필 사진</td>
                     <td>
                         <input type="file" name="profile" accept="image/jpeg, image/png">
-                        <button type="button" id="uploadProfileBtn">프로필 사진 업로드</button>
                     </td>
                 </tr>
                 <tr>
@@ -60,20 +59,19 @@
     <script src="/login_info.js"></script>
     <script src="//code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-            function showUserUpdateAlert() {
-                alert("사용자 정보가 성공적으로 수정되었습니다!");
-            }
+    	$(document).ready(function() {
+        function showUserUpdateAlert() {
+            alert("사용자 정보가 성공적으로 수정되었습니다! 다시 로그인 해주세요.");
+        }
 
-            $("#UserUpdateButton").click(function() {
-                // 파일 업로드
-                $("form").attr("action", "updateMember");
-                $("form").submit();
-            });
+        $("#UserUpdateButton").click(function() {
+            // 파일 업로드
+            $("form").attr("action", "updateMember");
+            $("form").submit();
+            showUserUpdateAlert();
+        });
 
             $("#deleteUser").click(function() {
-                // 파일 업로드 
-                alert("deleteUser");
                 $("form").attr("action", "deleteMember");
                 $("form").submit();
             });
@@ -104,13 +102,14 @@
                 }
             });
 
-            // 회원탈퇴 버튼 클릭 시 동작
+         // 회원탈퇴 버튼 클릭 시 동작
             $("#deleteUser").click(function() {
                 if (confirm("정말로 회원 탈퇴하시겠습니까?")) {
                     location.href = "/deleteMember";
+                    alert("회원 탈퇴가 완료되었습니다.");
                 }
             });
-
+         
             // 프로필 사진 업로드 버튼 클릭 이벤트 처리
             $("#uploadProfileBtn").on("click", function() {
                 // FormData를 사용하여 파일 업로드를 처리합니다.
