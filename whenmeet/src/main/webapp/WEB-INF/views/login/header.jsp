@@ -15,6 +15,7 @@ $(document).ready(function() {
         $("#user_profile").hide();
         $("#logout_btn").hide();
     </c:if>
+}
 </script>
 <script>
     $(document).ready(function() {
