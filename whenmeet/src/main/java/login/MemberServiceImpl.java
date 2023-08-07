@@ -54,5 +54,11 @@ public class MemberServiceImpl implements MemberService {
     public int emailCheck(String email) {
         return memberDAO.emailCheck(email);
     }
+
+	@Override
+	public boolean isUserIdDuplicated(String userId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
     
 }
