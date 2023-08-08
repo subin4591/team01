@@ -379,7 +379,8 @@ $(document).ready(function(){
 		  return degrees * (Math.PI / 180);
 		}
 		function dist(lat,lon){
-			if (navigator.geolocation) {
+			// https에서만 사용가능
+			/* if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(
 				     function(position) {
 				      const latitude = position.coords.latitude;
@@ -402,7 +403,16 @@ $(document).ready(function(){
 				  return distance;
 				} else {
 				  console.log("위치 정보를 확인할 수 없습니다.");
-				}
+				} */
+			  let distance = calculateDistance(lat,lon,37.5,127.03);
+		      if(distance > 10){
+		    	  distance = distance.toFixed(0) + "km";
+		      }else if(distance > 1){
+		    	  distance = distance.toFixed(1) + "km";
+		      }else{
+		    	  distance = (distance*1000).toFixed(0) + "m";
+		      }
+		      $('#distance').html("<h2> 현재 위치에서 거리 : " + distance + "</h2>");
 		}	
 });
 
