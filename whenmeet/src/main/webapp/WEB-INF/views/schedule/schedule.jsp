@@ -107,7 +107,7 @@ String userImgErr = "/img/user_logo.png";
 				membersProfileUrl.add(memberProfileUrl[i]);
 			}
 			
-			//출력
+			//출력!
 			for(int i = 0; i < membersName.size(); i++){
 				String Img = "/img/방장표시.svg";
 				int host = 0;
@@ -359,13 +359,12 @@ String userImgErr = "/img/user_logo.png";
           	</div>
           	
             <br>    				
-          	<form class = "tableForm" action = "/schedule/${groupId}/updateUserTable" method = "GET">
+          	<div class = "tableForm" >
           		<!-- 42 * 7개의 데이터를 slideMax개수 만큼 저장 -->
           		<input type = "text" style = "display : None" value = ""  name = "code" id = "tableFormResult">
-          		<input type = "text" style = "display : None" value = ""  name = "code" id = "tableFormResult">
-          		<button type = "submit" class = "btns" id = "ScheduleSaveBtn"  onclick = "ScheduleSaveBtnClick(<%= slideMax%>)">저장</button>
+          		<button type = "button" class = "btns" id = "ScheduleSaveBtn"  onclick = "ScheduleSaveBtnClick(<%= slideMax%>)">저장</button>
           		<br>
-          	</form>
+          	</div>
           </div>
           
           <!-- 전체 회원 테이블  -->	
@@ -478,13 +477,16 @@ String userImgErr = "/img/user_logo.png";
             <span>D-day가<br>아직 등록되지 않았습니다.</span>
           </div>
           		
-          <div id = "Dday_edit" style = "display : None;">
+          	<div id = "Dday_edit" style = "display : None;">
+          <div class = "loader" style = "">
+				    <div class = "loaderIcon"></div>
+		</div>
           	<img class = "etc" src = "/img/수정중.svg">
           	<img ID = "endEditDate" src = "/img/엑스.svg">
           	<!-- 이 부분은 최종 결정 난 날짜와 시각을 방장 or 부방장이 수동으로 입력 -->
           	<!-- 편집 표시 자체를 방장들만 볼 수 있게 -->
           	<!-- 이미지버튼으로 캘린더 띄우기 참고 : https://velog.io/@rkio/CSS-input-type-date-캘린더-아이콘-커스텀하기 -->
-          	<form action = "/schedule/${groupId}/updateDday#second_section" method = "POST" id = "Dday_frm" onsubmit = "return DdayError()">
+          	<div id = "Dday_frm" >
           		<br><br>
           		<span><a id = "DdayEditDate">날짜 : 0000-00-00</a>
           			<input type = "date" name = "date" class = "spanImg" id = "finalDate" placeholder = "" onchange = "changeDate()"/>
@@ -497,8 +499,8 @@ String userImgErr = "/img/user_logo.png";
             	<span><a id = "DdayEditTime2">종료 시각 : 00:00</a>
           			<input type = "time" name = "end" class = "spanImg" id = "finalEndTime" placeholder = "" onchange = "changeTime2()"/>
             	<br>
-            	<input type = "submit" value = "저장" class = "submitBtn"/>            
-          	</form>
+            	<input type = "button" value = "저장" class = "submitBtn"/>            
+          	</div>
           </div>
         <script>
         <% int DoItMax = (int)request.getAttribute("DoItMax");%>
@@ -554,13 +556,13 @@ String userImgErr = "/img/user_logo.png";
 				</div>
 				<div class = "week_modal_content">
 				
-					<form action = "/schedule/${groupId}/tableUpdate" method = "post" id = "updateWeekForm" onsubmit = "return changeWeek('<%= today %>');" >
+					<div id = "updateWeekForm" >
 						<span>기간 시작일 : <input type = "date" name = "start" id = "firstDate" ></span>
 						<span>기간 종료일 : <input type = "date"  name = "end" id = "EndDate" /></span>
 						<input type = "text" style = "display : None" name = "userId" value = "${userId}" />
 						<input type = "text" style = "display : None" name = "data" id = "updateTableData" value = ""/>
-						<input type = "submit" value = "저장"  class = "submitBtn" />
-					</form>
+						<input type = "button" value = "저장"  class = "submitBtn" />
+					</div>
 					
 				</div>		
   			</div>
@@ -1033,7 +1035,109 @@ String userImgErr = "/img/user_logo.png";
 		$(".loader").css("display", "None");
 
 		//ajax
+		$("#ScheduleSaveBtn").on("click", function(){
+			$.ajax({
+				url : "/schedule/${groupId}/updateUserTable",
+				type : "get",
+				data : {
+					code : $("#tableFormResult").val()
+				},
+				success : function(){
+					location.reload();
+					 $("#second_section").focus();
+				}
+			})
+		})
 		
+		$("#updateWeekForm .submitBtn").on("click", function(){
+			var result1 = $("#firstDate").val();
+			var result2 = $("#EndDate").val();
+			
+			if (result1 == "" || result2 == ""){
+				alert("기간을 입력해주세요.");
+				return false;
+			}
+			var today = "<%= today %>";
+			var results1 = result1.split("-");
+			var results2 = result2.split("-");
+			today = today.split(" ");
+			today = today[0].split("/");
+			var temp1 = results1[0]+results1[1]+results1[2];
+			var temp2 = results2[0]+results2[1]+results2[2];
+			today = today[0]+today[1]+today[2];
+			temp1 *= 1;
+			temp2 *= 1;
+			today *= 1;
+			var todayDate = new Date();
+			todayDate = ""+ todayDate.getFullYear() + changeMM(todayDate.getMonth()) + todayDate.getDate();
+
+			if (temp1 > temp2){
+				alert("올바른 기간을 입력해주세요.");
+				return false;
+			} else if (temp1 < todayDate){
+				alert("오늘 이전의 날짜는 입력할 수 없습니다.");
+				return false;
+			}
+			else{
+				$("#updateDateView .first").text(results1[0]+"/"+results1[1]+"/"+results1[2]+ " ("+getDayOfWeek(results1)+")");
+				$("#updateDateView .second").text(results2[0]+"/"+results2[1]+"/"+results2[2]+ " ("+getDayOfWeek(results2)+")");	
+				tbDateChange($("#updateDateView .first").text(), $("#updateDateView .second").text());
+				WpopClose();
+				console.log($("#updateTableData").val());
+				
+				$.ajax({
+					url : "/schedule/${groupId}/tableUpdate",
+					type : "post",
+					data : {
+						userId : "${userId}",
+						start : $("#firstDate").val(),
+						end : $("#EndDate").val(),
+						data : $("#updateTableData").val()
+					},
+					success : function(){
+						 location.reload();
+						 $("#second_section").focus();
+					}
+				})
+			}
+		});	
+		
+		$("#Dday_frm > span:nth-child(9) > input.submitBtn").on("click", function(){
+			
+			var date = $("#finalDate").val();
+			
+			var temp = date.split("-");
+			var Day = getDayOfWeek(temp);
+			var today = new Date();
+			Ddate = new Date(date);
+			
+			if (Math.floor((today.getTime()/(24*60*60*1000))) > (Ddate.getTime()/(24*60*60*1000)) || date == ""){
+				console.log(Math.floor((today.getTime()/(24*60*60*1000))));
+				console.log(Ddate.getTime()/(24*60*60*1000));
+				alert("정확한 날짜를 입력해주세요.");
+				return false;
+			} else{
+				$.ajax({
+					url : "/schedule/${groupId}/updateDday",
+					type : "post",
+					data : {
+						date : $("#finalDate").val(),
+						start : $("#finalStartTime").val(),
+						end : $("#finalEndTime").val()
+					},
+					success : function(){
+						$("#Dday_area .loader").show();
+						$('#Dday > span:nth-child(3)').load(window.location.href + " #Dday > span:nth-child(3)");
+						$('#Dday > span:nth-child(4)').load(window.location.href + " #Dday > span:nth-child(4)");
+						$('#Dday > span:nth-child(5)').load(window.location.href + " #Dday > span:nth-child(5)", function(){
+							$("#Dday").show();
+							$("#Dday_edit").hide();
+							$("#Dday_area .loader").hide();
+						});
+					}
+				})
+			}
+		});
 		$("#ganttCreateBtn").on("click", function(){
 			$.ajax({
 				url : "/schedule/<%= groupId%>/CreateGantt",
