@@ -15,5 +15,7 @@ public interface MemberDAO {
     public void deleteMember(String user_id); // 회원 탈퇴 
     public int idCheck(String user_id);
     public int emailCheck(String email);
+    int getCountByUserId(String userId);
+
 
 }

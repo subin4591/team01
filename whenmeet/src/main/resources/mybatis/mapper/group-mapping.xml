@@ -150,10 +150,10 @@
 		update `group_user_table` set
 		<choose>
 			<when test="host_id == 'host'">
-				host = 1
+				host = 1, sub_host = 0
 			</when>
 			<when test="host_id == 'sub_host'">
-				sub_host = 1
+				sub_host = 1, host = 0
 			</when>
 		</choose>
 		where group_id = #{group_id} and
