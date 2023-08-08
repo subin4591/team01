@@ -78,6 +78,8 @@ $(document).ready(function(){
 	        if(response.host != '${session_id}'){
 	        	setTimeout(() => {
 	        		$('#change_btn').hide();
+	        		$('#confirm_btn').hide();
+	        		$('#menu_wrap').hide();
 	        	}, 600);
 	        }
 	      },
@@ -92,7 +94,7 @@ $(document).ready(function(){
 			$('#menu_wrap').hide();
 			$('#confirm_btn').hide();
 			$('#change_btn').show();
-		}, 500);
+		}, 300);
 		
 	}
 
