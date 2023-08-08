@@ -90,7 +90,7 @@ public class scheduleController {
 				DayLists[6] = SaturdayList;
 
 					/*group_id / seq / count 가 일치할 때, sun~sat에 1인 값의 총 개수 합
-					이 배열의 크기는 group_id/seq/count의 개수만큼 존재한다.*/
+					이 배열의 크기는 group_id/seq/count의 개수만큼 존재한다!*/
 					usmap.put("group_id", groupId);
 					usmap.put("sun", 0); usmap.put("mon", 0); usmap.put("tue", 0); usmap.put("wed", 0);
 					usmap.put("thu", 0); usmap.put("fri", 0); usmap.put("sat", 0);
@@ -98,6 +98,14 @@ public class scheduleController {
 						usmap.put("seq", seqs[i]);
 						for (int j = 0; j < 42; j++) {
 							if (scheduleService.selectUserScheduleCntAll(usdto) > 0) {
+								SundayList[i][j] = 0;
+								MondayList[i][j] = 0;
+								TuesdayList[i][j] = 0;
+								WednesdayList[i][j] = 0;
+								ThusdayList[i][j] = 0;
+								FridayList[i][j] = 0;
+								SaturdayList[i][j] = 0;
+								
 								usmap.put("cnt", j);
 								usmap.put("sun", 1);
 								SundayList[i][j] = scheduleService.selectUserScheduleDayCnt(usmap);
@@ -774,7 +782,6 @@ public class scheduleController {
 			scheduleService.insertMeetingScheduleDate(map);
 		}
 		String[] datas = data.split("\\*");
-		
 		String startWeekFirst = datas[0];
 		String startWeekLast = datas[1];
 		String WeeksCnt = datas[2];
