@@ -208,6 +208,7 @@ $(document).ready(function(){
 	                infowindow.close();
 	            });
 	            kakao.maps.event.addListener(marker, 'click', function() {
+	            	$('#null_text').hide();
 	            	dist(places[i].y,places[i].x);
 	            	$('#result').html("<h1>" + title + "</h1>" +"<h2>" + places[i].address_name + "</h2>");
 	            	map.setLevel(3);
@@ -217,6 +218,7 @@ $(document).ready(function(){
 	            });
 	            
 	            itemEl.onclick =  function () {
+	            	$('#null_text').hide();
 	 				dist(places[i].y,places[i].x);
 	            	var spanElement = this.querySelector('div > span');
 	            	var address = spanElement.innerHTML;
@@ -353,11 +355,8 @@ $(document).ready(function(){
 	    }, 0); 
 	    
 	});
-	function calculateDistance(lat1, lon1, lat2, lon2) {
-		 setTimeout(function(){
-			 $('#null_text').hide();
-		 },100);
-		 
+	function calculateDistance(lat1, lon1, lat2, lon2) {	
+		  console.log("위치계산함수실행");
 		  const earthRadius = 6371; 
 
 		  const lat1Rad = toRadians(lat1);
@@ -380,7 +379,8 @@ $(document).ready(function(){
 		  return degrees * (Math.PI / 180);
 		}
 		function dist(lat,lon){
-			if (navigator.geolocation) {
+			// https에서만 사용가능
+			/* if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(
 				     function(position) {
 				      const latitude = position.coords.latitude;
@@ -403,7 +403,16 @@ $(document).ready(function(){
 				  return distance;
 				} else {
 				  console.log("위치 정보를 확인할 수 없습니다.");
-				}
+				} */
+			  let distance = calculateDistance(lat,lon,37.5,127.03);
+		      if(distance > 10){
+		    	  distance = distance.toFixed(0) + "km";
+		      }else if(distance > 1){
+		    	  distance = distance.toFixed(1) + "km";
+		      }else{
+		    	  distance = (distance*1000).toFixed(0) + "m";
+		      }
+		      $('#distance').html("<h2> 현재 위치에서 거리 : " + distance + "</h2>");
 		}	
 });
 
