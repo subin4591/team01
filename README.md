@@ -17,6 +17,9 @@
 - Database: 
 ![Static Badge](https://img.shields.io/badge/MySQL%208.0-4479A1?logo=mysql&logoColor=white)
 
+- Deployment:
+![Static Badge](https://img.shields.io/badge/Naver%20Cloud-03C75A?logo=naver&logoColor=white)
+
 - Tools: 
 ![Static Badge](https://img.shields.io/badge/STS4-6DB33F?logo=spring&logoColor=white)
 ![Static Badge](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white)
