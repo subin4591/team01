@@ -18,7 +18,9 @@
 ![Static Badge](https://img.shields.io/badge/MySQL%208.0-4479A1?logo=mysql&logoColor=white)
 
 - Deployment:
-![Static Badge](https://img.shields.io/badge/Naver%20Cloud-03C75A?logo=naver&logoColor=white)
+![Static Badge](https://img.shields.io/badge/Naver%20Cloud%20Platform-03C75A?logo=naver&logoColor=white)
+![Static Badge](https://img.shields.io/badge/Apache%20Tomcat-%23F8DC75?logo=apachetomcat&logoColor=black)
+![Static Badge](https://img.shields.io/badge/Jenkins-%23D24939?logo=jenkins&logoColor=white)
 
 - Tools: 
 ![Static Badge](https://img.shields.io/badge/STS4-6DB33F?logo=spring&logoColor=white)
